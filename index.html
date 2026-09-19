@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <title>Agrim Kasaju — Computer Systems Engineering & AI</title>
+    <meta name="description" content="Portfolio of Agrim Kasaju. Fourth-year Computer Systems Engineering student @ Carleton University and Software Developer (Co-op) @ Lumentum." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Agrim Kasaju — Computer Systems Engineering & AI" />
+    <meta property="og:description" content="Fourth-year Computer Systems Engineering student @ Carleton University and Software Developer (Co-op) @ Lumentum." />
+    <meta property="og:image" content="https://agrimkasaju.netlify.app/og-image.png" />
+    <meta property="og:url" content="https://agrimkasaju.netlify.app" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Agrim Kasaju — Computer Systems Engineering & AI" />
+    <meta name="twitter:description" content="Computer Systems Engineering student @ Carleton University and Software Developer (Co-op) @ Lumentum." />
+    <meta name="twitter:image" content="https://agrimkasaju.netlify.app/og-image.png" />
+    <script>
+      ;(() => {
+        try {
+          const isDark = localStorage.getItem('portfolio-theme') === 'dark'
+          const root = document.documentElement
+          root.classList.toggle('dark', isDark)
+          root.classList.toggle('dark-theme', isDark)
+          root.style.backgroundColor = isDark ? '#000000' : '#ffffff'
+          root.style.colorScheme = isDark ? 'dark' : 'light'
+        } catch {}
+      })()
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Runde:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

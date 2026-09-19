@@ -1,0 +1,31 @@
+@import url("https://fonts.cdnfonts.com/css/open-runde");
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *, .dark-theme, .dark-theme *));
+
+@theme {
+  --font-sans: "Open Runde", sans-serif;
+}
+
+html {
+  font-family: var(--font-sans);
+  color: #18181b;
+}
+
+html.dark,
+html.dark-theme {
+  color: #f4f4f5;
+}
+
+body,
+#root,
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+* {
+  box-sizing: border-box;
+}
