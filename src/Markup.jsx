@@ -105,14 +105,14 @@ const Markup = ({
           {activeThemeId !== 'default' && (
             <button
               onClick={resetTheme}
-              className="ml-2 underline text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 cursor-pointer"
+              className="ml-2 underline text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 cursor-pointer"
             >
               Reset to Neutral
             </button>
           )}
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-zinc-500 hidden sm:inline">Click any project to re-theme page</span>
+          <span className="text-zinc-500 dark:text-zinc-400 hidden sm:inline">Click any project to re-theme page</span>
           <div className="switch shrink-0" aria-label="Toggle dark mode">
             <input
               type="checkbox"

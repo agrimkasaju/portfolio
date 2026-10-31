@@ -64,7 +64,7 @@ export const MacbookShowcase = () => {
           <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-color)' }}></span>
           <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
             <span>Engineering Profile & Experience</span>
-            <span className="hidden sm:inline-block text-[11px] font-mono font-normal text-zinc-500">
+            <span className="hidden sm:inline-block text-[11px] font-mono font-normal text-zinc-500 dark:text-zinc-400">
               Interactive Workspace
             </span>
           </h2>
@@ -421,7 +421,7 @@ export const MacbookShowcase = () => {
                     </div>
 
                     {/* Window Markdown Editor Content Area */}
-                    <div className="p-3.5 sm:p-4 overflow-y-auto mac-scrollbar text-xs leading-relaxed text-zinc-300 font-sans space-y-2.5">
+                    <div className="p-3.5 sm:p-4 overflow-y-auto mac-scrollbar text-xs leading-relaxed text-zinc-200 font-sans space-y-2.5">
                       <div className="border-b border-zinc-800 pb-2">
                         <div className="flex items-center justify-between">
                           <h1 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
@@ -432,41 +432,41 @@ export const MacbookShowcase = () => {
                           </h1>
                           <span className="text-[10px] font-mono text-emerald-400">● AVAILABLE FOR ROLES</span>
                         </div>
-                        <p className="text-[11px] text-zinc-400 font-mono mt-0.5">
+                        <p className="text-[11px] text-zinc-300 font-mono mt-0.5">
                           B.Eng Computer Systems Engineering @ Carleton University · GPA 3.33/4.0
                         </p>
                       </div>
 
                       {/* Markdown Content Blocks */}
                       <div className="space-y-2">
-                        <p className="text-zinc-300">
+                        <p className="text-zinc-200">
                           Fourth-year engineering student with hands-on production experience in Linux systems software, automated verification harnesses, and edge AI deployment.
                         </p>
 
-                        <div className="p-2.5 rounded bg-zinc-900/80 border border-zinc-800 font-mono text-[11px] text-zinc-300">
-                          <p className="text-blue-400 font-bold mb-1">// Architectural Philosophy</p>
-                          <p className="leading-normal">
+                        <div className="p-2.5 rounded bg-zinc-900/90 border border-zinc-700/80 font-mono text-[11px] text-zinc-200">
+                          <p className="text-blue-300 font-bold mb-1">// Architectural Philosophy</p>
+                          <p className="leading-normal text-zinc-200">
                             High-throughput, low-latency execution that survives hostile edge environments, high thread contention, and deterministic timing constraints.
                           </p>
                         </div>
 
                         <div>
-                          <p className="font-semibold text-white text-[11px] uppercase tracking-wider mb-1 font-mono text-zinc-400">
+                          <p className="font-semibold text-white text-[11px] uppercase tracking-wider mb-1 font-mono text-zinc-300">
                             Core Engineering Stack:
                           </p>
                           <div className="flex flex-wrap gap-1 text-[10px] font-mono">
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-200">C/C++</span>
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-200">Go</span>
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-200">Python</span>
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-200">Linux POSIX APIs</span>
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-200">ONNX / TFLite INT8</span>
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-200">mTLS & X.509</span>
+                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">C/C++</span>
+                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">Go</span>
+                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">Python</span>
+                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">Linux POSIX APIs</span>
+                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">ONNX / TFLite INT8</span>
+                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">mTLS & X.509</span>
                           </div>
                         </div>
 
-                        <div className="pt-2 border-t border-zinc-800/80 text-[11px] text-zinc-400 flex items-center justify-between">
+                        <div className="pt-2 border-t border-zinc-800/80 text-[11px] text-zinc-300 flex items-center justify-between">
                           <span>Dean's Honour List (2024–2025)</span>
-                          <span className="text-zinc-500 font-mono">EOF · 42 lines</span>
+                          <span className="text-zinc-400 font-mono">EOF · 42 lines</span>
                         </div>
                       </div>
                     </div>
@@ -527,34 +527,34 @@ export const MacbookShowcase = () => {
                         </span>
                       </div>
 
-                      <div className="text-[10px] font-mono text-zinc-500">
+                      <div className="text-[10px] font-mono text-zinc-400">
                         ~/kasaju/EXPERIENCE.md · Preview
                       </div>
                     </div>
 
                     {/* Window Markdown Editor Content Area */}
-                    <div className="p-3.5 sm:p-4 overflow-y-auto mac-scrollbar text-xs leading-relaxed text-zinc-300 font-sans space-y-3">
+                    <div className="p-3.5 sm:p-4 overflow-y-auto mac-scrollbar text-xs leading-relaxed text-zinc-200 font-sans space-y-3">
                       {/* Lumentum Co-op Experience */}
                       <div className="border-b border-zinc-800/80 pb-2.5">
                         <div className="flex items-baseline justify-between">
                           <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
                             <span>Lumentum</span>
-                            <span className="text-zinc-500 font-normal">·</span>
+                            <span className="text-zinc-400 font-normal">·</span>
                             <span className="text-emerald-400 font-medium text-xs">Software Developer (Co-op)</span>
                           </h2>
-                          <span className="text-[10px] font-mono text-zinc-400">May 2026 – Present</span>
+                          <span className="text-[10px] font-mono text-zinc-300">May 2026 – Present</span>
                         </div>
-                        <p className="text-[10px] font-mono text-zinc-500">Ottawa, ON · Systems Software & Verification</p>
+                        <p className="text-[10px] font-mono text-zinc-400">Ottawa, ON · Systems Software & Verification</p>
 
-                        <ul className="mt-2 space-y-1.5 text-[11px] text-zinc-300 pl-3 list-disc marker:text-emerald-400">
+                        <ul className="mt-2 space-y-1.5 text-[11px] text-zinc-200 pl-3 list-disc marker:text-emerald-400">
                           <li>
-                            <strong className="text-white">Automated Linux Validation:</strong> Validated system software by automating test harness execution and diagnostic log parsing across 10+ configurations, <span className="text-emerald-300 font-semibold">reducing manual regression duration by 35%</span>.
+                            <strong className="text-white font-semibold">Automated Linux Validation:</strong> Validated system software by automating test harness execution and diagnostic log parsing across 10+ configurations, <span className="text-emerald-300 font-semibold">reducing manual regression duration by 35%</span>.
                           </li>
                           <li>
-                            <strong className="text-white">Mutual TLS (mTLS) Security:</strong> Implemented bidirectional X.509 certificate validation between host daemons and client endpoints to enforce strict authentication.
+                            <strong className="text-white font-semibold">Mutual TLS (mTLS) Security:</strong> Implemented bidirectional X.509 certificate validation between host daemons and client endpoints to enforce strict authentication.
                           </li>
                           <li>
-                            <strong className="text-white">State Isolation & Storage Reduction:</strong> Built C# filesystem event monitoring service & Go backend pipelines validating declarative prototext persistence, <span className="text-emerald-300 font-semibold">cutting snapshot storage overhead by 88%</span>.
+                            <strong className="text-white font-semibold">State Isolation & Storage Reduction:</strong> Built C# filesystem event monitoring service & Go backend pipelines validating declarative prototext persistence, <span className="text-emerald-300 font-semibold">cutting snapshot storage overhead by 88%</span>.
                           </li>
                         </ul>
                       </div>
@@ -563,31 +563,31 @@ export const MacbookShowcase = () => {
                       <div className="border-b border-zinc-800/80 pb-2">
                         <div className="flex items-baseline justify-between">
                           <h3 className="text-xs font-bold text-white">
-                            TELUS Go Sales <span className="text-zinc-500 font-normal">· Sales Representative</span>
+                            TELUS Go Sales <span className="text-zinc-400 font-normal">· Sales Representative</span>
                           </h3>
-                          <span className="text-[10px] font-mono text-zinc-400">Jul 2023 – Aug 2023</span>
+                          <span className="text-[10px] font-mono text-zinc-300">Jul 2023 – Aug 2023</span>
                         </div>
-                        <p className="text-[11px] text-zinc-400 mt-1">
+                        <p className="text-[11px] text-zinc-300 mt-1">
                           Communicated technical network specifications, hardware requirements, and client advisory in Calgary, AB.
                         </p>
                       </div>
 
                       {/* Academic Experience & Coursework */}
                       <div>
-                        <p className="text-[10px] font-mono uppercase text-zinc-400 tracking-wider mb-1 font-semibold">
+                        <p className="text-[10px] font-mono uppercase text-zinc-300 tracking-wider mb-1 font-semibold">
                           Coursework & Low-Level Foundations:
                         </p>
                         <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-                          <div className="p-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
+                          <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
                             ⚡ Real-Time Systems (Rate-Monotonic)
                           </div>
-                          <div className="p-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
+                          <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
                             🛡️ Network & Software Security (iptables)
                           </div>
-                          <div className="p-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
+                          <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
                             🔌 ARM SoC Design (UART/I2C/SPI)
                           </div>
-                          <div className="p-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
+                          <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
                             ⚙️ CPU Scheduling & POSIX IPC
                           </div>
                         </div>

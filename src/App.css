@@ -935,31 +935,8 @@ body.chat-open #chatPanel {
   }
 }
 
-.dark-theme .bg-black {
-  background: #f4f4f5 !important;
-}
-
-.dark-theme .border-black {
-  border-color: #f4f4f5 !important;
-}
-
-.dark-theme .border-b.blog-card-separator,
-.dark-theme .border-b.blog-header-separator {
-  border-bottom-width: 0 !important;
-}
-
-.dark-theme .blog-card-separator {
-  border-bottom-width: 1px !important;
-  border-color: #2f2f2f !important;
-}
-
-.dark-theme .blog-header-separator {
-  border-bottom-width: 1px !important;
-  border-color: #2f2f2f !important;
-}
-
 .dark-theme .text-white {
-  color: #0a0a0a !important;
+  color: #ffffff !important;
 }
 
 .dark-theme .hover\:bg-gray-200:hover {
