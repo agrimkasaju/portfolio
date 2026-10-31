@@ -8,13 +8,13 @@ const projectsData = [
     tag: 'AI & Agentic Systems',
     time: 'Jun 2026 – Present',
     github: 'https://github.com/agrimkasaju/Anubis',
-    description: 'Voice-activated autonomous AI assistant built in Python utilizing agentic workflows (Planner, Executor, Task Queue) with sub-800ms tool execution.',
+    description: 'Asynchronous voice-activated assistant orchestrating native system tools and managing automated pipelines with custom wake-word inference.',
     metrics: [
-      'Trained and integrated custom Orion ONNX wake-word model with real-time audio inference (<150ms latency) and multi-frame checks, reaching 98%+ accuracy and cutting false triggers by 85%.',
-      'Engineered persistent long-term memory module and IPC bridge to orchestrate external Python pipelines, processing 100+ job applications with zero data loss.',
-      'Autonomously coordinates 15+ native system tools and asynchronous I/O routines.'
+      'Architected an asynchronous assistant in Python utilizing modular planning, execution, and task queue stages to autonomously orchestrate over 15 local system tools and background processes.',
+      'Trained and integrated a custom Orion ONNX wake-word model with streaming audio inference and multi-frame activation checks to maintain low edge latency and suppress false activations.',
+      'Built an asynchronous IPC bridge and thread-safe persistence module to exchange structured JSON payloads between the voice assistant and external automation pipelines across 100+ workflows.'
     ],
-    tech: ['Python', 'ONNX', 'openWakeWord', 'Agentic Workflows', 'IPC', 'Asyncio']
+    tech: ['Python', 'ONNX Runtime', 'openWakeWord', 'Agentic Workflows', 'IPC', 'Asyncio']
   },
   {
     id: 'smartInventory',
@@ -23,26 +23,26 @@ const projectsData = [
     tag: 'Embedded & Edge AI',
     time: 'Jan 2025 – Apr 2025',
     github: 'https://github.com/agrimkasaju/Smart-Inventory-System',
-    description: 'Real-time object-detection inference pipeline on Raspberry Pi hardware using INT8 quantized TensorFlow Lite and low-latency cloud synchronization.',
+    description: 'Edge object-detection pipeline on Raspberry Pi hardware using INT8 quantized TensorFlow Lite and cloud database synchronization.',
     metrics: [
-      'Applied INT8 quantization cutting model size by 75% (16MB to 4MB) and quadrupling inference speed from 3 FPS to 12+ FPS on ARM SoC.',
-      'Engineered reusable data-access components interfacing with Firebase for sub-100ms real-time database synchronization.',
-      'Authored automated unit test suites in Pytest achieving 90%+ code coverage with continuous deployment via GitHub Actions; led 4-member Agile team.'
+      'Applied post-training INT8 quantization to TensorFlow Lite, reducing precision from 32-bit floats to 8-bit integers to shrink memory footprint by 75% and boost throughput from 5–10 FPS to 15–20 FPS on edge hardware.',
+      'Constructed modular data-access components interfacing with Firebase for real-time edge-to-cloud inventory database synchronization.',
+      'Authored automated unit test suites in Pytest and managed continuous integration workflows via GitHub Actions across a 4-member Agile team.'
     ],
     tech: ['Raspberry Pi', 'TensorFlow Lite', 'Python', 'Firebase', 'Pytest', 'GitHub Actions']
   },
   {
     id: 'apiSearch',
-    title: 'High-Throughput Full-Stack REST Platform',
+    title: 'Full-Stack REST Platform (React/Node.js)',
     shortTitle: 'API Search Platform',
     tag: 'Full-Stack & APIs',
     time: 'Sept 2025 – Dec 2025',
     github: 'https://github.com/agrimkasaju/API_search',
-    description: 'Scalable web application aggregating 4+ external REST APIs with sub-200ms query latency and centralized state management.',
+    description: 'Full-stack web application aggregating live multi-source data through concurrent asynchronous REST requests and centralized state management.',
     metrics: [
-      'Built modular TypeScript UI components and centralized Redux state, cutting redundant re-renders by 40% and reducing UI render latency by ~35% (saving 60ms).',
-      'Implemented asynchronous data polling, input sanitization, and structured error handling maintaining 99.5% client-side uptime.',
-      'Integrated resilient fault tolerance and defensive schema validation for external endpoints.'
+      'Aggregated live data across 4+ external REST APIs through concurrent asynchronous requests in React, Node.js, and TypeScript.',
+      'Engineered modular TypeScript UI components and centralized Redux state management, decoupling data fetching from view rendering to prevent redundant component updates during active searches.',
+      'Implemented asynchronous data polling, input sanitization, and structured client-side error handling to gracefully handle upstream rate limits and network timeouts without disrupting UI state.'
     ],
     tech: ['React', 'TypeScript', 'Node.js', 'Redux', 'REST APIs']
   },
@@ -53,12 +53,28 @@ const projectsData = [
     tag: 'Systems & Concurrency',
     time: 'Sep 2024 – Dec 2024',
     github: 'https://github.com/agrimkasaju/Scheduler-Algorithm',
-    description: 'Benchmarked FCFS, Round Robin, and preemptive priority-based CPU scheduling algorithms in C/C++ on Linux.',
+    description: 'Kernel-level task dispatch simulation in C/C++ on Linux benchmarking scheduling policies and multi-threaded IPC buffer synchronization.',
     metrics: [
-      'Simulated 1,000+ heavy workloads demonstrating a 30% reduction in average turnaround time.',
-      'Engineered concurrent producer-consumer processes utilizing POSIX threads, semaphores, and shared memory with zero race conditions or deadlocks.'
+      'Implemented FCFS, Round Robin, and preemptive priority CPU scheduling algorithms in C/C++ on Linux, modeling kernel-level task dispatch dynamics and reducing wait times for high-priority tasks.',
+      'Developed concurrent producer-consumer processes in C using POSIX threads, semaphores, and shared memory, synchronizing buffer access and eliminating race conditions under thread contention.',
+      'Benchmarked scheduling turnaround, context-switching overhead, and thread latency across varied process arrival and burst workloads to profile system performance.'
     ],
     tech: ['C', 'C++', 'POSIX Threads', 'Semaphores', 'Shared Memory', 'Linux']
+  },
+  {
+    id: 'authSecurity',
+    title: 'Secure User Account & RBAC System (Python)',
+    shortTitle: 'RBAC Auth & Audit System',
+    tag: 'Cybersecurity & Auth',
+    time: 'Jan 2025 – Apr 2025',
+    github: 'https://github.com/agrimkasaju/bcrypt_password_hashing',
+    description: 'Python authentication service enforcing role-based access control, cryptographic password hashing, and immutable audit logging.',
+    metrics: [
+      'Designed a Python authentication service enforcing role-based access control (RBAC) and bcrypt password hashing configured with 12 salt rounds to protect credentials against offline brute-force attacks.',
+      'Implemented append-only JSON Lines audit logging to record timestamps, user identities, and authorization decisions, maintaining an immutable history of authentication events.',
+      'Performed STRIDE threat modeling and enforced defense-in-depth controls including least privilege policies and session expiration limits, validating mitigations with automated Pytest suites.'
+    ],
+    tech: ['Python', 'Bcrypt', 'RBAC', 'JSON Lines', 'STRIDE Threat Modeling', 'Pytest']
   }
 ]
 
@@ -190,13 +206,13 @@ const Markup = ({
               I am a fourth-year <strong>Computer Systems Engineering</strong> student at Carleton University (Dean's Honour List, GPA 3.33/4.0) with hands-on production experience in Linux systems software, automated CI verification pipelines, and edge AI deployment.
             </p>
             <p className="text-xs sm:text-sm leading-relaxed mb-3 text-zinc-700 dark:text-zinc-300">
-              Currently working as a <strong>Software Developer (Co-op) at Lumentum</strong>, I validate Linux-based system software via automated regression suites (reducing manual test cycle duration by 35%), build automated Python and CI pipelines across 10+ target configurations, troubleshoot mTLS/network security across distributed endpoints, and develop C# prototype inventory synchronization tooling.
+              Currently working as a <strong>Software Developer (Co-op) at Lumentum</strong>, I validate Linux system software by automating test harness execution and diagnostic log parsing (reducing manual regression duration by 35%), construct automated verification pipelines in Python and Bash across 10+ target Linux configurations, implement bidirectional X.509 certificate validation and mTLS handshakes between daemons and client endpoints, and develop C# filesystem event-monitoring services coordinating with Go backend pipelines to isolate snapshot state and reduce storage overhead by 88%.
             </p>
             <p className="text-xs sm:text-sm leading-relaxed mb-3 text-zinc-700 dark:text-zinc-300">
-              On the engineering front, I specialize in building high-throughput and low-latency systems. My applied work spans autonomous agentic orchestration (<a href="https://github.com/agrimkasaju/Anubis" className="font-semibold underline" style={{ color: 'var(--accent-color)' }}>Anubis</a> with custom Orion ONNX wake-word detection under 150ms), embedded INT8 quantized TensorFlow Lite inference on Raspberry Pi (<a href="https://github.com/agrimkasaju/Smart-Inventory-System" className="font-semibold underline" style={{ color: 'var(--accent-color)' }}>Smart Inventory</a>, 4x FPS speedup), and POSIX concurrent CPU scheduling in C/C++.
+              On the engineering front, I specialize in building high-throughput and low-latency systems. My applied work spans autonomous agentic orchestration (<a href="https://github.com/agrimkasaju/Anubis" className="font-semibold underline" style={{ color: 'var(--accent-color)' }}>Anubis</a> with streaming Orion ONNX wake-word detection), embedded INT8 quantized TensorFlow Lite inference on Raspberry Pi (<a href="https://github.com/agrimkasaju/Smart-Inventory-System" className="font-semibold underline" style={{ color: 'var(--accent-color)' }}>Smart Inventory</a>, reducing precision from 32-bit floats to 8-bit integers to shrink memory by 75% and boost throughput to 15–20 FPS), role-based cryptographic authentication (<a href="https://github.com/agrimkasaju/bcrypt_password_hashing" className="font-semibold underline" style={{ color: 'var(--accent-color)' }}>RBAC Auth</a> with bcrypt 12 salt rounds and immutable JSON Lines audit logs), and POSIX concurrent CPU scheduling in C/C++.
             </p>
             <p className="text-xs sm:text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-              I prioritize clean architectures, rigorous automated test suites (Pytest 90%+ code coverage), and dependable low-level execution that survives hostile edge environments and high contention.
+              I prioritize clean architectures, deterministic hardware benchmarks, and dependable low-level execution that survives hostile edge environments and high thread contention.
             </p>
           </div>
         </article>
@@ -212,7 +228,7 @@ const Markup = ({
                 <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Software Developer (Co-op)</p>
                 <p className="text-[11px] text-zinc-500">Lumentum · Ottawa, ON <span className="float-right font-mono">May 2026 – Present</span></p>
                 <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-1 leading-normal">
-                  Linux system software validation, automated CI pipelines across 10+ configurations, mTLS security troubleshooting, C# prototype sync tools.
+                  Automated Linux validation across 10+ configurations (-35% test duration), bidirectional X.509 mTLS daemon authentication, and C#/Go event services cutting snapshot storage overhead by 88%.
                 </p>
               </div>
               <div className="border-l-2 border-zinc-300 dark:border-zinc-700 pl-3">
@@ -255,13 +271,13 @@ const Markup = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {projectsData.map((proj) => {
+          {projectsData.map((proj, idx) => {
               const isSelected = activeThemeId === proj.id
               return (
                 <article
                   key={proj.id}
                   onClick={() => selectProjectTheme(proj.id)}
-                  className="p-4 bg-white dark:bg-zinc-900 border transition-all duration-300 cursor-pointer relative group hover:-translate-y-0.5"
+                  className={`p-4 bg-white dark:bg-zinc-900 border transition-all duration-300 cursor-pointer relative group hover:-translate-y-0.5 ${idx === 4 ? 'md:col-span-2' : ''}`}
                   style={{
                     borderColor: isSelected ? 'var(--accent-color)' : undefined,
                     boxShadow: isSelected ? '0 0 16px var(--accent-glow)' : undefined
@@ -336,7 +352,7 @@ const Markup = ({
           <div>
             <h3 className="font-bold text-zinc-800 dark:text-zinc-200 mb-1.5">Languages</h3>
             <div className="flex flex-wrap gap-1">
-              {['C', 'C++', 'Python', 'TypeScript', 'Java', 'SQL', 'Verilog', 'C#.NET', 'Bash'].map(s => (
+              {['C', 'C++', 'Go', 'Python', 'Bash', 'C#', 'TypeScript', 'JavaScript', 'Java', 'SQL', 'Verilog'].map(s => (
                 <span key={s} className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">{s}</span>
               ))}
             </div>
@@ -344,7 +360,7 @@ const Markup = ({
           <div>
             <h3 className="font-bold text-zinc-800 dark:text-zinc-200 mb-1.5">AI & Machine Learning</h3>
             <div className="flex flex-wrap gap-1">
-              {['ONNX', 'openWakeWord', 'TensorFlow Lite', 'Edge Inference', 'Quantization (INT8)', 'LLM APIs'].map(s => (
+              {['ONNX Runtime', 'TensorFlow Lite', 'INT8 Quantization', 'openWakeWord', 'Edge Inference', 'LLM APIs (Gemini, Groq)'].map(s => (
                 <span key={s} className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">{s}</span>
               ))}
             </div>
@@ -352,15 +368,15 @@ const Markup = ({
           <div>
             <h3 className="font-bold text-zinc-800 dark:text-zinc-200 mb-1.5">Systems & Embedded</h3>
             <div className="flex flex-wrap gap-1">
-              {['Linux / Embedded', 'Raspberry Pi', 'ARM SoC', 'RTOS', 'POSIX Threads', 'Shared Memory', 'UART/SPI/I2C'].map(s => (
+              {['Linux (POSIX APIs)', 'POSIX Threads', 'Semaphores', 'Shared Memory', 'IPC', 'ARM SoC', 'Raspberry Pi', 'RTOS', 'UART / SPI / I2C'].map(s => (
                 <span key={s} className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">{s}</span>
               ))}
             </div>
           </div>
           <div>
-            <h3 className="font-bold text-zinc-800 dark:text-zinc-200 mb-1.5">DevOps & Security</h3>
+            <h3 className="font-bold text-zinc-800 dark:text-zinc-200 mb-1.5">Security & DevOps</h3>
             <div className="flex flex-wrap gap-1">
-              {['mTLS', 'STRIDE Threat Model', 'CIA Triad', 'Docker', 'GitHub Actions', 'Pytest', 'Terraform'].map(s => (
+              {['Mutual TLS (mTLS)', 'X.509 Certificates', 'RBAC', 'Bcrypt', 'STRIDE Threat Modeling', 'TCP/IP', 'Docker', 'GitHub Actions CI/CD', 'Pytest'].map(s => (
                 <span key={s} className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">{s}</span>
               ))}
             </div>

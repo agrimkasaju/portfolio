@@ -7,41 +7,41 @@ const projects = [
     themeId: 'anubis',
     title: 'Voice-Activated AI Assistant (Anubis)',
     tag: 'AI & Agentic Systems',
-    description: 'Autonomous voice-controlled assistant with sub-800ms tool execution and custom Orion ONNX wake-word model with real-time audio inference (<150ms latency, 98%+ accuracy).',
+    description: 'Asynchronous Python assistant orchestrating 15+ local system tools via agentic stages (Planner, Executor, Task Queue), streaming Orion ONNX wake-word detection, and thread-safe IPC payload exchange across 100+ pipelines.',
     github: 'https://github.com/agrimkasaju/Anubis',
-    tech: ['Python', 'ONNX', 'openWakeWord', 'Agentic Workflow', 'IPC Bridge', 'Asyncio']
+    tech: ['Python', 'ONNX Runtime', 'openWakeWord', 'Agentic Workflows', 'IPC Bridge', 'Asyncio']
   },
   {
     themeId: 'smartInventory',
     title: 'Smart Inventory System (Embedded Edge ML)',
     tag: 'Embedded & Edge AI',
-    description: 'Real-time object-detection inference on Raspberry Pi hardware. Applied INT8 quantization to compress model size by 75% and boost inference from 3 to 12+ FPS.',
+    description: 'Real-time object-detection on Raspberry Pi. Applied INT8 quantization reducing float32 to int8 to shrink memory footprint by 75% and increase inference throughput from 5–10 FPS to 15–20 FPS with real-time Firebase edge-to-cloud sync.',
     github: 'https://github.com/agrimkasaju/Smart-Inventory-System',
     tech: ['Raspberry Pi', 'TensorFlow Lite', 'Python', 'Firebase', 'Pytest', 'GitHub Actions']
   },
   {
     themeId: 'apiSearch',
-    title: 'High-Throughput Full-Stack REST Platform',
+    title: 'Full-Stack REST Platform (React/Node.js)',
     tag: 'Full-Stack & APIs',
-    description: 'Scalable web application aggregating 4+ external REST APIs with sub-200ms query latency; optimized Redux state and modular TS components cutting re-renders by 40%.',
+    description: 'Web application aggregating live data across 4+ external REST APIs via concurrent asynchronous requests. Decoupled data fetching from view rendering using centralized Redux state to prevent redundant component re-renders.',
     github: 'https://github.com/agrimkasaju/API_search',
     tech: ['React', 'TypeScript', 'Node.js', 'Redux', 'REST APIs']
   },
   {
     themeId: 'cpuScheduler',
-    title: 'CPU Scheduling Simulator',
+    title: 'CPU Scheduling Simulator (C/C++ & Linux)',
     tag: 'Systems & Concurrency',
-    description: 'FCFS, Round Robin, and preemptive priority CPU scheduling algorithms in C/C++ on Linux, benchmarking 1,000+ workloads and cutting turnaround time by 30%.',
+    description: 'FCFS, Round Robin, and preemptive priority algorithms modeling kernel-level task dispatch dynamics in C/C++ on Linux. Synchronized multi-threaded buffer access using POSIX threads, semaphores, and shared memory without race conditions.',
     github: 'https://github.com/agrimkasaju/Scheduler-Algorithm',
     tech: ['C', 'C++', 'POSIX Threads', 'Semaphores', 'Shared Memory', 'Linux']
   },
   {
-    themeId: 'default',
-    title: 'Secure User Account & RBAC System',
+    themeId: 'authSecurity',
+    title: 'Secure User Account & RBAC System (Python)',
     tag: 'Cybersecurity & Auth',
-    description: 'Secure Python authentication system enforcing role-based permissions (RBAC), bcrypt hashing (12 salt rounds), and append-only JSONL audit logging at 1,000+ events/sec.',
+    description: 'Authentication service enforcing role-based access control (RBAC) and bcrypt password hashing configured with 12 salt rounds against offline attacks, append-only JSON Lines audit logging, and STRIDE threat mitigation validated via Pytest.',
     github: 'https://github.com/agrimkasaju/bcrypt_password_hashing',
-    tech: ['Python', 'bcrypt', 'RBAC', 'JSON Lines', 'STRIDE Threat Model']
+    tech: ['Python', 'Bcrypt', 'RBAC', 'JSON Lines', 'STRIDE Threat Modeling', 'Pytest']
   }
 ]
 
@@ -132,7 +132,7 @@ const RecentProj = () => {
             <article
               key={index}
               onClick={() => handleProjectClick(project.themeId)}
-              className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
+              className={`bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer ${index === 4 ? 'md:col-span-2' : ''}`}
             >
               <div className="flex items-start justify-between gap-2 mb-1.5">
                 <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 border border-zinc-300 dark:border-zinc-700">

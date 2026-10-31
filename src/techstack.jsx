@@ -28,53 +28,72 @@ const TechStack = () => {
   const skillGroups = [
     {
       title: 'Programming Languages',
-      skills: ['C', 'C++', 'Python', 'TypeScript', 'JavaScript', 'Java', 'SQL', 'Verilog', 'C#.NET', 'Bash']
-    },
-    {
-      title: 'AI & Machine Learning',
-      skills: [
-        'ONNX Runtime',
-        'openWakeWord',
-        'Custom Wake-Word Training',
-        'TensorFlow Lite',
-        'Edge Inference',
-        'Model Quantization (INT8)',
-        'LLM API Integration (Gemini, Groq)',
-        'Prompt Engineering'
-      ]
+      skills: ['C', 'C++', 'Go', 'Python', 'Bash', 'C#', 'TypeScript', 'JavaScript', 'Java', 'SQL', 'Verilog']
     },
     {
       title: 'Systems, Embedded & Hardware',
       skills: [
-        'Linux / Embedded Linux',
-        'Raspberry Pi',
+        'Linux (POSIX APIs)',
+        'POSIX Threads',
+        'Semaphores',
+        'Shared Memory',
+        'IPC',
         'ARM SoC Architecture',
+        'Raspberry Pi',
         'Real-Time Operating Systems (RTOS)',
-        'POSIX Threads & Semaphores',
-        'Shared Memory & IPC',
-        'UART / SPI / I2C / GPIO',
+        'UART / I2C / SPI',
         'Vivado & Xilinx FPGA'
       ]
     },
     {
-      title: 'Cyber Security & Networking',
+      title: 'Edge AI & Machine Learning',
       skills: [
-        'STRIDE Threat Modeling',
-        'CIA Triad & Defense-in-Depth',
+        'ONNX Runtime',
+        'TensorFlow Lite',
+        'INT8 Model Quantization',
+        'openWakeWord',
+        'Custom Wake-Word Training',
+        'Edge Streaming Inference',
+        'LLM APIs (Gemini, Groq)'
+      ]
+    },
+    {
+      title: 'Cybersecurity & Network Protocols',
+      skills: [
+        'Mutual TLS (mTLS)',
+        'X.509 Certificates',
         'Role-Based Access Control (RBAC)',
-        'bcrypt Password Hashing',
-        'Mutual TLS (mTLS) & Certificates',
-        'Firewall & Packet Filtering',
-        'Incident Log Diagnostics'
+        'Bcrypt Password Hashing (12 Rounds)',
+        'STRIDE Threat Modeling',
+        'TCP/IP',
+        'iptables Packet Filtering',
+        'Immutable Audit Logging'
+      ]
+    },
+    {
+      title: 'Data Serialization, Storage & Web',
+      skills: [
+        'Protocol Buffers',
+        'Declarative Prototext',
+        'JSON Lines (JSONL)',
+        'RESTful APIs',
+        'SQL',
+        'React',
+        'Node.js',
+        'Redux Centralized State',
+        'Firebase'
       ]
     },
     {
       title: 'DevOps, CI/CD & Testing',
-      skills: ['GitHub Actions', 'Pytest (90%+ Coverage)', 'Docker', 'Jenkins', 'Terraform', 'HCP Vault', 'Git']
-    },
-    {
-      title: 'Web, Data & Tools',
-      skills: ['React', 'Node.js', 'Redux', 'RESTful APIs', 'Firebase', 'Pandas', 'NumPy', 'Playwright', 'VS Code', 'Eclipse']
+      skills: [
+        'Git',
+        'GitHub Actions CI/CD',
+        'Pytest (Unit & Integration)',
+        'Docker',
+        'GDB',
+        'Playwright'
+      ]
     }
   ]
 

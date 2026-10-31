@@ -92,6 +92,21 @@ export const PROJECT_THEMES = {
     borderLight: '#fde68a',
     statusGreen: '#f59e0b',
     tag: 'Terminal Amber'
+  },
+  authSecurity: {
+    id: 'authSecurity',
+    name: 'RBAC Auth & Audit — Security',
+    accent: '#e11d48',
+    accentDark: '#f43f5e',
+    glow: 'rgba(244, 63, 94, 0.25)',
+    bgDark: '#140508',
+    bgLight: '#fff1f2',
+    panelDark: '#1c080c',
+    panelLight: '#ffffff',
+    borderDark: '#45101a',
+    borderLight: '#fecdd3',
+    statusGreen: '#fb7185',
+    tag: 'Cyber Crimson'
   }
 }
 
