@@ -91,41 +91,6 @@ const Markup = ({
 
   return (
     <div className="page-fadeup max-w-4xl mx-auto px-4 py-8 mt-2 sm:mt-3">
-      {/* Active Theme Indicator & Switch */}
-      <div className="flex items-center justify-between gap-2 mb-4 p-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs transition-colors duration-200"
-        style={{
-          boxShadow: activeThemeId !== 'default' ? `0 0 15px var(--accent-glow)` : 'none',
-          borderColor: activeThemeId !== 'default' ? 'var(--accent-color)' : undefined
-        }}>
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: 'var(--accent-color)' }}></span>
-          <span className="font-semibold text-zinc-800 dark:text-zinc-200">
-            Theme: <span style={{ color: 'var(--accent-color)' }}>{currentTheme.name}</span>
-          </span>
-          {activeThemeId !== 'default' && (
-            <button
-              onClick={resetTheme}
-              className="ml-2 underline text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 cursor-pointer"
-            >
-              Reset to Neutral
-            </button>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-zinc-500 dark:text-zinc-400 hidden sm:inline">Click any project to re-theme page</span>
-          <div className="switch shrink-0" aria-label="Toggle dark mode">
-            <input
-              type="checkbox"
-              id="themeToggle"
-              checked={isDark}
-              onChange={toggleTheme}
-              aria-label="Toggle dark mode"
-            />
-            <label htmlFor="themeToggle"></label>
-          </div>
-        </div>
-      </div>
-
       {/* Hero Section */}
       <section id="heroCard" className="fadeup-item fadeup-1 grid grid-cols-[100px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] md:grid-cols-[140px_minmax(0,1fr)] gap-4 sm:gap-6 mb-6 items-start">
         {/* Geometric Monogram Badge */}
@@ -195,7 +160,13 @@ const Markup = ({
       </section>
 
       {/* About & Experience Showcase (Apple-style MacBook Interactive Display) */}
-      <MacbookShowcase />
+      <MacbookShowcase
+        isDark={isDark}
+        toggleTheme={toggleTheme}
+        activeThemeId={activeThemeId}
+        resetTheme={resetTheme}
+        currentTheme={currentTheme}
+      />
 
       {/* Featured Projects with Click-to-Theme */}
       <section className="fadeup-item fadeup-3 mb-4">
