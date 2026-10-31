@@ -73,13 +73,8 @@ export const MacbookShowcase = ({
 
   // Real-time live clock state
   const [currentTime, setCurrentTime] = useState('')
-  // Real-time location state - null by default, only shown if user explicitly grants permission
-  const [userLocation, setUserLocation] = useState(null)
-  // Location permission state: 'prompt' | 'granted' | 'denied'
-  const [locationPermission, setLocationPermission] = useState('prompt')
-  // Location permission modal state
-  const [showLocationPrompt, setShowLocationPrompt] = useState(false)
-  const [isLocating, setIsLocating] = useState(false)
+  // Real-time location state automatically synchronized from timezone
+  const [userLocation, setUserLocation] = useState(getInitialTimezoneCity)
 
   // Real-time live clock ticking every second
   useEffect(() => {
@@ -92,6 +87,29 @@ export const MacbookShowcase = ({
     updateClock()
     const interval = setInterval(updateClock, 1000)
     return () => clearInterval(interval)
+  }, [])
+
+  // Automatically sync location seamlessly in the background without prompting the user
+  useEffect(() => {
+    let isMounted = true
+    const autoSyncLocation = async () => {
+      try {
+        const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3500) })
+        if (res.ok) {
+          const data = await res.json()
+          if (data && data.city && isMounted) {
+            const region = data.region_code || data.region || data.country_code
+            setUserLocation(region ? `${data.city}, ${region}` : data.city)
+          }
+        }
+      } catch (e) {
+        // Silently retains the timezone city initialized above
+      }
+    }
+    autoSyncLocation()
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   // Auto-switch default wallpaper if theme changes
@@ -126,16 +144,6 @@ export const MacbookShowcase = ({
     return () => observer.disconnect()
   }, [hasAutoOpened])
 
-  // Prompt for location access after the laptop finishes opening
-  useEffect(() => {
-    if (isLidOpen && locationPermission === 'prompt') {
-      const promptTimer = setTimeout(() => {
-        setShowLocationPrompt(true)
-      }, 1500)
-      return () => clearTimeout(promptTimer)
-    }
-  }, [isLidOpen, locationPermission])
-
   // Cycle through classic wallpapers from wallpapercave
   const cycleWallpaper = () => {
     setActiveWallpaperIndex((prev) => (prev + 1) % WALLPAPERS.length)
@@ -164,77 +172,6 @@ export const MacbookShowcase = ({
     e.stopPropagation()
     setMaximized((prev) => ({ ...prev, [windowKey]: !prev[windowKey] }))
     setActiveWindow(windowKey)
-  }
-
-  // Request actual geolocation from browser
-  const handleRequestLocation = (e) => {
-    if (e) e.stopPropagation()
-    setIsLocating(true)
-
-    if (!navigator.geolocation) {
-      setIsLocating(false)
-      setUserLocation(null)
-      setLocationPermission('denied')
-      setShowLocationPrompt(false)
-      return
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const { latitude, longitude } = pos.coords
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
-            { headers: { 'Accept': 'application/json' } }
-          )
-          if (res.ok) {
-            const data = await res.json()
-            const city =
-              data.address?.city ||
-              data.address?.town ||
-              data.address?.village ||
-              data.address?.suburb
-            const state =
-              data.address?.['ISO3166-2-lvl4']?.split('-')[1] ||
-              data.address?.state ||
-              data.address?.country_code?.toUpperCase()
-            if (city && state) {
-              setUserLocation(`${city}, ${state}`)
-            } else if (city) {
-              setUserLocation(city)
-            } else {
-              setUserLocation(getInitialTimezoneCity())
-            }
-            setLocationPermission('granted')
-          } else {
-            setUserLocation(getInitialTimezoneCity())
-            setLocationPermission('granted')
-          }
-        } catch (err) {
-          console.warn('Reverse geocode fallback to timezone', err)
-          setUserLocation(getInitialTimezoneCity())
-          setLocationPermission('granted')
-        } finally {
-          setIsLocating(false)
-          setShowLocationPrompt(false)
-        }
-      },
-      (err) => {
-        console.warn('Geolocation permission denied or timeout', err)
-        setUserLocation(null)
-        setLocationPermission('denied')
-        setIsLocating(false)
-        setShowLocationPrompt(false)
-      },
-      { timeout: 7000 }
-    )
-  }
-
-  const handleDenyLocation = (e) => {
-    if (e) e.stopPropagation()
-    setUserLocation(null)
-    setLocationPermission('denied')
-    setShowLocationPrompt(false)
   }
 
   const currentWallpaper = WALLPAPERS[activeWallpaperIndex]
@@ -440,56 +377,31 @@ export const MacbookShowcase = ({
                     <span>{isDark ? 'Dark' : 'Light'}</span>
                   </button>
 
-                  {/* WORKING FEATURE 3: Real-Time Location & Live Clock Sync (Native macOS Styling) */}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setShowLocationPrompt(true)
-                    }}
-                    title={
-                      userLocation
-                        ? `Location: ${userLocation} · Click to update`
-                        : 'Click to enable location synchronization'
-                    }
-                    className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 text-[10px] font-mono transition-colors cursor-pointer group shadow-xs shrink-0"
+                  {/* AUTOMATIC REAL-TIME FEATURE: Auto-Synced Location & Live Clock */}
+                  <div
+                    title={`Location: ${userLocation} · Live Clock: ${currentTime}`}
+                    className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 text-[10px] font-mono shadow-xs shrink-0 select-none"
                   >
                     {/* macOS Location Arrow Icon */}
-                    {userLocation ? (
-                      <svg
-                        className="w-2.5 h-2.5 text-blue-400 shrink-0"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z" />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-2.5 h-2.5 text-zinc-400 group-hover:text-blue-400 shrink-0 transition-colors"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <polygon points="12 2 19 21 12 17 5 21 12 2" />
-                      </svg>
-                    )}
+                    <svg
+                      className="w-2.5 h-2.5 text-blue-400 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z" />
+                    </svg>
 
-                    {/* Location Name - ONLY displayed if permission is granted and location exists */}
-                    {userLocation && (
-                      <>
-                        <span className="font-medium text-zinc-200 group-hover:text-white transition-colors">
-                          {userLocation}
-                        </span>
-                        <span className="text-zinc-500 font-normal">·</span>
-                      </>
-                    )}
+                    {/* Auto-Synchronized Location */}
+                    <span className="font-medium text-zinc-200">
+                      {userLocation}
+                    </span>
+                    <span className="text-zinc-500 font-normal">·</span>
 
-                    {/* Live Clock */}
+                    {/* Auto-Synchronized Live Clock */}
                     <span className="font-semibold text-zinc-100 tracking-tight">
                       {currentTime || 'Syncing...'}
                     </span>
-                  </button>
+                  </div>
                 </div>
               </div>
 
@@ -584,61 +496,6 @@ export const MacbookShowcase = ({
                     )}
                   </button>
                 </div>
-
-                {/* --- macOS LOCATION PERMISSION MODAL --- */}
-                {showLocationPrompt && (
-                  <div
-                    onClick={(e) => e.stopPropagation()}
-                    className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs transition-opacity"
-                  >
-                    <div className="relative w-full max-w-[290px] sm:max-w-[320px] bg-zinc-900/95 backdrop-blur-xl border border-zinc-700/90 rounded-2xl p-4 sm:p-5 shadow-2xl text-center space-y-3">
-                      {/* Compass / Location Icon Badge */}
-                      <div className="w-11 h-11 mx-auto rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center shadow-inner">
-                        <svg className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z" />
-                        </svg>
-                      </div>
-
-                      <div>
-                        <h3 className="text-xs sm:text-sm font-bold text-white tracking-tight">
-                          "KasajuOS" Would Like to Access Your Location
-                        </h3>
-                        <p className="text-[11px] text-zinc-300 mt-1 leading-normal font-sans">
-                          Enables real-time local city, timezone, and live clock synchronization in the macOS menu bar.
-                        </p>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex gap-2 pt-1 font-medium text-xs">
-                        <button
-                          type="button"
-                          onClick={handleDenyLocation}
-                          className="flex-1 py-1.5 px-3 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-700 transition-colors cursor-pointer"
-                        >
-                          Don't Allow
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleRequestLocation}
-                          disabled={isLocating}
-                          className="flex-1 py-1.5 px-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-md transition-colors flex items-center justify-center gap-1 cursor-pointer"
-                        >
-                          {isLocating ? (
-                            <>
-                              <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                              </svg>
-                              <span>Syncing...</span>
-                            </>
-                          ) : (
-                            <span>Allow</span>
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 {/* --- WINDOW 1: ABOUT_ME.md (Opened Markdown Application) --- */}
                 {isLidOpen && !closed.about && !minimized.about && (
