@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 const getInitialTimezoneCity = () => {
   try {
@@ -20,6 +20,31 @@ const getInitialTimezoneCity = () => {
   return 'Ottawa, ON'
 }
 
+// Classic aesthetic wallpapers sourced directly from wallpapercave.com/macbook-backgrounds-hd
+const WALLPAPERS = [
+  {
+    id: 'matterhorn',
+    name: 'Matterhorn Starry Night',
+    shortName: 'Starry Night',
+    path: '/wallpapers/matterhorn-night.webp',
+    icon: '🏔️'
+  },
+  {
+    id: 'galaxy',
+    name: 'OS X Lion Andromeda Galaxy',
+    shortName: 'OS X Galaxy',
+    path: '/wallpapers/osx-galaxy.webp',
+    icon: '🌌'
+  },
+  {
+    id: 'ocean',
+    name: 'Golden Ocean Sunrise',
+    shortName: 'Sun Sunrise',
+    path: '/wallpapers/ocean-sunrise.webp',
+    icon: '🌅'
+  }
+]
+
 export const MacbookShowcase = ({
   isDark = false,
   toggleTheme = () => {},
@@ -27,12 +52,17 @@ export const MacbookShowcase = ({
   resetTheme = () => {},
   currentTheme = { name: 'Minimal Slate', id: 'default' }
 }) => {
-  // State: whether windows are opened (triggered by click)
-  const [isOpen, setIsOpen] = useState(false)
+  // Apple-style Closed-Lid to Open-Display state
+  const [isLidOpen, setIsLidOpen] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [hasAutoOpened, setHasAutoOpened] = useState(false)
+  const sectionRef = useRef(null)
+
+  // Wallpaper index state (synced with theme: Matterhorn for dark, Sunrise for light)
+  const [activeWallpaperIndex, setActiveWallpaperIndex] = useState(() => (isDark ? 0 : 2))
+
   // Which window has focus (higher z-index): 'about' | 'experience'
   const [activeWindow, setActiveWindow] = useState('about')
-  // Simulated click state for cursor animation
-  const [isClicking, setIsClicking] = useState(false)
   // Window minimize states
   const [minimized, setMinimized] = useState({ about: false, experience: false })
   // Window maximized states
@@ -62,22 +92,59 @@ export const MacbookShowcase = ({
     return () => clearInterval(interval)
   }, [])
 
-  // Trigger the opening animation with a realistic mouse click sequence
-  const triggerOpen = () => {
-    if (isOpen) return
-    setIsClicking(true)
-    setTimeout(() => {
-      setIsOpen(true)
-      setIsClicking(false)
-      setActiveWindow('about')
+  // Auto-switch default wallpaper if theme changes
+  useEffect(() => {
+    setActiveWallpaperIndex(isDark ? 0 : 2)
+  }, [isDark])
 
-      // Prompt for location access after opening if not previously handled
-      if (!locationPermissionAsked) {
-        setTimeout(() => {
-          setShowLocationPrompt(true)
-        }, 650)
-      }
-    }, 280)
+  // Automatic Apple-Style Scroll Reveal:
+  // Starts closed, and as the user scrolls to the section, smoothly hinges open into the bigger picture view
+  useEffect(() => {
+    if (hasAutoOpened) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (entry.isIntersecting && !hasAutoOpened) {
+          setHasAutoOpened(true)
+          // Brief beat to appreciate closed MacBook lid, then open smoothly
+          const openTimer = setTimeout(() => {
+            setIsLidOpen(true)
+          }, 350)
+
+          return () => clearTimeout(openTimer)
+        }
+      },
+      { threshold: 0.25 }
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [hasAutoOpened])
+
+  // Expand container into "bigger picture view" as lid unfolds
+  useEffect(() => {
+    if (isLidOpen) {
+      const expandTimer = setTimeout(() => {
+        setIsExpanded(true)
+      }, 300)
+      return () => clearTimeout(expandTimer)
+    } else {
+      setIsExpanded(false)
+    }
+  }, [isLidOpen])
+
+  // Toggle lid manually (Close Lid / Open Display)
+  const toggleLid = () => {
+    setIsLidOpen((prev) => !prev)
+  }
+
+  // Cycle through classic wallpapers from wallpapercave
+  const cycleWallpaper = () => {
+    setActiveWallpaperIndex((prev) => (prev + 1) % WALLPAPERS.length)
   }
 
   // Request actual geolocation from browser
@@ -139,17 +206,6 @@ export const MacbookShowcase = ({
     setShowLocationPrompt(false)
   }
 
-  // Replay animation
-  const handleReplay = (e) => {
-    e.stopPropagation()
-    setIsOpen(false)
-    setMinimized({ about: false, experience: false })
-    setMaximized({ about: false, experience: false })
-    setTimeout(() => {
-      triggerOpen()
-    }, 200)
-  }
-
   const toggleMinimize = (windowKey, e) => {
     e.stopPropagation()
     setMinimized((prev) => ({ ...prev, [windowKey]: !prev[windowKey] }))
@@ -165,13 +221,15 @@ export const MacbookShowcase = ({
     e.stopPropagation()
     setMinimized((prev) => ({ ...prev, [windowKey]: false }))
     setActiveWindow(windowKey)
-    if (!isOpen) setIsOpen(true)
+    if (!isLidOpen) setIsLidOpen(true)
   }
 
+  const currentWallpaper = WALLPAPERS[activeWallpaperIndex]
+
   return (
-    <section className="fadeup-item fadeup-2 mb-6">
-      {/* Section Header */}
-      <div className="flex items-center justify-between mb-3 px-1">
+    <section ref={sectionRef} className="fadeup-item fadeup-2 mb-8">
+      {/* Section Header with Apple-Style Interactive Controls */}
+      <div className="flex items-center justify-between mb-4 px-1">
         <div className="flex items-center gap-2">
           <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-color)' }}></span>
           <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
@@ -181,30 +239,57 @@ export const MacbookShowcase = ({
             </span>
           </h2>
         </div>
+
+        {/* Apple Keynote Style Lid Toggle Button */}
+        <button
+          type="button"
+          onClick={toggleLid}
+          className="px-2.5 py-1 rounded-md text-[11px] font-mono border border-zinc-700/80 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-200 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+          title={isLidOpen ? 'Click to close MacBook lid' : 'Click to open MacBook display'}
+        >
+          <i className={`fa-solid ${isLidOpen ? 'fa-laptop' : 'fa-laptop-code'} text-blue-400 text-xs`}></i>
+          <span>{isLidOpen ? 'Close Lid' : 'Open Display'}</span>
+        </button>
       </div>
 
-      {/* --- APPLE MACBOOK INTERACTIVE SHOWCASE --- */}
-      <div className="relative w-full max-w-4xl mx-auto select-none">
+      {/* --- APPLE MACBOOK 3D HERO SHOWCASE (Positioned like apple.com/ca) --- */}
+      <div
+        className={`relative mx-auto select-none transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isExpanded ? 'w-full max-w-5xl' : 'w-full max-w-4xl'
+        }`}
+        style={{
+          perspective: '1600px',
+          perspectiveOrigin: '50% 85%'
+        }}
+      >
         {/* Left-Hand External Ambient Light Source (Simulates off-screen Moon/Sun illuminating the workspace) */}
         <div
           aria-hidden="true"
-          className="absolute -top-12 -left-16 w-72 h-72 rounded-full blur-3xl pointer-events-none transition-all duration-700 z-0"
+          className="absolute -top-12 -left-16 w-80 h-80 rounded-full blur-3xl pointer-events-none transition-all duration-700 z-0"
           style={{
             background: isDark
-              ? 'radial-gradient(circle, rgba(147, 197, 253, 0.14) 0%, rgba(96, 165, 250, 0.04) 50%, transparent 75%)'
-              : 'radial-gradient(circle, rgba(253, 224, 71, 0.20) 0%, rgba(251, 191, 36, 0.06) 50%, transparent 75%)'
+              ? 'radial-gradient(circle, rgba(147, 197, 253, 0.16) 0%, rgba(96, 165, 250, 0.05) 50%, transparent 75%)'
+              : 'radial-gradient(circle, rgba(253, 224, 71, 0.22) 0%, rgba(251, 191, 36, 0.07) 50%, transparent 75%)'
           }}
         />
 
-        {/* Laptop Screen Lid / Shell */}
+        {/* Laptop Screen Lid / Shell with 3D Folding Transform */}
         <div
-          className="relative rounded-t-2xl sm:rounded-t-3xl p-2 sm:p-3 pb-0 border transition-all duration-300 shadow-2xl z-10"
+          className="relative rounded-t-2xl sm:rounded-t-3xl p-2 sm:p-2.5 pb-0 border shadow-2xl z-20"
           style={{
             backgroundColor: '#161922',
             borderColor: isDark ? '#2d3345' : '#3c455c',
-            boxShadow: isDark
-              ? '0 25px 60px -15px rgba(0, 0, 0, 0.7), -6px -6px 28px -10px rgba(186, 230, 253, 0.15)'
-              : '0 25px 60px -15px rgba(0, 0, 0, 0.7), -6px -6px 28px -10px rgba(254, 240, 138, 0.22)'
+            transformOrigin: 'bottom center',
+            transform: isLidOpen
+              ? 'rotateX(0deg) translateZ(0px)'
+              : 'rotateX(-78deg) translateZ(0px)',
+            transition: 'transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 1.2s ease, max-width 1s ease',
+            transformStyle: 'preserve-3d',
+            boxShadow: isLidOpen
+              ? isDark
+                ? '0 30px 70px -15px rgba(0, 0, 0, 0.8), -6px -6px 28px -10px rgba(186, 230, 253, 0.15)'
+                : '0 30px 70px -15px rgba(0, 0, 0, 0.8), -6px -6px 28px -10px rgba(254, 240, 138, 0.22)'
+              : '0 15px 35px -5px rgba(0, 0, 0, 0.9)'
           }}
         >
           {/* Top Camera Bezel / Notch */}
@@ -213,29 +298,62 @@ export const MacbookShowcase = ({
             <div className="w-1 h-1 rounded-full bg-emerald-400/90 shadow-[0_0_4px_#34d399]"></div>
           </div>
 
-          {/* Display Area (16:10 Laptop Aspect Ratio) */}
+          {/* Display Area (Liquid Retina Display with Classic Mac Wallpaper & Bigger Picture View) */}
           <div
             tabIndex={0}
-            role="button"
-            aria-label="Interactive MacBook display workspace"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                if (!isOpen) triggerOpen()
-              }
-            }}
-            onClick={!isOpen ? triggerOpen : undefined}
-            className={`relative w-full overflow-hidden rounded-t-lg transition-all duration-300 outline-none focus:ring-1 focus:ring-blue-400/40 ${
-              !isOpen ? 'cursor-pointer' : ''
-            }`}
+            role="region"
+            aria-label="Interactive MacBook Liquid Retina Display"
+            className="relative w-full overflow-hidden rounded-t-lg transition-all duration-700 outline-none"
             style={{
-              minHeight: '440px',
-              height: '470px',
-              background: 'radial-gradient(ellipse at 50% 20%, #1e2638 0%, #0c101a 50%, #06080e 100%)'
+              minHeight: isExpanded ? '520px' : '440px',
+              height: isExpanded ? '530px' : '470px',
+              backgroundImage: `url(${currentWallpaper.path})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
             }}
           >
-            {/* Subtle Cosmic Grid / Ambient Glow */}
-            <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]"></div>
+            {/* --- CLOSED LID EXTERIOR SHELL FACE (Visible when Lid is Closed) --- */}
+            <div
+              className={`absolute inset-0 z-45 rounded-t-lg transition-opacity duration-700 flex flex-col items-center justify-center select-none ${
+                isLidOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+              }`}
+              style={{
+                background: isDark
+                  ? 'linear-gradient(145deg, #2a303d 0%, #1c202a 50%, #12141a 100%)'
+                  : 'linear-gradient(145deg, #384050 0%, #262c38 50%, #1a1e27 100%)',
+                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.6)'
+              }}
+            >
+              {/* Aluminum Specular Sheen Diagonal Streak */}
+              <div
+                className="absolute inset-0 pointer-events-none opacity-20"
+                style={{
+                  background: 'linear-gradient(125deg, transparent 20%, rgba(255,255,255,0.4) 45%, transparent 60%)'
+                }}
+              />
+
+              {/* Centered Mirrored Apple Logo */}
+              <div className="relative flex flex-col items-center text-center">
+                <span
+                  className="text-5xl sm:text-6xl text-zinc-200 transition-transform duration-500"
+                  style={{
+                    filter: 'drop-shadow(0 4px 12px rgba(255, 255, 255, 0.28)) drop-shadow(0 0 25px rgba(56, 189, 248, 0.2))'
+                  }}
+                >
+                  
+                </span>
+                <span className="text-[11px] font-mono tracking-widest uppercase text-zinc-300 mt-3 font-semibold">
+                  MacBook Pro
+                </span>
+                <span className="text-[10px] font-mono text-zinc-400 opacity-70 mt-0.5">
+                  Liquid Retina XDR Display
+                </span>
+              </div>
+            </div>
+
+            {/* Subtle Cosmic Grid / Ambient Glow Layer */}
+            <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]"></div>
 
             {/* Natural Directional Glass Screen Glare (Originates from the Left: Moonlight in Dark Mode, Sunlight in Light Mode) */}
             <div
@@ -303,9 +421,23 @@ export const MacbookShowcase = ({
                 </div>
               </div>
 
-              {/* Right Side: Working Features (Theme Toggle, Real-Time Location & Clock Sync, Replay) */}
+              {/* Right Side: Working Features (Wallpaper Switcher, Theme Toggle, Real-Time Location & Clock Sync) */}
               <div className="flex items-center gap-2">
-                {/* WORKING FEATURE 1: Dark / Light Mode Toggle Button */}
+                {/* WORKING FEATURE 1: Classic Aesthetic Wallpaper Switcher */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    cycleWallpaper()
+                  }}
+                  title={`Wallpaper: ${currentWallpaper.name} (Click to cycle classic Mac aesthetics)`}
+                  className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 text-[10px] font-mono transition-colors cursor-pointer group shadow-xs shrink-0"
+                >
+                  <span>{currentWallpaper.icon}</span>
+                  <span className="hidden sm:inline">{currentWallpaper.shortName}</span>
+                </button>
+
+                {/* WORKING FEATURE 2: Dark / Light Mode Toggle Button */}
                 <button
                   type="button"
                   onClick={(e) => {
@@ -323,7 +455,7 @@ export const MacbookShowcase = ({
                   <span>{isDark ? 'Dark' : 'Light'}</span>
                 </button>
 
-                {/* WORKING FEATURE 2: Real-Time Location & Live Clock Sync */}
+                {/* WORKING FEATURE 3: Real-Time Location & Live Clock Sync */}
                 <button
                   type="button"
                   onClick={(e) => {
@@ -343,26 +475,11 @@ export const MacbookShowcase = ({
                     {currentTime || 'Syncing...'}
                   </span>
                 </button>
-
-                {/* WORKING FEATURE 3: Replay Animation */}
-                {isOpen && (
-                  <button
-                    type="button"
-                    onClick={handleReplay}
-                    title="Replay click animation"
-                    className="px-1.5 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition-colors flex items-center gap-1 cursor-pointer text-[10px]"
-                  >
-                    <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    <span className="hidden sm:inline">Replay</span>
-                  </button>
-                )}
               </div>
             </div>
 
             {/* Mobile Window Switcher Tabs (Visible under 640px) */}
-            {isOpen && (
+            {isLidOpen && (
               <div className="sm:hidden relative z-25 flex items-center bg-zinc-900/90 border-b border-zinc-800 p-1 gap-1">
                 <button
                   type="button"
@@ -374,11 +491,11 @@ export const MacbookShowcase = ({
                   }}
                   className={`flex-1 py-1 text-[11px] font-mono rounded flex items-center justify-center gap-1.5 ${
                     mobileTab === 'about'
-                      ? 'bg-zinc-800 text-white font-semibold'
-                      : 'text-zinc-400'
+                      ? 'bg-blue-600 text-white font-semibold'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                   }`}
                 >
-                  <span>📄 ABOUT_ME.md</span>
+                  <span>ABOUT_ME.md</span>
                 </button>
                 <button
                   type="button"
@@ -390,25 +507,22 @@ export const MacbookShowcase = ({
                   }}
                   className={`flex-1 py-1 text-[11px] font-mono rounded flex items-center justify-center gap-1.5 ${
                     mobileTab === 'experience'
-                      ? 'bg-zinc-800 text-white font-semibold'
-                      : 'text-zinc-400'
+                      ? 'bg-blue-600 text-white font-semibold'
+                      : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
                   }`}
                 >
-                  <span>📄 EXPERIENCE.md</span>
+                  <span>EXPERIENCE.md</span>
                 </button>
               </div>
             )}
 
-            {/* Desktop Workspace */}
-            <div className="relative w-full h-[calc(100%-28px)] p-3 sm:p-4 overflow-hidden">
-              {/* Desktop Background Files (Icons) */}
-              <div className="absolute top-4 left-4 flex flex-col gap-4 z-10">
-                <div
-                  onClick={(e) => restoreWindow('about', e)}
-                  className="flex flex-col items-center gap-1 w-16 group cursor-pointer"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-zinc-800/80 border border-zinc-700/80 group-hover:border-blue-400 flex items-center justify-center shadow-lg transition-all">
-                    <svg className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            {/* Desktop Canvas Window Container */}
+            <div className="relative w-full h-[calc(100%-28px)] overflow-hidden">
+              {/* Background Desktop App Icons */}
+              <div className="absolute top-4 right-4 z-10 flex flex-col gap-3 select-none pointer-events-none opacity-40 hidden sm:flex">
+                <div className="flex flex-col items-center gap-1 w-16 group">
+                  <div className="w-10 h-10 rounded-lg bg-zinc-800/80 border border-zinc-700/80 flex items-center justify-center text-blue-400 shadow-md">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                       <polyline points="14 2 14 8 20 8" />
                       <line x1="16" y1="13" x2="8" y2="13" />
@@ -421,12 +535,9 @@ export const MacbookShowcase = ({
                   </span>
                 </div>
 
-                <div
-                  onClick={(e) => restoreWindow('experience', e)}
-                  className="flex flex-col items-center gap-1 w-16 group cursor-pointer"
-                >
-                  <div className="w-10 h-10 rounded-lg bg-zinc-800/80 border border-zinc-700/80 group-hover:border-emerald-400 flex items-center justify-center shadow-lg transition-all">
-                    <svg className="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <div className="flex flex-col items-center gap-1 w-16 group">
+                  <div className="w-10 h-10 rounded-lg bg-zinc-800/80 border border-zinc-700/80 flex items-center justify-center text-emerald-400 shadow-md">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                       <polyline points="14 2 14 8 20 8" />
                       <line x1="12" y1="18" x2="12" y2="12" />
@@ -438,46 +549,6 @@ export const MacbookShowcase = ({
                   </span>
                 </div>
               </div>
-
-              {/* --- INITIAL UNOPENED STATE: APPLE-STYLE MOUSE CLICK INVITATION --- */}
-              {!isOpen && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center z-25 bg-black/20 backdrop-blur-[2px] transition-all">
-                  {/* Simulated Animated Cursor */}
-                  <div className="relative flex flex-col items-center group animate-cursor-float">
-                    <div
-                      className={`relative transition-transform duration-200 ${
-                        isClicking ? 'scale-90' : 'scale-100 hover:scale-105'
-                      }`}
-                    >
-                      {/* Apple-style macOS Cursor SVG */}
-                      <svg
-                        className="w-8 h-8 text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)] filter transition-all animate-bounce"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M4 2l14 11-6.5.7L15 21l-3 1.2-3.6-7.4L4 18V2z" stroke="#000" strokeWidth="1.2" />
-                      </svg>
-
-                      {/* Ripple Effect Ring when Clicking */}
-                      <div
-                        className={`absolute -inset-2 rounded-full border-2 border-blue-400 transition-all ${
-                          isClicking ? 'scale-150 opacity-100' : 'opacity-0 scale-75'
-                        }`}
-                      ></div>
-                    </div>
-
-                    {/* Interactive Prompt Badge */}
-                    <div className="mt-3 px-3.5 py-1.5 rounded-full bg-zinc-900/90 border border-zinc-700 text-zinc-100 text-xs font-semibold shadow-2xl flex items-center gap-2 hover:border-blue-400 transition-all group-hover:shadow-[0_0_20px_var(--accent-glow)]">
-                      <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
-                      <span>Click to open workspace</span>
-                      <span className="text-[10px] font-mono opacity-60">⌘ Enter</span>
-                    </div>
-                    <p className="text-[11px] text-zinc-400 mt-1.5 font-mono">
-                      Reveals README.md & EXPERIENCE.md in macOS windows
-                    </p>
-                  </div>
-                </div>
-              )}
 
               {/* --- macOS LOCATION PERMISSION MODAL --- */}
               {showLocationPrompt && (
@@ -536,7 +607,7 @@ export const MacbookShowcase = ({
               )}
 
               {/* --- WINDOW 1: ABOUT_ME.md (Opened Markdown Application) --- */}
-              {isOpen && !minimized.about && (
+              {isLidOpen && !minimized.about && (
                 <div
                   onClick={(e) => {
                     e.stopPropagation()
@@ -546,7 +617,7 @@ export const MacbookShowcase = ({
                   className={`absolute transition-all duration-300 rounded-xl overflow-hidden border shadow-2xl flex flex-col ${
                     maximized.about
                       ? 'inset-1 z-35'
-                      : 'left-3 sm:left-6 top-3 sm:top-4 w-[94%] sm:w-[58%] h-[82%] sm:h-[84%]'
+                      : 'left-3 sm:left-6 top-3 sm:top-4 w-[94%] sm:w-[57%] h-[84%] sm:h-[86%]'
                   } ${
                     activeWindow === 'about'
                       ? 'z-30 ring-1 ring-blue-500/30 border-zinc-700/90 shadow-[0_20px_50px_rgba(0,0,0,0.85)]'
@@ -556,8 +627,10 @@ export const MacbookShowcase = ({
                     mobileTab !== 'about' ? 'hidden sm:flex' : 'flex'
                   }`}
                   style={{
-                    backgroundColor: '#0d1117',
-                    transform: isOpen ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)'
+                    backgroundColor: 'rgba(13, 17, 23, 0.88)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    transform: isLidOpen ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)'
                   }}
                 >
                   {/* Window Title Bar */}
@@ -581,171 +654,111 @@ export const MacbookShowcase = ({
                           type="button"
                           onClick={(e) => toggleMaximize('about', e)}
                           className="w-3 h-3 rounded-full bg-[#27c93f] hover:brightness-110 border border-[#1aab29] cursor-pointer"
-                          title={maximized.about ? "Restore Window" : "Maximize Full Profile"}
+                          title="Maximize to view full dossier"
                         />
                       </div>
                       <span className="text-[11px] font-mono text-zinc-400 ml-1 flex items-center gap-1">
-                        <span className="text-blue-400">#</span> ABOUT_ME.md {maximized.about && '· (Full Dossier)'}
+                        <span className="text-blue-400">#</span> ABOUT_ME.md
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-400">
-                      {maximized.about && (
-                        <button
-                          type="button"
-                          onClick={(e) => toggleMaximize('about', e)}
-                          className="px-1.5 py-0.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors cursor-pointer"
-                        >
-                          Exit Fullscreen ✕
-                        </button>
-                      )}
-                      <span>~/kasaju/ABOUT_ME.md · UTF-8</span>
+                    <div className="text-[10px] font-mono text-zinc-400">
+                      ~/kasaju/ABOUT_ME.md · UTF-8
                     </div>
                   </div>
 
                   {/* Window Markdown Editor Content Area */}
                   <div className="p-3.5 sm:p-4 overflow-y-auto mac-scrollbar text-xs leading-relaxed text-zinc-200 font-sans space-y-3">
-                    {/* Header: Name + Theme State Badge (Replaced v4.0.26 & Removed Available for Roles) */}
-                    <div className="border-b border-zinc-800 pb-2.5">
-                      <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <h1 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
-                          <span>Agrim Kasaju</span>
+                    <div className="border-b border-zinc-800/80 pb-2.5">
+                      <div className="flex items-center justify-between">
+                        <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                          Agrim Kasaju
                         </h1>
-
-                        {/* Theme State Badge */}
-                        <div
-                          className="flex items-center gap-1.5 px-2 py-0.5 rounded border text-[10px] font-mono transition-all"
-                          style={{
-                            borderColor: 'var(--accent-color)',
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            color: 'var(--accent-color)'
-                          }}
-                        >
-                          <span
-                            className="w-1.5 h-1.5 rounded-full inline-block animate-pulse"
-                            style={{ backgroundColor: 'var(--accent-color)' }}
-                          />
-                          <span className="font-semibold">Theme: {currentTheme.name}</span>
-                          {activeThemeId !== 'default' && (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                resetTheme()
-                              }}
-                              title="Reset to Neutral theme"
-                              className="text-zinc-400 hover:text-white underline ml-1 cursor-pointer"
-                            >
-                              Reset
-                            </button>
-                          )}
-                        </div>
+                        <span className="text-[10px] font-mono text-blue-300 bg-blue-950/60 border border-blue-800/50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                          <span>Theme: {currentTheme?.name || 'Minimal Slate'}</span>
+                        </span>
                       </div>
-
-                      <p className="text-[11px] text-zinc-300 font-mono mt-0.5">
+                      <p className="text-[11px] font-mono text-zinc-400 mt-0.5">
                         B.Eng Computer Systems Engineering @ Carleton University · GPA 3.33/4.0 · Dean's Honour List
                       </p>
                     </div>
 
-                    {/* --- IF MAXIMIZED: FULL EXTENSIVE DOSSIER FROM CLASSIC CARDS --- */}
-                    {maximized.about ? (
-                      <div className="space-y-4">
-                        <div className="space-y-2.5 text-zinc-200 leading-relaxed">
-                          <p>
-                            I am a fourth-year <strong>Computer Systems Engineering</strong> student at Carleton University (Dean's Honour List, GPA 3.33/4.0) with hands-on production experience in Linux systems software, automated CI verification pipelines, and edge AI deployment.
-                          </p>
-                          <p>
-                            Currently working as a <strong>Software Developer (Co-op) at Lumentum</strong>, I validate Linux system software by automating test harness execution and diagnostic log parsing (reducing manual regression duration by 35%), construct automated verification pipelines in Python and Bash across 10+ target Linux configurations, implement bidirectional X.509 certificate validation and mTLS handshakes between daemons and client endpoints, and develop C# filesystem event-monitoring services coordinating with Go backend pipelines to isolate snapshot state and reduce storage overhead by 88%.
-                          </p>
-                          <p>
-                            On the engineering front, I specialize in building high-throughput and low-latency systems. My applied work spans autonomous agentic orchestration (<a href="https://github.com/agrimkasaju/Anubis" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-blue-400 hover:text-blue-300">Anubis</a> with streaming Orion ONNX wake-word detection), embedded INT8 quantized TensorFlow Lite inference on Raspberry Pi (<a href="https://github.com/agrimkasaju/Smart-Inventory-System" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-emerald-400 hover:text-emerald-300">Smart Inventory</a>, reducing precision from 32-bit floats to 8-bit integers to shrink memory by 75% and boost throughput to 15–20 FPS), role-based cryptographic authentication (<a href="https://github.com/agrimkasaju/bcrypt_password_hashing" target="_blank" rel="noopener noreferrer" className="font-semibold underline text-rose-400 hover:text-rose-300">RBAC Auth</a> with bcrypt 12 salt rounds and immutable JSON Lines audit logs), and POSIX concurrent CPU scheduling in C/C++.
-                          </p>
-                          <p>
-                            I prioritize clean architectures, deterministic hardware benchmarks, and dependable low-level execution that survives hostile edge environments and high thread contention.
-                          </p>
-                        </div>
+                    <p className="text-zinc-300">
+                      Fourth-year engineering student with hands-on production experience in Linux systems software, automated verification harnesses, and edge AI deployment.
+                    </p>
 
-                        {/* Full Academic & Coursework Breakdown */}
-                        <div className="pt-3 border-t border-zinc-800">
-                          <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-2 font-mono flex items-center justify-between">
-                            <span>Academic Experience & Low-Level Foundations</span>
-                            <span className="text-zinc-400 font-normal">Carleton University (2022–2028)</span>
-                          </h3>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-mono">
-                            <div className="p-2.5 rounded bg-zinc-900 border border-zinc-800">
-                              <p className="font-bold text-amber-300 mb-1">⚡ Real-Time Systems</p>
-                              <p className="text-zinc-300 font-sans leading-normal">
-                                Implemented fixed-priority preemptive scheduling (Rate-Monotonic & EDF) in C; designed mutex synchronization primitives with priority inheritance to bound blocking.
-                              </p>
-                            </div>
-                            <div className="p-2.5 rounded bg-zinc-900 border border-zinc-800">
-                              <p className="font-bold text-emerald-300 mb-1">🛡️ Network & Software Security</p>
-                              <p className="text-zinc-300 font-sans leading-normal">
-                                Configured iptables firewall chains and stateful packet-filtering scripts across Docker bridge networks; audited access logs against brute-force intrusion.
-                              </p>
-                            </div>
-                            <div className="p-2.5 rounded bg-zinc-900 border border-zinc-800">
-                              <p className="font-bold text-blue-300 mb-1">🔌 Computer Systems Design</p>
-                              <p className="text-zinc-300 font-sans leading-normal">
-                                Programmed bare-metal interrupt service routines on ARM SoC (UART @ 115200, I2C @ 400kHz, SPI); synthesized custom FPGA logic via AMD Vivado toolchains.
-                              </p>
-                            </div>
-                            <div className="p-2.5 rounded bg-zinc-900 border border-zinc-800">
-                              <p className="font-bold text-purple-300 mb-1">⚙️ Concurrent Operating Systems</p>
-                              <p className="text-zinc-300 font-sans leading-normal">
-                                Developed concurrent producer-consumer buffers in C on Linux using POSIX threads, semaphores, and shared memory without race conditions.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
+                    {/* Architectural Philosophy Callout */}
+                    <div className="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800/90 text-[11px]">
+                      <span className="text-blue-400 font-mono font-semibold block mb-0.5">// Architectural Philosophy</span>
+                      <p className="text-zinc-300">
+                        High-throughput, low-latency execution that survives hostile edge environments, high thread contention, and deterministic timing constraints.
+                      </p>
+                    </div>
 
-                        <div className="pt-2 border-t border-zinc-800 text-[11px] text-zinc-400 flex items-center justify-between">
-                          <span>Dean's Honour List (2024–2025) · GPA 3.33/4.0</span>
-                          <button
-                            type="button"
-                            onClick={(e) => toggleMaximize('about', e)}
-                            className="text-blue-400 hover:underline cursor-pointer"
-                          >
-                            Restore window view &rarr;
-                          </button>
-                        </div>
+                    {/* Core Engineering Stack */}
+                    <div>
+                      <span className="text-[10px] font-mono uppercase text-zinc-300 tracking-wider mb-1 block font-semibold">
+                        Core Engineering Stack:
+                      </span>
+                      <div className="flex flex-wrap gap-1 text-[10px] font-mono">
+                        <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">C/C++</span>
+                        <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">Go</span>
+                        <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">Python</span>
+                        <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">Linux POSIX APIs</span>
+                        <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">ONNX / TFLite INT8</span>
+                        <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">mTLS & X.509</span>
                       </div>
-                    ) : (
-                      /* --- STANDARD COMPACT VIEW (KEPT CLEAN AS REQUESTED) --- */
-                      <div className="space-y-2.5">
-                        <p className="text-zinc-200">
-                          Fourth-year engineering student with hands-on production experience in Linux systems software, automated verification harnesses, and edge AI deployment.
-                        </p>
+                    </div>
 
-                        <div className="p-2.5 rounded bg-zinc-900/90 border border-zinc-700/80 font-mono text-[11px] text-zinc-200">
-                          <p className="text-blue-300 font-bold mb-1">// Architectural Philosophy</p>
-                          <p className="leading-normal text-zinc-200">
-                            High-throughput, low-latency execution that survives hostile edge environments, high thread contention, and deterministic timing constraints.
-                          </p>
+                    {/* MAXIMIZED VIEW EXPANSION */}
+                    {maximized.about && (
+                      <div className="mt-4 pt-4 border-t border-zinc-800/90 space-y-4 animate-fadeIn">
+                        <div className="p-3 rounded-lg bg-blue-950/30 border border-blue-800/40 text-blue-200 text-[11px] font-mono flex items-center justify-between">
+                          <span>✨ Full Engineering Dossier Unlocked (Maximized View)</span>
+                          <span className="text-[10px] opacity-75">Click green button to minimize back</span>
                         </div>
 
                         <div>
-                          <p className="font-semibold text-white text-[11px] uppercase tracking-wider mb-1 font-mono text-zinc-300">
-                            Core Engineering Stack:
-                          </p>
-                          <div className="flex flex-wrap gap-1 text-[10px] font-mono">
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">C/C++</span>
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">Go</span>
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">Python</span>
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">Linux POSIX APIs</span>
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">ONNX / TFLite INT8</span>
-                            <span className="px-1.5 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-100">mTLS & X.509</span>
+                          <h2 className="text-xs font-bold font-mono text-zinc-200 uppercase tracking-wider mb-2">
+                            ## Engineering Background & Systems Philosophy
+                          </h2>
+                          <div className="space-y-2.5 text-zinc-300 text-xs leading-relaxed font-sans">
+                            <p>
+                              I am a fourth-year Computer Systems Engineering student at Carleton University with a 3.33/4.0 GPA, specializing in hardware-software co-design, real-time operating systems, distributed networks, and embedded edge AI computing.
+                            </p>
+                            <p>
+                              At <strong>Lumentum</strong>, I work as a Software Developer Co-op on systems verification pipelines, where I automated Linux test harnesses across 10+ optical subsystem configurations (reducing test durations by 35%), implemented mutual TLS (mTLS) with bidirectional X.509 certificate validation, and architected C#/Go filesystem event monitoring pipelines with prototext persistence that reduced snapshot storage overhead by 88%.
+                            </p>
+                            <p>
+                              My technical approach prioritizes systems-level determinism, minimal memory footprint, lockless inter-thread communication, and rigorous verification under high load.
+                            </p>
                           </div>
                         </div>
 
-                        <div className="pt-2 border-t border-zinc-800/80 text-[11px] text-zinc-400 flex items-center justify-between">
-                          <span>Dean's Honour List (2024–2025)</span>
-                          <span
-                            onClick={(e) => toggleMaximize('about', e)}
-                            className="text-blue-400 hover:underline cursor-pointer font-mono"
-                          >
-                            ⤢ Expand Full Dossier
-                          </span>
+                        {/* Extended Coursework Grid */}
+                        <div className="pt-2">
+                          <h3 className="text-[10px] font-mono uppercase text-zinc-400 tracking-wider mb-2">
+                            ### Academic Highlights & Systems Coursework
+                          </h3>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-mono">
+                            <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
+                              <span className="text-white font-semibold block">⚡ Real-Time Systems (SYSC 4001)</span>
+                              <span className="text-[10px] text-zinc-400">Rate-Monotonic scheduling, priority inversion inheritance, POSIX threads.</span>
+                            </div>
+                            <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
+                              <span className="text-white font-semibold block">🛡️ Network Security (SYSC 4810)</span>
+                              <span className="text-[10px] text-zinc-400">Cryptographic protocols, packet filtering, iptables, mTLS authentication.</span>
+                            </div>
+                            <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
+                              <span className="text-white font-semibold block">🔌 Embedded Systems (SYSC 3310)</span>
+                              <span className="text-[10px] text-zinc-400">ARM Cortex-M SoC, memory-mapped I/O, UART/SPI/I2C bare-metal drivers.</span>
+                            </div>
+                            <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
+                              <span className="text-white font-semibold block">⚙️ Operating Systems (SYSC 4005)</span>
+                              <span className="text-[10px] text-zinc-400">Virtual memory paging, inode filesystems, lock-free concurrency.</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -753,8 +766,8 @@ export const MacbookShowcase = ({
                 </div>
               )}
 
-              {/* --- WINDOW 2: EXPERIENCE.md (Opened Markdown Application — Offset / Asymmetric) --- */}
-              {isOpen && !minimized.experience && (
+              {/* --- WINDOW 2: EXPERIENCE.md (Opened Markdown Application) --- */}
+              {isLidOpen && !minimized.experience && (
                 <div
                   onClick={(e) => {
                     e.stopPropagation()
@@ -764,7 +777,7 @@ export const MacbookShowcase = ({
                   className={`absolute transition-all duration-300 rounded-xl overflow-hidden border shadow-2xl flex flex-col ${
                     maximized.experience
                       ? 'inset-1 z-35'
-                      : 'right-3 sm:right-6 top-8 sm:top-10 w-[94%] sm:w-[60%] h-[82%] sm:h-[84%]'
+                      : 'right-3 sm:right-6 top-6 sm:top-7 w-[94%] sm:w-[50%] h-[80%] sm:h-[84%]'
                   } ${
                     activeWindow === 'experience'
                       ? 'z-30 ring-1 ring-emerald-500/30 border-zinc-700/90 shadow-[0_20px_50px_rgba(0,0,0,0.85)]'
@@ -774,8 +787,10 @@ export const MacbookShowcase = ({
                     mobileTab !== 'experience' ? 'hidden sm:flex' : 'flex'
                   }`}
                   style={{
-                    backgroundColor: '#0a0e14',
-                    transform: isOpen ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)'
+                    backgroundColor: 'rgba(15, 20, 28, 0.90)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    transform: isLidOpen ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)'
                   }}
                 >
                   {/* Window Title Bar */}
@@ -879,25 +894,37 @@ export const MacbookShowcase = ({
           </div>
         </div>
 
-        {/* Laptop Hinge & Lower Aluminum Deck */}
-        <div className="relative w-full">
-          {/* Display Hinge Bar */}
-          <div className="mx-auto w-[92%] h-1 sm:h-1.5 bg-zinc-900 border-x border-zinc-800"></div>
+        {/* Laptop Hinge & Lower Aluminum Deck (Precision Apple Proportions) */}
+        <div className="relative w-full z-15">
+          {/* Display Hinge Bar with Dark Recessed Glass Joint */}
+          <div
+            onClick={toggleLid}
+            title={isLidOpen ? 'Click hinge to close lid' : 'Click hinge to open display'}
+            className="mx-auto w-[94%] h-1.5 sm:h-2 bg-zinc-950 border-x border-zinc-800 rounded-t-xs cursor-pointer hover:bg-zinc-900 transition-colors"
+          ></div>
 
           {/* Aluminum Lower Chassis (MacBook Base Deck) */}
           <div
-            className="relative w-full h-4 sm:h-5 rounded-b-xl sm:rounded-b-2xl border-t flex items-start justify-center shadow-xl"
+            className="relative w-full h-5 sm:h-6 rounded-b-xl sm:rounded-b-2xl border-t flex items-start justify-center shadow-2xl transition-all duration-300"
             style={{
-              background: 'linear-gradient(180deg, #323846 0%, #222630 50%, #16181f 100%)',
-              borderColor: '#434b5c'
+              background: isDark
+                ? 'linear-gradient(180deg, #323846 0%, #20242e 45%, #14171e 100%)'
+                : 'linear-gradient(180deg, #3d4556 0%, #282e3c 45%, #1b1f28 100%)',
+              borderColor: isDark ? '#434b5c' : '#4d576e',
+              boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
             }}
           >
-            {/* Center Thumb Notch for opening lid */}
-            <div className="w-24 sm:w-32 h-1.5 sm:h-2 bg-zinc-950/90 rounded-b-md border-t border-zinc-700/80 shadow-inner"></div>
+            {/* Precision CNC Center Thumb Notch for opening lid */}
+            <div
+              onClick={toggleLid}
+              className="w-28 sm:w-36 h-2 sm:h-2.5 bg-zinc-950 rounded-b-md border-t border-zinc-700/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)] cursor-pointer hover:border-blue-400 transition-colors"
+              title={isLidOpen ? 'Close Lid' : 'Open Display'}
+            ></div>
           </div>
 
-          {/* Laptop Desk Drop Shadow */}
-          <div className="mx-auto w-[82%] h-3 bg-black/50 blur-lg rounded-full mt-0.5"></div>
+          {/* Apple Dual-Stage Desk Surface Drop Shadow */}
+          <div className="mx-auto w-[88%] h-4 bg-black/60 blur-xl rounded-full -mt-1"></div>
+          <div className="mx-auto w-[70%] h-6 bg-black/40 blur-2xl rounded-full -mt-3"></div>
         </div>
       </div>
     </section>
