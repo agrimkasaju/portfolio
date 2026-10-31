@@ -99,6 +99,7 @@ export const MacbookShowcase = ({
   }, [isDark])
 
   // One-time slow, cinematic opening animation on initial page load / scroll into view
+  // Deliberate 900ms pause so user clearly sees the closed MacBook resting on desk, then slowly unfolds over 4.8s
   useEffect(() => {
     if (hasAutoOpened) return
 
@@ -107,15 +108,14 @@ export const MacbookShowcase = ({
         const entry = entries[0]
         if (entry.isIntersecting && !hasAutoOpened) {
           setHasAutoOpened(true)
-          // Deliberate pause so user sees the zoomed-out closed MacBook, then slowly unfolds and zooms in
           const openTimer = setTimeout(() => {
             setIsLidOpen(true)
-          }, 650)
+          }, 900)
 
           return () => clearTimeout(openTimer)
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.15 }
     )
 
     if (sectionRef.current) {
@@ -217,7 +217,7 @@ export const MacbookShowcase = ({
   const currentWallpaper = WALLPAPERS[activeWallpaperIndex]
 
   return (
-    <section ref={sectionRef} className="fadeup-item fadeup-2 mb-12 overflow-visible">
+    <section ref={sectionRef} className="fadeup-item fadeup-2 mb-16 overflow-visible">
       {/* Section Header */}
       <div className="flex items-center justify-between mb-4 px-1">
         <div className="flex items-center gap-2">
@@ -232,14 +232,14 @@ export const MacbookShowcase = ({
       </div>
 
       {/* Spacious Bounding Box - Prevents 3D Lid Clipping & Enables Smooth Camera Zoom */}
-      <div className="relative w-full py-6 sm:py-10 px-2 sm:px-6 overflow-visible flex items-center justify-center">
-        {/* --- APPLE MACBOOK 3D HERO SHOWCASE (Positioned like apple.com/ca) --- */}
+      <div className="relative w-full py-8 sm:py-12 px-2 sm:px-6 overflow-visible flex items-center justify-center">
+        {/* --- APPLE MACBOOK 3D HERO SHOWCASE (Positioned with Authentic Asymmetrical Base Depth) --- */}
         <div
-          className="relative w-full max-w-5xl mx-auto select-none overflow-visible transition-transform duration-[2600ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
+          className="relative w-full max-w-5xl mx-auto select-none overflow-visible transition-transform duration-[4800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{
-            perspective: '1800px',
-            perspectiveOrigin: '50% 85%',
-            transform: isLidOpen ? 'scale(1.0) translateY(0)' : 'scale(0.82) translateY(18px)',
+            perspective: '1600px',
+            perspectiveOrigin: '50% 55%',
+            transform: isLidOpen ? 'scale(1.0) translateY(0)' : 'scale(0.80) translateY(24px)',
             transformOrigin: 'center center'
           }}
         >
@@ -254,7 +254,7 @@ export const MacbookShowcase = ({
             }}
           />
 
-          {/* Laptop Screen Lid / Shell with Slow 3D Folding Transform */}
+          {/* Laptop Screen Lid / Shell with Slow 3D Folding Transform (Takes 4.8s to open) */}
           <div
             className="relative rounded-t-2xl sm:rounded-t-3xl p-2 sm:p-2.5 pb-0 border shadow-2xl z-20"
             style={{
@@ -263,8 +263,8 @@ export const MacbookShowcase = ({
               transformOrigin: 'bottom center',
               transform: isLidOpen
                 ? 'rotateX(0deg) translateZ(0px)'
-                : 'rotateX(-75deg) translateZ(0px)',
-              transition: 'transform 2600ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 2600ms ease',
+                : 'rotateX(-82deg) translateZ(0px)',
+              transition: 'transform 4800ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 4800ms ease',
               transformStyle: 'preserve-3d',
               boxShadow: isLidOpen
                 ? isDark
@@ -286,8 +286,8 @@ export const MacbookShowcase = ({
               aria-label="Interactive MacBook Liquid Retina Display"
               className="relative w-full overflow-hidden rounded-t-lg transition-all duration-700 outline-none"
               style={{
-                minHeight: '520px',
-                height: '530px',
+                minHeight: '490px',
+                height: '510px',
                 backgroundImage: `url(${currentWallpaper.path})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
@@ -532,47 +532,6 @@ export const MacbookShowcase = ({
                   </button>
                 </div>
 
-                {/* --- macOS FLOATING DOCK AT BOTTOM OF DISPLAY --- */}
-                <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 z-35 hidden sm:flex items-center gap-3 px-3 py-1.5 rounded-2xl bg-zinc-950/80 backdrop-blur-xl border border-white/15 shadow-2xl">
-                  {/* Dock Item 1: ABOUT_ME.md */}
-                  <button
-                    type="button"
-                    onClick={(e) => restoreWindow('about', e)}
-                    title="Restore / Open ABOUT_ME.md"
-                    className="relative group p-1.5 rounded-xl hover:bg-white/15 transition-all cursor-pointer flex flex-col items-center outline-none"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-blue-600/25 border border-blue-400/50 flex items-center justify-center text-blue-300 group-hover:scale-110 transition-transform shadow-md">
-                      <span className="font-mono font-bold text-xs">#</span>
-                    </div>
-                    <span className="absolute -top-7 px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-[10px] font-mono text-zinc-200 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                      ABOUT_ME.md
-                    </span>
-                    {!closed.about && !minimized.about && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1"></span>
-                    )}
-                  </button>
-
-                  <div className="w-[1px] h-6 bg-white/20 mx-0.5"></div>
-
-                  {/* Dock Item 2: EXPERIENCE.md */}
-                  <button
-                    type="button"
-                    onClick={(e) => restoreWindow('experience', e)}
-                    title="Restore / Open EXPERIENCE.md"
-                    className="relative group p-1.5 rounded-xl hover:bg-white/15 transition-all cursor-pointer flex flex-col items-center outline-none"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-emerald-600/25 border border-emerald-400/50 flex items-center justify-center text-emerald-300 group-hover:scale-110 transition-transform shadow-md">
-                      <span className="font-mono font-bold text-xs">&gt;</span>
-                    </div>
-                    <span className="absolute -top-7 px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-[10px] font-mono text-zinc-200 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-lg">
-                      EXPERIENCE.md
-                    </span>
-                    {!closed.experience && !minimized.experience && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1"></span>
-                    )}
-                  </button>
-                </div>
-
                 {/* --- macOS LOCATION PERMISSION MODAL --- */}
                 {showLocationPrompt && (
                   <div
@@ -665,13 +624,13 @@ export const MacbookShowcase = ({
                             type="button"
                             onClick={(e) => handleClose('about', e)}
                             className="w-3 h-3 rounded-full bg-[#ff5f56] hover:brightness-110 border border-[#e0443e] cursor-pointer"
-                            title="Close (Click desktop icon or dock to reopen)"
+                            title="Close (Click desktop shortcut to reopen)"
                           />
                           <button
                             type="button"
                             onClick={(e) => handleMinimize('about', e)}
                             className="w-3 h-3 rounded-full bg-[#ffbd2e] hover:brightness-110 border border-[#dea123] cursor-pointer"
-                            title="Minimize to desktop / dock"
+                            title="Minimize to desktop"
                           />
                           <button
                             type="button"
@@ -825,13 +784,13 @@ export const MacbookShowcase = ({
                             type="button"
                             onClick={(e) => handleClose('experience', e)}
                             className="w-3 h-3 rounded-full bg-[#ff5f56] hover:brightness-110 border border-[#e0443e] cursor-pointer"
-                            title="Close (Click desktop icon or dock to reopen)"
+                            title="Close (Click desktop shortcut to reopen)"
                           />
                           <button
                             type="button"
                             onClick={(e) => handleMinimize('experience', e)}
                             className="w-3 h-3 rounded-full bg-[#ffbd2e] hover:brightness-110 border border-[#dea123] cursor-pointer"
-                            title="Minimize to desktop / dock"
+                            title="Minimize to desktop"
                           />
                           <button
                             type="button"
@@ -917,29 +876,106 @@ export const MacbookShowcase = ({
             </div>
           </div>
 
-          {/* Laptop Hinge & Lower Aluminum Deck (Precision Apple Proportions) */}
-          <div className="relative w-full z-15">
-            {/* Display Hinge Bar with Dark Recessed Glass Joint */}
-            <div className="mx-auto w-[94%] h-1.5 sm:h-2 bg-zinc-950 border-x border-zinc-800 rounded-t-xs"></div>
+          {/* --- MACBOOK PRO LOWER UNIBODY BASE DECK (Authentic Apple Proportions & 3D Perspective) --- */}
+          <div
+            className="relative w-full z-10 -mt-1"
+            style={{
+              perspective: '1400px',
+              perspectiveOrigin: '50% 10%'
+            }}
+          >
+            {/* Rear Cylindrical Hinge Barrel */}
+            <div className="mx-auto w-[96%] h-2 sm:h-2.5 bg-black border-x border-zinc-800 rounded-t-sm shadow-md"></div>
 
-            {/* Aluminum Lower Chassis (MacBook Base Deck) */}
+            {/* Base Chassis (Extends Forward in 3D Perspective) */}
             <div
-              className="relative w-full h-5 sm:h-6 rounded-b-xl sm:rounded-b-2xl border-t flex items-start justify-center shadow-2xl transition-all duration-300"
+              className="relative w-full rounded-b-2xl border-t transition-all duration-700 shadow-2xl overflow-hidden"
               style={{
+                transformOrigin: 'top center',
+                transform: 'rotateX(58deg)',
+                transformStyle: 'preserve-3d',
                 background: isDark
-                  ? 'linear-gradient(180deg, #323846 0%, #20242e 45%, #14171e 100%)'
-                  : 'linear-gradient(180deg, #3d4556 0%, #282e3c 45%, #1b1f28 100%)',
-                borderColor: isDark ? '#434b5c' : '#4d576e',
-                boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                  ? 'linear-gradient(180deg, #1c1f28 0%, #13161e 40%, #0b0d12 100%)'
+                  : 'linear-gradient(180deg, #2b303d 0%, #1e222b 40%, #12141a 100%)',
+                borderColor: isDark ? '#373e4f' : '#454e63',
+                padding: '10px 16px 14px 16px',
+                boxShadow: '0 35px 80px -15px rgba(0, 0, 0, 0.95), 0 15px 30px -5px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
               }}
             >
-              {/* Precision CNC Center Thumb Notch for opening lid */}
-              <div className="w-28 sm:w-36 h-2 sm:h-2.5 bg-zinc-950 rounded-b-md border-t border-zinc-700/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.8)]"></div>
+              {/* Upper Deck Surface: Speaker Grilles + Keyboard Well */}
+              <div className="flex items-center justify-between gap-3 sm:gap-4 max-w-4xl mx-auto">
+                {/* Left Speaker Grille */}
+                <div className="w-8 sm:w-14 h-20 sm:h-24 rounded bg-[radial-gradient(#52525b_1px,transparent_1px)] [background-size:3px_3px] opacity-40 shrink-0"></div>
+
+                {/* Recessed Anodized Aluminum Keyboard Well */}
+                <div className="flex-1 h-20 sm:h-24 bg-[#0a0b0e] border border-zinc-800/90 rounded-lg p-1.5 sm:p-2 shadow-inner flex flex-col justify-between select-none">
+                  {/* Function Keys Row */}
+                  <div className="flex gap-1 h-2.5 sm:h-3">
+                    <div className="w-4 sm:w-6 bg-zinc-900 border border-zinc-800 rounded-[2px] text-[6px] text-zinc-500 flex items-center justify-center">esc</div>
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    ))}
+                    <div className="w-4 sm:w-6 bg-zinc-950 border border-zinc-700/80 rounded-[2px] shadow-inner"></div>
+                  </div>
+
+                  {/* Number Row */}
+                  <div className="flex gap-1 h-3 sm:h-3.5">
+                    <div className="w-4 sm:w-5 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    ))}
+                    <div className="w-5 sm:w-7 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                  </div>
+
+                  {/* QWERTY Row */}
+                  <div className="flex gap-1 h-3 sm:h-3.5">
+                    <div className="w-5 sm:w-7 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    ))}
+                    <div className="w-4 sm:w-5 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                  </div>
+
+                  {/* Home Row (ASDF) */}
+                  <div className="flex gap-1 h-3 sm:h-3.5">
+                    <div className="w-6 sm:w-8 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    {Array.from({ length: 11 }).map((_, i) => (
+                      <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    ))}
+                    <div className="w-6 sm:w-9 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                  </div>
+
+                  {/* Bottom Row (Spacebar + Modifiers) */}
+                  <div className="flex gap-1 h-3.5 sm:h-4">
+                    <div className="w-4 sm:w-6 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    <div className="w-4 sm:w-6 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    <div className="w-5 sm:w-7 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    <div className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[2px] shadow-inner"></div>
+                    <div className="w-5 sm:w-7 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    <div className="w-4 sm:w-6 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
+                    <div className="w-6 sm:w-8 bg-zinc-900 border border-zinc-800 rounded-[2px] flex gap-0.5">
+                      <div className="flex-1 bg-zinc-800/80 rounded-[1px]"></div>
+                      <div className="flex-1 bg-zinc-800/80 rounded-[1px]"></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Speaker Grille */}
+                <div className="w-8 sm:w-14 h-20 sm:h-24 rounded bg-[radial-gradient(#52525b_1px,transparent_1px)] [background-size:3px_3px] opacity-40 shrink-0"></div>
+              </div>
+
+              {/* Center Glass Force Touch Trackpad */}
+              <div className="relative mx-auto mt-2 w-44 sm:w-60 h-11 sm:h-14 rounded-xl bg-zinc-900/80 border border-zinc-700/60 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]">
+                <div className="absolute inset-0 rounded-xl bg-white/[0.03] pointer-events-none"></div>
+              </div>
+
+              {/* Precision CNC Thumb Opening Scoop Notch on Front Lip */}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-28 sm:w-36 h-2 bg-zinc-950 rounded-t-md border-b border-zinc-700/80 shadow-inner"></div>
             </div>
 
-            {/* Apple Dual-Stage Desk Surface Drop Shadow */}
-            <div className="mx-auto w-[88%] h-4 bg-black/60 blur-xl rounded-full -mt-1"></div>
-            <div className="mx-auto w-[70%] h-6 bg-black/40 blur-2xl rounded-full -mt-3"></div>
+            {/* Ambient Studio Desk Surface Drop Shadow */}
+            <div className="mx-auto w-[92%] h-8 bg-black/70 blur-2xl rounded-full -mt-4"></div>
+            <div className="mx-auto w-[76%] h-12 bg-black/50 blur-3xl rounded-full -mt-6"></div>
           </div>
         </div>
       </div>
