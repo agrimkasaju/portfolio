@@ -73,12 +73,13 @@ export const MacbookShowcase = ({
 
   // Real-time live clock state
   const [currentTime, setCurrentTime] = useState('')
-  // Real-time location state
-  const [userLocation, setUserLocation] = useState(getInitialTimezoneCity)
+  // Real-time location state - null by default, only shown if user explicitly grants permission
+  const [userLocation, setUserLocation] = useState(null)
+  // Location permission state: 'prompt' | 'granted' | 'denied'
+  const [locationPermission, setLocationPermission] = useState('prompt')
   // Location permission modal state
   const [showLocationPrompt, setShowLocationPrompt] = useState(false)
   const [isLocating, setIsLocating] = useState(false)
-  const [locationPermissionAsked, setLocationPermissionAsked] = useState(false)
 
   // Real-time live clock ticking every second
   useEffect(() => {
@@ -125,6 +126,16 @@ export const MacbookShowcase = ({
     return () => observer.disconnect()
   }, [hasAutoOpened])
 
+  // Prompt for location access after the laptop finishes opening
+  useEffect(() => {
+    if (isLidOpen && locationPermission === 'prompt') {
+      const promptTimer = setTimeout(() => {
+        setShowLocationPrompt(true)
+      }, 1500)
+      return () => clearTimeout(promptTimer)
+    }
+  }, [isLidOpen, locationPermission])
+
   // Cycle through classic wallpapers from wallpapercave
   const cycleWallpaper = () => {
     setActiveWallpaperIndex((prev) => (prev + 1) % WALLPAPERS.length)
@@ -159,10 +170,11 @@ export const MacbookShowcase = ({
   const handleRequestLocation = (e) => {
     if (e) e.stopPropagation()
     setIsLocating(true)
-    setLocationPermissionAsked(true)
 
     if (!navigator.geolocation) {
       setIsLocating(false)
+      setUserLocation(null)
+      setLocationPermission('denied')
       setShowLocationPrompt(false)
       return
     }
@@ -190,10 +202,18 @@ export const MacbookShowcase = ({
               setUserLocation(`${city}, ${state}`)
             } else if (city) {
               setUserLocation(city)
+            } else {
+              setUserLocation(getInitialTimezoneCity())
             }
+            setLocationPermission('granted')
+          } else {
+            setUserLocation(getInitialTimezoneCity())
+            setLocationPermission('granted')
           }
         } catch (err) {
           console.warn('Reverse geocode fallback to timezone', err)
+          setUserLocation(getInitialTimezoneCity())
+          setLocationPermission('granted')
         } finally {
           setIsLocating(false)
           setShowLocationPrompt(false)
@@ -201,6 +221,8 @@ export const MacbookShowcase = ({
       },
       (err) => {
         console.warn('Geolocation permission denied or timeout', err)
+        setUserLocation(null)
+        setLocationPermission('denied')
         setIsLocating(false)
         setShowLocationPrompt(false)
       },
@@ -210,7 +232,8 @@ export const MacbookShowcase = ({
 
   const handleDenyLocation = (e) => {
     if (e) e.stopPropagation()
-    setLocationPermissionAsked(true)
+    setUserLocation(null)
+    setLocationPermission('denied')
     setShowLocationPrompt(false)
   }
 
@@ -417,23 +440,53 @@ export const MacbookShowcase = ({
                     <span>{isDark ? 'Dark' : 'Light'}</span>
                   </button>
 
-                  {/* WORKING FEATURE 3: Real-Time Location & Live Clock Sync */}
+                  {/* WORKING FEATURE 3: Real-Time Location & Live Clock Sync (Native macOS Styling) */}
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation()
                       setShowLocationPrompt(true)
                     }}
-                    title="Click to view or synchronize live location"
-                    className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-950/70 hover:bg-emerald-900/80 border border-emerald-500/50 text-emerald-300 text-[10px] font-mono shadow-[0_0_12px_rgba(16,185,129,0.3)] transition-all cursor-pointer group shrink-0"
+                    title={
+                      userLocation
+                        ? `Location: ${userLocation} · Click to update`
+                        : 'Click to enable location synchronization'
+                    }
+                    className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 text-[10px] font-mono transition-colors cursor-pointer group shadow-xs shrink-0"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 -ml-2.5"></span>
-                    <span className="font-semibold text-emerald-200 group-hover:text-white transition-colors">
-                      {userLocation}
-                    </span>
-                    <span className="text-emerald-500 font-normal">·</span>
-                    <span className="text-emerald-300 font-bold tracking-tight">
+                    {/* macOS Location Arrow Icon */}
+                    {userLocation ? (
+                      <svg
+                        className="w-2.5 h-2.5 text-blue-400 shrink-0"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z" />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="w-2.5 h-2.5 text-zinc-400 group-hover:text-blue-400 shrink-0 transition-colors"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <polygon points="12 2 19 21 12 17 5 21 12 2" />
+                      </svg>
+                    )}
+
+                    {/* Location Name - ONLY displayed if permission is granted and location exists */}
+                    {userLocation && (
+                      <>
+                        <span className="font-medium text-zinc-200 group-hover:text-white transition-colors">
+                          {userLocation}
+                        </span>
+                        <span className="text-zinc-500 font-normal">·</span>
+                      </>
+                    )}
+
+                    {/* Live Clock */}
+                    <span className="font-semibold text-zinc-100 tracking-tight">
                       {currentTime || 'Syncing...'}
                     </span>
                   </button>
@@ -541,9 +594,8 @@ export const MacbookShowcase = ({
                     <div className="relative w-full max-w-[290px] sm:max-w-[320px] bg-zinc-900/95 backdrop-blur-xl border border-zinc-700/90 rounded-2xl p-4 sm:p-5 shadow-2xl text-center space-y-3">
                       {/* Compass / Location Icon Badge */}
                       <div className="w-11 h-11 mx-auto rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center shadow-inner">
-                        <svg className="w-5 h-5 text-blue-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <svg className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z" />
                         </svg>
                       </div>
 
