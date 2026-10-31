@@ -1,4 +1,5 @@
 import React from 'react'
+import MacbookShowcase from './MacbookShowcase.jsx'
 
 const projectsData = [
   {
@@ -193,73 +194,8 @@ const Markup = ({
         </div>
       </section>
 
-      {/* About & Experience Grid */}
-      <section className="fadeup-item fadeup-2 grid grid-cols-1 md:grid-cols-[1.6fr_1fr] gap-3 mb-4 md:items-stretch">
-        {/* Standout About Me */}
-        <article className="bg-white dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-800 h-full flex flex-col justify-between">
-          <div>
-            <h2 className="text-base font-bold mb-2.5 pb-1 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
-              <span>About Me</span>
-              <span className="text-[11px] font-mono font-normal text-zinc-500">Systems · AI · Reliability</span>
-            </h2>
-            <p className="text-xs sm:text-sm leading-relaxed mb-3 text-zinc-700 dark:text-zinc-300">
-              I am a fourth-year <strong>Computer Systems Engineering</strong> student at Carleton University (Dean's Honour List, GPA 3.33/4.0) with hands-on production experience in Linux systems software, automated CI verification pipelines, and edge AI deployment.
-            </p>
-            <p className="text-xs sm:text-sm leading-relaxed mb-3 text-zinc-700 dark:text-zinc-300">
-              Currently working as a <strong>Software Developer (Co-op) at Lumentum</strong>, I validate Linux system software by automating test harness execution and diagnostic log parsing (reducing manual regression duration by 35%), construct automated verification pipelines in Python and Bash across 10+ target Linux configurations, implement bidirectional X.509 certificate validation and mTLS handshakes between daemons and client endpoints, and develop C# filesystem event-monitoring services coordinating with Go backend pipelines to isolate snapshot state and reduce storage overhead by 88%.
-            </p>
-            <p className="text-xs sm:text-sm leading-relaxed mb-3 text-zinc-700 dark:text-zinc-300">
-              On the engineering front, I specialize in building high-throughput and low-latency systems. My applied work spans autonomous agentic orchestration (<a href="https://github.com/agrimkasaju/Anubis" className="font-semibold underline" style={{ color: 'var(--accent-color)' }}>Anubis</a> with streaming Orion ONNX wake-word detection), embedded INT8 quantized TensorFlow Lite inference on Raspberry Pi (<a href="https://github.com/agrimkasaju/Smart-Inventory-System" className="font-semibold underline" style={{ color: 'var(--accent-color)' }}>Smart Inventory</a>, reducing precision from 32-bit floats to 8-bit integers to shrink memory by 75% and boost throughput to 15–20 FPS), role-based cryptographic authentication (<a href="https://github.com/agrimkasaju/bcrypt_password_hashing" className="font-semibold underline" style={{ color: 'var(--accent-color)' }}>RBAC Auth</a> with bcrypt 12 salt rounds and immutable JSON Lines audit logs), and POSIX concurrent CPU scheduling in C/C++.
-            </p>
-            <p className="text-xs sm:text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-              I prioritize clean architectures, deterministic hardware benchmarks, and dependable low-level execution that survives hostile edge environments and high thread contention.
-            </p>
-          </div>
-        </article>
-
-        {/* Industry Experience & Education */}
-        <div className="flex flex-col gap-3">
-          <aside className="bg-white dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-800">
-            <h2 className="text-base font-bold mb-2.5 pb-1 border-b border-zinc-200 dark:border-zinc-800">
-              Experience
-            </h2>
-            <div className="space-y-3">
-              <div className="border-l-2 pl-3" style={{ borderColor: 'var(--accent-color)' }}>
-                <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Software Developer (Co-op)</p>
-                <p className="text-[11px] text-zinc-500">Lumentum · Ottawa, ON <span className="float-right font-mono">May 2026 – Present</span></p>
-                <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-1 leading-normal">
-                  Automated Linux validation across 10+ configurations (-35% test duration), bidirectional X.509 mTLS daemon authentication, and C#/Go event services cutting snapshot storage overhead by 88%.
-                </p>
-              </div>
-              <div className="border-l-2 border-zinc-300 dark:border-zinc-700 pl-3">
-                <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Sales Representative</p>
-                <p className="text-[11px] text-zinc-500">TELUS Go Sales · Calgary, AB <span className="float-right font-mono">2023</span></p>
-                <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-1 leading-normal">
-                  Translated complex technical product information and supported high-touch customer consultations.
-                </p>
-              </div>
-            </div>
-          </aside>
-
-          <aside className="bg-white dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-800">
-            <h2 className="text-base font-bold mb-2 pb-1 border-b border-zinc-200 dark:border-zinc-800">
-              Education
-            </h2>
-            <div>
-              <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Carleton University</p>
-              <p className="text-[11px] text-zinc-500">B.Eng in Computer Systems <span className="float-right font-mono">2022 – 2028</span></p>
-              <p className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-1">
-                GPA 3.33/4.0 · Dean's Honour List (2024–2025)
-              </p>
-              <div className="mt-2 text-[10px] text-zinc-500 flex flex-wrap gap-1">
-                <span className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">Real-Time Systems</span>
-                <span className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">Network Security</span>
-                <span className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">ARM SoC Design</span>
-              </div>
-            </div>
-          </aside>
-        </div>
-      </section>
+      {/* About & Experience Showcase (Apple-style MacBook Interactive Display) */}
+      <MacbookShowcase />
 
       {/* Featured Projects with Click-to-Theme */}
       <section className="fadeup-item fadeup-3 mb-4">

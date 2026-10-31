@@ -24,11 +24,6 @@ body {
   overflow-x: hidden;
 }
 
-*,
-*::before,
-*::after {
-  border-radius: 0 !important;
-}
 
 :root {
   --theme-transition-duration: 420ms;
@@ -145,6 +140,35 @@ body.dark-theme,
 html.dark-theme #root,
 body.dark-theme #root {
   background: #000;
+}
+
+/* Sleek macOS-style scrollbar for laptop markdown windows */
+.mac-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.mac-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.mac-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 9999px;
+}
+.mac-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+@keyframes cursor-float {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-4px) translateX(2px);
+  }
+}
+
+.animate-cursor-float {
+  animation: cursor-float 2.4s ease-in-out infinite;
 }
 
 #root {
