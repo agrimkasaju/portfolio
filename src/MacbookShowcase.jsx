@@ -185,13 +185,26 @@ export const MacbookShowcase = ({
 
       {/* --- APPLE MACBOOK INTERACTIVE SHOWCASE --- */}
       <div className="relative w-full max-w-4xl mx-auto select-none">
+        {/* Left-Hand External Ambient Light Source (Simulates off-screen Moon/Sun illuminating the workspace) */}
+        <div
+          aria-hidden="true"
+          className="absolute -top-12 -left-16 w-72 h-72 rounded-full blur-3xl pointer-events-none transition-all duration-700 z-0"
+          style={{
+            background: isDark
+              ? 'radial-gradient(circle, rgba(147, 197, 253, 0.14) 0%, rgba(96, 165, 250, 0.04) 50%, transparent 75%)'
+              : 'radial-gradient(circle, rgba(253, 224, 71, 0.20) 0%, rgba(251, 191, 36, 0.06) 50%, transparent 75%)'
+          }}
+        />
+
         {/* Laptop Screen Lid / Shell */}
         <div
-          className="relative rounded-t-2xl sm:rounded-t-3xl p-2 sm:p-3 pb-0 border transition-all duration-300 shadow-2xl"
+          className="relative rounded-t-2xl sm:rounded-t-3xl p-2 sm:p-3 pb-0 border transition-all duration-300 shadow-2xl z-10"
           style={{
             backgroundColor: '#161922',
-            borderColor: '#2d3345',
-            boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 35px -10px var(--accent-glow)'
+            borderColor: isDark ? '#2d3345' : '#3c455c',
+            boxShadow: isDark
+              ? '0 25px 60px -15px rgba(0, 0, 0, 0.7), -6px -6px 28px -10px rgba(186, 230, 253, 0.15)'
+              : '0 25px 60px -15px rgba(0, 0, 0, 0.7), -6px -6px 28px -10px rgba(254, 240, 138, 0.22)'
           }}
         >
           {/* Top Camera Bezel / Notch */}
@@ -224,51 +237,74 @@ export const MacbookShowcase = ({
             {/* Subtle Cosmic Grid / Ambient Glow */}
             <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]"></div>
 
+            {/* Natural Directional Glass Screen Glare (Originates from the Left: Moonlight in Dark Mode, Sunlight in Light Mode) */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none z-35 overflow-hidden transition-all duration-700 select-none"
+            >
+              {/* Light Source 1: Soft Left-Edge Source Halo (Moonlight / Sunlight casting into the screen) */}
+              <div
+                className="absolute -left-16 -top-16 w-80 h-80 rounded-full blur-3xl transition-all duration-700 pointer-events-none"
+                style={{
+                  background: isDark
+                    ? 'radial-gradient(circle, rgba(186, 230, 253, 0.32) 0%, rgba(147, 197, 253, 0.12) 45%, transparent 75%)'
+                    : 'radial-gradient(circle, rgba(254, 240, 138, 0.42) 0%, rgba(253, 230, 138, 0.18) 45%, transparent 75%)'
+                }}
+              />
+
+              {/* Light Source 2: Diagonal Glass Reflection Wash (Sweeps across the left-hand menu and window edges) */}
+              <div
+                className="absolute top-0 left-0 w-3/5 h-full transition-all duration-700 pointer-events-none"
+                style={{
+                  background: isDark
+                    ? 'linear-gradient(120deg, rgba(255, 255, 255, 0.22) 0%, rgba(224, 242, 254, 0.14) 22%, rgba(186, 230, 253, 0.05) 45%, transparent 70%)'
+                    : 'linear-gradient(120deg, rgba(255, 255, 255, 0.32) 0%, rgba(254, 240, 138, 0.22) 22%, rgba(253, 224, 71, 0.07) 48%, transparent 70%)',
+                  maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 40%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 40%, transparent 100%)'
+                }}
+              />
+
+              {/* Light Source 3: Specular Angled Screen Glare Streak */}
+              <div
+                className="absolute top-0 left-0 w-1/2 h-full opacity-65 transition-all duration-700 pointer-events-none"
+                style={{
+                  background: isDark
+                    ? 'linear-gradient(115deg, transparent 12%, rgba(255, 255, 255, 0.16) 24%, rgba(224, 242, 254, 0.07) 30%, transparent 42%)'
+                    : 'linear-gradient(115deg, transparent 12%, rgba(255, 255, 255, 0.28) 24%, rgba(254, 240, 138, 0.12) 30%, transparent 42%)'
+                }}
+              />
+
+              {/* Light Source 4: Optical Glass Diffusion over Inactive Menu Bar Items */}
+              <div
+                className="absolute top-0 left-0 w-80 h-7 backdrop-blur-[1.5px] transition-all duration-700 pointer-events-none"
+                style={{
+                  maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 65%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 65%, transparent 100%)'
+                }}
+              />
+            </div>
+
             {/* macOS Top Menu Bar */}
             <div className="relative z-30 h-7 px-3 bg-zinc-950/80 backdrop-blur-md border-b border-white/10 flex items-center justify-between text-[11px] text-zinc-300">
-              {/* Left Side: Apple Branding + Sun-Glare Blurred Inactive Menu Items */}
+              {/* Left Side: Apple Branding + Sun/Moon Glare Diffused Inactive Menu Items */}
               <div className="flex items-center gap-3">
                 <span className="font-bold text-white text-xs hover:opacity-80 cursor-pointer"></span>
                 <span className="font-semibold text-white tracking-tight">KasajuOS</span>
 
-                {/* Sun-Glare Blurred Inactive Buttons: File, Edit, View, Window */}
-                <div className="relative hidden md:flex items-center gap-2.5 overflow-hidden px-1.5 py-0.5 rounded">
-                  {/* Sunbeam Glare Reflection Layer */}
-                  <div
-                    className="absolute inset-0 pointer-events-none z-10"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(255, 235, 170, 0.45) 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%)',
-                      mixBlendMode: 'screen'
-                    }}
-                  />
-                  <div className="flex items-center gap-2.5 filter blur-[1.8px] opacity-30 select-none pointer-events-none text-zinc-300">
-                    <span>File</span>
-                    <span>Edit</span>
-                    <span>View</span>
-                    <span>Window</span>
-                  </div>
+                {/* Inactive Menu Buttons (File, Edit, View, Window) Naturally Blurred under Left-Hand Glare */}
+                <div
+                  aria-hidden="true"
+                  className="hidden md:flex items-center gap-3 filter blur-[2px] opacity-25 select-none pointer-events-none transition-all duration-500 font-normal text-zinc-300"
+                >
+                  <span>File</span>
+                  <span>Edit</span>
+                  <span>View</span>
+                  <span>Window</span>
                 </div>
               </div>
 
-              {/* Right Side: Working Features (Theme, Dark/Light, Real-time Location/Time, Replay) + Blurred Inactive Stats */}
+              {/* Right Side: Working Features (Theme Toggle, Real-Time Location & Clock Sync, Replay) */}
               <div className="flex items-center gap-2">
-                {/* Sun-Glare Blurred Inactive System Status (100% Battery & Wi-Fi) */}
-                <div className="relative hidden lg:flex items-center gap-1.5 overflow-hidden px-1 py-0.5 rounded">
-                  <div
-                    className="absolute inset-0 pointer-events-none z-10"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(255, 240, 180, 0.4) 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%)',
-                      mixBlendMode: 'screen'
-                    }}
-                  />
-                  <div className="flex items-center gap-1.5 filter blur-[1.8px] opacity-30 select-none pointer-events-none text-zinc-300">
-                    <span className="font-mono text-[10px]">100%</span>
-                    <svg className="w-3 h-3 text-zinc-300" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L12 22l7.03-4.39C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9zm0 14.5c-3.04 0-5.5-2.46-5.5-5.5S8.96 6.5 12 6.5s5.5 2.46 5.5 5.5-2.46 5.5-5.5 5.5z"/>
-                    </svg>
-                  </div>
-                </div>
-
                 {/* WORKING FEATURE 1: Dark / Light Mode Toggle Button */}
                 <button
                   type="button"
@@ -280,7 +316,7 @@ export const MacbookShowcase = ({
                   className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-100 text-[10px] font-mono transition-colors cursor-pointer group shadow-xs"
                 >
                   {isDark ? (
-                    <i className="fa-solid fa-moon text-amber-300 text-[10px]"></i>
+                    <i className="fa-solid fa-moon text-blue-300 text-[10px]"></i>
                   ) : (
                     <i className="fa-solid fa-sun text-amber-400 text-[10px]"></i>
                   )}
