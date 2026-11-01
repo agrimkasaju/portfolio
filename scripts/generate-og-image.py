@@ -376,11 +376,11 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
     width: 100%;
     z-index: 5;
     margin-top: -1px;
-    perspective: 1200px;
-    perspective-origin: 50% 10%;
+    perspective: 2800px;
+    perspective-origin: 50% 0%;
   }}
   .hinge-barrel {{
-    width: 95%;
+    width: 100%;
     height: 4px;
     margin: 0 auto;
     background: #000000;
@@ -392,10 +392,11 @@ HTML_TEMPLATE = f"""<!DOCTYPE html>
     width: 100%;
     height: 115px;
     background: linear-gradient(180deg, #1c1f28 0%, #13161e 40%, #0b0d12 100%);
-    border-top: 1px solid #373e4f;
+    border: 1px solid #373e4f;
+    border-top: none;
     border-radius: 0 0 16px 16px;
     transform-origin: top center;
-    transform: rotateX(55deg);
+    transform: rotateX(64deg);
     transform-style: preserve-3d;
     box-shadow: 0 30px 60px -5px rgba(0,0,0,0.98), inset 0 1px 0 rgba(255,255,255,0.22);
     padding: 6px 14px;

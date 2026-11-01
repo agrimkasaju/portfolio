@@ -839,23 +839,23 @@ export const MacbookShowcase = ({
             </div>
           </div>
 
-          {/* --- MACBOOK PRO LOWER UNIBODY BASE DECK (Authentic Apple Proportions & 3D Perspective) --- */}
+          {/* --- MACBOOK PRO LOWER UNIBODY BASE DECK (Authentic Apple Proportions & Seamless Edge Alignment) --- */}
           <div
             className="relative w-full z-10 -mt-1"
             style={{
-              perspective: '1400px',
-              perspectiveOrigin: '50% 10%'
+              perspective: '2800px',
+              perspectiveOrigin: '50% 0%'
             }}
           >
-            {/* Rear Cylindrical Hinge Barrel */}
-            <div className="mx-auto w-[96%] h-2 sm:h-2.5 bg-black border-x border-zinc-800 rounded-t-sm shadow-md"></div>
+            {/* Rear Cylindrical Hinge Barrel (Matches 100% Display Lid Width) */}
+            <div className="w-full h-2 sm:h-2.5 bg-black border-x border-zinc-800 rounded-t-sm shadow-md"></div>
 
-            {/* Base Chassis (Extends Forward in 3D Perspective) */}
+            {/* Base Chassis (Extends Forward with Natural, Proportionate 3D Depth) */}
             <div
-              className="relative w-[96%] mx-auto rounded-b-2xl sm:rounded-b-3xl border transition-all duration-700 overflow-hidden"
+              className="relative w-full rounded-b-2xl sm:rounded-b-3xl border border-t-0 transition-all duration-700 overflow-hidden"
               style={{
                 transformOrigin: 'top center',
-                transform: 'rotateX(58deg)',
+                transform: 'rotateX(64deg)',
                 transformStyle: 'preserve-3d',
                 background: isDark
                   ? 'linear-gradient(180deg, #1c1f28 0%, #13161e 40%, #0b0d12 100%)'
@@ -939,7 +939,7 @@ export const MacbookShowcase = ({
             </div>
 
             {/* Soft Ambient Desk Contact Shadow (Blends Seamlessly with Any Background & Theme) */}
-            <div className="relative mx-auto w-[96%] pointer-events-none -mt-16 sm:-mt-20 z-0">
+            <div className="relative mx-auto w-[96%] pointer-events-none -mt-20 sm:-mt-24 z-0">
               <div
                 className="mx-auto w-[92%] h-10 rounded-full transition-all duration-700"
                 style={{
