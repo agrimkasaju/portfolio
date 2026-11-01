@@ -70,9 +70,50 @@ export const MacbookShowcase = ({
   const [maximized, setMaximized] = useState({ about: false, experience: false })
   // Active mobile tab when on small screens
   const [mobileTab, setMobileTab] = useState('about')
+  // Mobile dossier modal reader state: null | 'about' | 'experience'
+  const [dossierModal, setDossierModal] = useState(null)
+
+  // Responsive scale state for mobile fitting
+  const containerRef = useRef(null)
+  const [scale, setScale] = useState(1)
+  const DESIGN_WIDTH = 820
+  const DESIGN_HEIGHT = 740
+
+  useEffect(() => {
+    if (!containerRef.current) return
+    const updateScale = () => {
+      if (containerRef.current) {
+        const width = containerRef.current.clientWidth
+        if (width > 0 && width < DESIGN_WIDTH) {
+          setScale(width / DESIGN_WIDTH)
+        } else {
+          setScale(1)
+        }
+      }
+    }
+    updateScale()
+    const ro = new ResizeObserver(updateScale)
+    ro.observe(containerRef.current)
+    window.addEventListener('resize', updateScale)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', updateScale)
+    }
+  }, [])
 
   // Real-time live clock state
   const [currentTime, setCurrentTime] = useState('')
+
+  // Escape key listener to close mobile dossier modal
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setDossierModal(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
   // Real-time location state automatically synchronized from timezone
   const [userLocation, setUserLocation] = useState(getInitialTimezoneCity)
 
@@ -191,18 +232,33 @@ export const MacbookShowcase = ({
         </div>
       </div>
 
-      {/* Spacious Bounding Box - Prevents 3D Lid Clipping & Enables Smooth Camera Zoom */}
-      <div className="relative w-full py-8 sm:py-12 px-2 sm:px-6 overflow-visible flex items-center justify-center">
-        {/* --- APPLE MACBOOK 3D HERO SHOWCASE (Positioned with Authentic Asymmetrical Base Depth) --- */}
+      {/* Spacious Bounding Box - Scales proportionally on mobile to fit screen */}
+      <div
+        ref={containerRef}
+        className="relative w-full py-2 sm:py-8 px-0 sm:px-6 overflow-hidden sm:overflow-visible flex flex-col items-center justify-start"
+        style={{
+          height: scale < 1 ? `${Math.round(DESIGN_HEIGHT * scale)}px` : 'auto'
+        }}
+      >
         <div
-          className="relative w-full max-w-5xl mx-auto select-none overflow-visible transition-transform duration-[4800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{
-            perspective: '1600px',
-            perspectiveOrigin: '50% 55%',
-            transform: isLidOpen ? 'scale(1.0) translateY(0)' : 'scale(0.80) translateY(24px)',
-            transformOrigin: 'center center'
+            width: scale < 1 ? `${DESIGN_WIDTH}px` : '100%',
+            maxWidth: `${DESIGN_WIDTH}px`,
+            transform: scale < 1 ? `scale(${scale})` : undefined,
+            transformOrigin: 'top center',
+            flexShrink: 0
           }}
         >
+          {/* --- APPLE MACBOOK 3D HERO SHOWCASE (Positioned with Authentic Asymmetrical Base Depth) --- */}
+          <div
+            className="relative w-full max-w-5xl mx-auto select-none overflow-visible transition-transform duration-[4800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={{
+              perspective: '1600px',
+              perspectiveOrigin: '50% 55%',
+              transform: isLidOpen ? 'scale(1.0) translateY(0)' : 'scale(0.80) translateY(24px)',
+              transformOrigin: 'center center'
+            }}
+          >
           {/* Left-Hand External Ambient Light Source (Simulates off-screen Moon/Sun illuminating the workspace) */}
           <div
             aria-hidden="true"
@@ -405,34 +461,6 @@ export const MacbookShowcase = ({
                 </div>
               </div>
 
-              {/* Mobile Window Switcher Tabs (Visible under 640px) */}
-              {isLidOpen && (
-                <div className="sm:hidden relative z-25 flex items-center bg-zinc-900/90 border-b border-zinc-800 p-1 gap-1">
-                  <button
-                    type="button"
-                    onClick={(e) => restoreWindow('about', e)}
-                    className={`flex-1 py-1 text-[11px] font-mono rounded flex items-center justify-center gap-1.5 cursor-pointer ${
-                      mobileTab === 'about' && !closed.about && !minimized.about
-                        ? 'bg-blue-600 text-white font-semibold'
-                        : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                    }`}
-                  >
-                    <span>ABOUT_ME.md</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => restoreWindow('experience', e)}
-                    className={`flex-1 py-1 text-[11px] font-mono rounded flex items-center justify-center gap-1.5 cursor-pointer ${
-                      mobileTab === 'experience' && !closed.experience && !minimized.experience
-                        ? 'bg-blue-600 text-white font-semibold'
-                        : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                    }`}
-                  >
-                    <span>EXPERIENCE.md</span>
-                  </button>
-                </div>
-              )}
-
               {/* Desktop Canvas Window Container */}
               <div className="relative w-full h-[calc(100%-28px)] overflow-hidden">
                 {/* --- INTERACTIVE DESKTOP APP SHORTCUTS (Click to Open / Restore Markdown Files) --- */}
@@ -504,18 +532,18 @@ export const MacbookShowcase = ({
                       e.stopPropagation()
                       setActiveWindow('about')
                       setMobileTab('about')
+                      if (scale < 1) {
+                        setDossierModal('about')
+                      }
                     }}
                     className={`absolute transition-all duration-300 rounded-xl overflow-hidden border shadow-2xl flex flex-col ${
                       maximized.about
                         ? 'inset-1 z-35'
-                        : 'left-3 sm:left-6 top-3 sm:top-4 w-[94%] sm:w-[57%] h-[84%] sm:h-[86%]'
+                        : 'left-6 top-4 w-[57%] h-[86%]'
                     } ${
                       activeWindow === 'about'
                         ? 'z-30 ring-1 ring-blue-500/30 border-zinc-700/90 shadow-[0_20px_50px_rgba(0,0,0,0.85)]'
                         : 'z-20 border-zinc-800/80 opacity-95 hover:opacity-100'
-                    } ${
-                      /* Mobile responsiveness tab visibility */
-                      mobileTab !== 'about' ? 'hidden sm:flex' : 'flex'
                     }`}
                     style={{
                       backgroundColor: 'rgba(13, 17, 23, 0.88)',
@@ -543,7 +571,14 @@ export const MacbookShowcase = ({
                           />
                           <button
                             type="button"
-                            onClick={(e) => toggleMaximize('about', e)}
+                            onClick={(e) => {
+                              if (scale < 1) {
+                                e.stopPropagation()
+                                setDossierModal('about')
+                              } else {
+                                toggleMaximize('about', e)
+                              }
+                            }}
                             className="w-3 h-3 rounded-full bg-[#27c93f] hover:brightness-110 border border-[#1aab29] cursor-pointer"
                             title="Maximize to view full dossier"
                           />
@@ -664,18 +699,18 @@ export const MacbookShowcase = ({
                       e.stopPropagation()
                       setActiveWindow('experience')
                       setMobileTab('experience')
+                      if (scale < 1) {
+                        setDossierModal('experience')
+                      }
                     }}
                     className={`absolute transition-all duration-300 rounded-xl overflow-hidden border shadow-2xl flex flex-col ${
                       maximized.experience
                         ? 'inset-1 z-35'
-                        : 'right-3 sm:right-6 top-6 sm:top-7 w-[94%] sm:w-[50%] h-[80%] sm:h-[84%]'
+                        : 'right-6 top-7 w-[50%] h-[84%]'
                     } ${
                       activeWindow === 'experience'
                         ? 'z-30 ring-1 ring-emerald-500/30 border-zinc-700/90 shadow-[0_20px_50px_rgba(0,0,0,0.85)]'
                         : 'z-20 border-zinc-800/80 opacity-95 hover:opacity-100'
-                    } ${
-                      /* Mobile responsiveness tab visibility */
-                      mobileTab !== 'experience' ? 'hidden sm:flex' : 'flex'
                     }`}
                     style={{
                       backgroundColor: 'rgba(15, 20, 28, 0.90)',
@@ -703,7 +738,14 @@ export const MacbookShowcase = ({
                           />
                           <button
                             type="button"
-                            onClick={(e) => toggleMaximize('experience', e)}
+                            onClick={(e) => {
+                              if (scale < 1) {
+                                e.stopPropagation()
+                                setDossierModal('experience')
+                              } else {
+                                toggleMaximize('experience', e)
+                              }
+                            }}
                             className="w-3 h-3 rounded-full bg-[#27c93f] hover:brightness-110 border border-[#1aab29] cursor-pointer"
                             title="Maximize"
                           />
@@ -888,6 +930,258 @@ export const MacbookShowcase = ({
           </div>
         </div>
       </div>
+    </div>
+
+      {/* Mobile Quick Reader Actions */}
+      {scale < 1 && (
+        <div className="flex flex-wrap items-center justify-center gap-2.5 mt-3 px-2 select-none">
+          <button
+            type="button"
+            onClick={() => setDossierModal('about')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-100 shadow-md transition-colors cursor-pointer"
+          >
+            <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span>Read ABOUT_ME.md</span>
+            <span className="text-[10px] text-zinc-400">↗</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setDossierModal('experience')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-100 shadow-md transition-colors cursor-pointer"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>Read EXPERIENCE.md</span>
+            <span className="text-[10px] text-zinc-400">↗</span>
+          </button>
+        </div>
+      )}
+
+      {/* Mobile Dossier Modal Reader (Clean, Accessible Full-Screen View) */}
+      {dossierModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate-fadeIn"
+          onClick={() => setDossierModal(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-2xl max-h-[85vh] bg-zinc-950/95 border border-zinc-700/90 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-zinc-200"
+            style={{
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)'
+            }}
+          >
+            {/* Modal Window Title Bar */}
+            <div className="h-9 px-3 bg-zinc-900/95 border-b border-zinc-800 flex items-center justify-between shrink-0 select-none">
+              <div className="flex items-center gap-2">
+                {/* Traffic Lights */}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setDossierModal(null)}
+                    className="w-3 h-3 rounded-full bg-[#ff5f56] hover:brightness-110 border border-[#e0443e] cursor-pointer"
+                    title="Close reader"
+                  />
+                  <span className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] opacity-60"></span>
+                  <span className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] opacity-60"></span>
+                </div>
+                <span className="text-xs font-mono text-zinc-300 ml-1">
+                  ~/kasaju/{dossierModal === 'about' ? 'ABOUT_ME.md' : 'EXPERIENCE.md'}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setDossierModal(null)}
+                className="w-6 h-6 rounded-md hover:bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center text-xs transition-colors cursor-pointer"
+                title="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Segmented Tab Bar */}
+            <div className="flex items-center bg-zinc-900/60 border-b border-zinc-800 p-1.5 gap-1.5 select-none">
+              <button
+                type="button"
+                onClick={() => setDossierModal('about')}
+                className={`flex-1 py-1 text-xs font-mono rounded-md flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
+                  dossierModal === 'about'
+                    ? 'bg-blue-600 text-white font-semibold shadow-xs'
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
+                }`}
+              >
+                <span className="text-blue-300">#</span>
+                <span>ABOUT_ME.md</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDossierModal('experience')}
+                className={`flex-1 py-1 text-xs font-mono rounded-md flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
+                  dossierModal === 'experience'
+                    ? 'bg-emerald-600 text-white font-semibold shadow-xs'
+                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
+                }`}
+              >
+                <span className="text-emerald-300">#</span>
+                <span>EXPERIENCE.md</span>
+              </button>
+            </div>
+
+            {/* Modal Content Body */}
+            <div className="p-4 sm:p-6 overflow-y-auto mac-scrollbar space-y-4 text-xs sm:text-sm leading-relaxed text-zinc-200 font-sans">
+              {dossierModal === 'about' ? (
+                <>
+                  <div className="border-b border-zinc-800/80 pb-3">
+                    <div className="flex items-center justify-between">
+                      <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                        Agrim Kasaju
+                      </h1>
+                      <span className="text-[11px] font-mono text-blue-300 bg-blue-950/60 border border-blue-800/50 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                        <span>Theme: {currentTheme?.name || 'Minimal Slate'}</span>
+                      </span>
+                    </div>
+                    <p className="text-xs font-mono text-zinc-400 mt-1">
+                      B.Eng Computer Systems Engineering @ Carleton University · GPA 3.33/4.0 · Dean's Honour List
+                    </p>
+                  </div>
+
+                  <p className="text-zinc-300">
+                    Fourth-year engineering student with hands-on production experience in Linux systems software, automated verification harnesses, and edge AI deployment.
+                  </p>
+
+                  {/* Architectural Philosophy */}
+                  <div className="p-3 rounded-xl bg-zinc-900/90 border border-zinc-800/90 text-xs">
+                    <span className="text-blue-400 font-mono font-semibold block mb-1">// Architectural Philosophy</span>
+                    <p className="text-zinc-300">
+                      High-throughput, low-latency execution that survives hostile edge environments, high thread contention, and deterministic timing constraints.
+                    </p>
+                  </div>
+
+                  {/* Core Engineering Stack */}
+                  <div>
+                    <span className="text-xs font-mono uppercase text-zinc-300 tracking-wider mb-1.5 block font-semibold">
+                      Core Engineering Stack:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5 text-xs font-mono">
+                      <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">C/C++</span>
+                      <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">Go</span>
+                      <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">Python</span>
+                      <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">Linux POSIX APIs</span>
+                      <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">ONNX / TFLite INT8</span>
+                      <span className="px-2.5 py-1 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">mTLS & X.509</span>
+                    </div>
+                  </div>
+
+                  {/* Systems Philosophy Details */}
+                  <div className="pt-2 border-t border-zinc-800/90 space-y-3">
+                    <h2 className="text-xs font-bold font-mono text-zinc-200 uppercase tracking-wider">
+                      ## Engineering Background & Systems Philosophy
+                    </h2>
+                    <p className="text-zinc-300">
+                      I am a fourth-year Computer Systems Engineering student at Carleton University with a 3.33/4.0 GPA, specializing in hardware-software co-design, real-time operating systems, distributed networks, and embedded edge AI computing.
+                    </p>
+                    <p className="text-zinc-300">
+                      At <strong>Lumentum</strong>, I work as a Software Developer Co-op on systems verification pipelines, where I automated Linux test harnesses across 10+ optical subsystem configurations (reducing test durations by 35%), implemented mutual TLS (mTLS) with bidirectional X.509 certificate validation, and architected C#/Go filesystem event monitoring pipelines with prototext persistence that reduced snapshot storage overhead by 88%.
+                    </p>
+                    <p className="text-zinc-300">
+                      My technical approach prioritizes systems-level determinism, minimal memory footprint, lockless inter-thread communication, and rigorous verification under high load.
+                    </p>
+                  </div>
+
+                  {/* Coursework */}
+                  <div className="pt-2">
+                    <h3 className="text-xs font-mono uppercase text-zinc-400 tracking-wider mb-2">
+                      ### Academic Highlights & Systems Coursework
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs font-mono">
+                      <div className="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800 text-zinc-300">
+                        <span className="text-white font-semibold block mb-0.5">⚡ Real-Time Systems (SYSC 4001)</span>
+                        <span className="text-zinc-400">Rate-Monotonic scheduling, priority inversion inheritance, POSIX threads.</span>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800 text-zinc-300">
+                        <span className="text-white font-semibold block mb-0.5">🛡️ Network Security (SYSC 4810)</span>
+                        <span className="text-zinc-400">Cryptographic protocols, packet filtering, iptables, mTLS authentication.</span>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800 text-zinc-300">
+                        <span className="text-white font-semibold block mb-0.5">🔌 Embedded Systems (SYSC 3310)</span>
+                        <span className="text-zinc-400">ARM Cortex-M SoC, memory-mapped I/O, UART/SPI/I2C bare-metal drivers.</span>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800 text-zinc-300">
+                        <span className="text-white font-semibold block mb-0.5">⚙️ Operating Systems (SYSC 4005)</span>
+                        <span className="text-zinc-400">Virtual memory paging, inode filesystems, lock-free concurrency.</span>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Lumentum */}
+                  <div className="border-b border-zinc-800/80 pb-3">
+                    <div className="flex items-baseline justify-between">
+                      <h2 className="text-base font-bold text-white flex items-center gap-1.5">
+                        <span>Lumentum</span>
+                        <span className="text-zinc-400 font-normal">·</span>
+                        <span className="text-emerald-400 font-medium text-xs">Software Developer (Co-op)</span>
+                      </h2>
+                      <span className="text-xs font-mono text-zinc-300">May 2026 – Present</span>
+                    </div>
+                    <p className="text-xs font-mono text-zinc-400 mt-0.5">Ottawa, ON · Systems Software & Verification</p>
+
+                    <ul className="mt-2.5 space-y-2 text-xs sm:text-sm text-zinc-200 pl-4 list-disc marker:text-emerald-400">
+                      <li>
+                        <strong className="text-white font-semibold">Automated Linux Validation:</strong> Validated system software by automating test harness execution and diagnostic log parsing across 10+ configurations, <span className="text-emerald-300 font-semibold">reducing manual regression duration by 35%</span>.
+                      </li>
+                      <li>
+                        <strong className="text-white font-semibold">Mutual TLS (mTLS) Security:</strong> Implemented bidirectional X.509 certificate validation between host daemons and client endpoints to enforce strict authentication.
+                      </li>
+                      <li>
+                        <strong className="text-white font-semibold">State Isolation & Storage Reduction:</strong> Built C# filesystem event monitoring service & Go backend pipelines validating declarative prototext persistence, <span className="text-emerald-300 font-semibold">cutting snapshot storage overhead by 88%</span>.
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* TELUS */}
+                  <div className="border-b border-zinc-800/80 pb-3">
+                    <div className="flex items-baseline justify-between">
+                      <h3 className="text-sm font-bold text-white">
+                        TELUS Go Sales <span className="text-zinc-400 font-normal">· Sales Representative</span>
+                      </h3>
+                      <span className="text-xs font-mono text-zinc-300">Jul 2023 – Aug 2023</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-zinc-300 mt-1">
+                      Communicated technical network specifications, hardware requirements, and client advisory in Calgary, AB.
+                    </p>
+                  </div>
+
+                  {/* Coursework & Low-Level Foundations */}
+                  <div>
+                    <p className="text-xs font-mono uppercase text-zinc-300 tracking-wider mb-2 font-semibold">
+                      Coursework & Low-Level Foundations:
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                      <div className="p-2 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
+                        ⚡ Real-Time Systems (Rate-Monotonic)
+                      </div>
+                      <div className="p-2 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
+                        🛡️ Network & Software Security (iptables)
+                      </div>
+                      <div className="p-2 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
+                        🔌 ARM SoC Design (UART/I2C/SPI)
+                      </div>
+                      <div className="p-2 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
+                        ⚙️ CPU Scheduling & POSIX IPC
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
