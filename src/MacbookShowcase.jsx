@@ -53,8 +53,20 @@ export const MacbookShowcase = ({
   currentTheme = { name: 'Minimal Slate', id: 'default' }
 }) => {
   // Apple-style one-time slow opening animation state
-  const [isLidOpen, setIsLidOpen] = useState(false)
-  const [hasAutoOpened, setHasAutoOpened] = useState(false)
+  const [isLidOpen, setIsLidOpen] = useState(() => {
+    try {
+      return typeof window !== 'undefined' && window.location.search.includes('opened=true')
+    } catch {
+      return false
+    }
+  })
+  const [hasAutoOpened, setHasAutoOpened] = useState(() => {
+    try {
+      return typeof window !== 'undefined' && window.location.search.includes('opened=true')
+    } catch {
+      return false
+    }
+  })
   const sectionRef = useRef(null)
 
   // Wallpaper index state (synced with theme: Matterhorn for dark, Sunrise for light)
@@ -840,7 +852,7 @@ export const MacbookShowcase = ({
 
             {/* Base Chassis (Extends Forward in 3D Perspective) */}
             <div
-              className="relative w-full rounded-b-2xl border-t transition-all duration-700 shadow-2xl overflow-hidden"
+              className="relative w-[96%] mx-auto rounded-b-2xl sm:rounded-b-3xl border transition-all duration-700 overflow-hidden"
               style={{
                 transformOrigin: 'top center',
                 transform: 'rotateX(58deg)',
@@ -850,7 +862,9 @@ export const MacbookShowcase = ({
                   : 'linear-gradient(180deg, #2b303d 0%, #1e222b 40%, #12141a 100%)',
                 borderColor: isDark ? '#373e4f' : '#454e63',
                 padding: '10px 16px 14px 16px',
-                boxShadow: '0 35px 80px -15px rgba(0, 0, 0, 0.95), 0 15px 30px -5px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                boxShadow: isDark
+                  ? '0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 10px 20px -6px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.6)'
+                  : '0 20px 45px -12px rgba(15, 23, 42, 0.28), 0 8px 18px -6px rgba(15, 23, 42, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.4)'
               }}
             >
               {/* Upper Deck Surface: Speaker Grilles + Keyboard Well */}
@@ -924,9 +938,27 @@ export const MacbookShowcase = ({
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-28 sm:w-36 h-2 bg-zinc-950 rounded-t-md border-b border-zinc-700/80 shadow-inner"></div>
             </div>
 
-            {/* Ambient Studio Desk Surface Drop Shadow */}
-            <div className="mx-auto w-[92%] h-8 bg-black/70 blur-2xl rounded-full -mt-4"></div>
-            <div className="mx-auto w-[76%] h-12 bg-black/50 blur-3xl rounded-full -mt-6"></div>
+            {/* Soft Ambient Desk Contact Shadow (Blends Seamlessly with Any Background & Theme) */}
+            <div className="relative mx-auto w-[96%] pointer-events-none -mt-16 sm:-mt-20 z-0">
+              <div
+                className="mx-auto w-[92%] h-10 rounded-full transition-all duration-700"
+                style={{
+                  background: isDark
+                    ? 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.22) 50%, transparent 75%)'
+                    : 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.22) 0%, rgba(15, 23, 42, 0.07) 50%, transparent 75%)',
+                  filter: isDark ? 'blur(12px)' : 'blur(14px)'
+                }}
+              />
+              <div
+                className="mx-auto w-[78%] h-14 rounded-full transition-all duration-700 -mt-6"
+                style={{
+                  background: isDark
+                    ? 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.12) 50%, transparent 75%)'
+                    : 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.12) 0%, rgba(15, 23, 42, 0.03) 50%, transparent 75%)',
+                  filter: isDark ? 'blur(20px)' : 'blur(22px)'
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

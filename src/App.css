@@ -175,10 +175,6 @@ body.dark-theme #root {
   overflow-x: hidden;
 }
 
-#root {
-  overflow-y: clip;
-}
-
 body.chat-open #chatPanel {
   z-index: 70;
 }
@@ -1275,8 +1271,7 @@ body:not(.dark-theme) #experienceList .experience-item:hover {
 .fadeup-7 { animation-delay: 600ms; }
 
 .page-fadeup {
-  overflow-x: clip;
-  overflow-y: clip;
+  overflow: visible;
 }
 
 @keyframes page-stagger-in {
