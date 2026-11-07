@@ -810,19 +810,19 @@ export const MacbookShowcase = ({
                             </h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-mono">
                               <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                <span className="text-white font-semibold block">⚡ Real-Time Systems (SYSC 4001)</span>
+                                <span className="text-white font-semibold block">⚡ Real-Time Systems</span>
                                 <span className="text-[10px] text-zinc-400">Rate-Monotonic scheduling, priority inversion inheritance, POSIX threads.</span>
                               </div>
                               <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                <span className="text-white font-semibold block">🛡️ Network Security (SYSC 4810)</span>
+                                <span className="text-white font-semibold block">🛡️ Network Security</span>
                                 <span className="text-[10px] text-zinc-400">Cryptographic protocols, packet filtering, iptables, mTLS authentication.</span>
                               </div>
                               <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                <span className="text-white font-semibold block">🔌 Embedded Systems (SYSC 3310)</span>
+                                <span className="text-white font-semibold block">🔌 Embedded Systems</span>
                                 <span className="text-[10px] text-zinc-400">ARM Cortex-M SoC, memory-mapped I/O, UART/SPI/I2C bare-metal drivers.</span>
                               </div>
                               <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                <span className="text-white font-semibold block">⚙️ Operating Systems (SYSC 4005)</span>
+                                <span className="text-white font-semibold block">⚙️ Operating Systems</span>
                                 <span className="text-[10px] text-zinc-400">Virtual memory paging, inode filesystems, lock-free concurrency.</span>
                               </div>
                             </div>
@@ -1139,19 +1139,19 @@ export const MacbookShowcase = ({
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs font-mono">
                       <div className="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                        <span className="text-white font-semibold block mb-0.5">⚡ Real-Time Systems (SYSC 4001)</span>
+                        <span className="text-white font-semibold block mb-0.5">⚡ Real-Time Systems</span>
                         <span className="text-zinc-400">Rate-Monotonic scheduling, priority inversion inheritance, POSIX threads.</span>
                       </div>
                       <div className="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                        <span className="text-white font-semibold block mb-0.5">🛡️ Network Security (SYSC 4810)</span>
+                        <span className="text-white font-semibold block mb-0.5">🛡️ Network Security</span>
                         <span className="text-zinc-400">Cryptographic protocols, packet filtering, iptables, mTLS authentication.</span>
                       </div>
                       <div className="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                        <span className="text-white font-semibold block mb-0.5">🔌 Embedded Systems (SYSC 3310)</span>
+                        <span className="text-white font-semibold block mb-0.5">🔌 Embedded Systems</span>
                         <span className="text-zinc-400">ARM Cortex-M SoC, memory-mapped I/O, UART/SPI/I2C bare-metal drivers.</span>
                       </div>
                       <div className="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                        <span className="text-white font-semibold block mb-0.5">⚙️ Operating Systems (SYSC 4005)</span>
+                        <span className="text-white font-semibold block mb-0.5">⚙️ Operating Systems</span>
                         <span className="text-zinc-400">Virtual memory paging, inode filesystems, lock-free concurrency.</span>
                       </div>
                     </div>
