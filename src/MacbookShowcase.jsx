@@ -89,7 +89,7 @@ export const MacbookShowcase = ({
   const containerRef = useRef(null)
   const [scale, setScale] = useState(1)
   const DESIGN_WIDTH = 820
-  const DESIGN_HEIGHT = 740
+  const DESIGN_HEIGHT = 860
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -247,7 +247,7 @@ export const MacbookShowcase = ({
       {/* Spacious Bounding Box - Scales proportionally on mobile to fit screen */}
       <div
         ref={containerRef}
-        className="relative w-full py-2 sm:py-8 px-0 sm:px-6 overflow-hidden sm:overflow-visible flex flex-col items-center justify-start"
+        className="relative w-full py-2 sm:py-6 px-0 sm:px-4 overflow-hidden sm:overflow-visible flex flex-col items-center justify-start"
         style={{
           height: scale < 1 ? `${Math.round(DESIGN_HEIGHT * scale)}px` : 'auto'
         }}
@@ -261,87 +261,216 @@ export const MacbookShowcase = ({
             flexShrink: 0
           }}
         >
-          {/* --- APPLE MACBOOK 3D HERO SHOWCASE (Positioned with Authentic Asymmetrical Base Depth) --- */}
+          {/* --- APPLE MACBOOK 3D HERO SHOWCASE (Unified Perspective Rig) --- */}
           <div
-            className="relative w-full max-w-5xl mx-auto select-none overflow-visible transition-transform duration-[4800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+            className="relative w-full select-none overflow-visible flex items-center justify-center"
             style={{
               perspective: '1600px',
-              perspectiveOrigin: '50% 55%',
-              transform: isLidOpen ? 'scale(1.0) translateY(0)' : 'scale(0.80) translateY(24px)',
-              transformOrigin: 'center center'
+              perspectiveOrigin: '50% 25%',
+              minHeight: '840px'
             }}
           >
-          {/* Left-Hand External Ambient Light Source (Simulates off-screen Moon/Sun illuminating the workspace) */}
-          <div
-            aria-hidden="true"
-            className="absolute -top-12 -left-16 w-80 h-80 rounded-full blur-3xl pointer-events-none transition-all duration-700 z-0"
-            style={{
-              background: isDark
-                ? 'radial-gradient(circle, rgba(147, 197, 253, 0.16) 0%, rgba(96, 165, 250, 0.05) 50%, transparent 75%)'
-                : 'radial-gradient(circle, rgba(253, 224, 71, 0.22) 0%, rgba(251, 191, 36, 0.07) 50%, transparent 75%)'
-            }}
-          />
-
-          {/* Laptop Screen Lid / Shell with Slow 3D Folding Transform (Takes 4.8s to open) */}
-          <div
-            className="relative rounded-t-2xl sm:rounded-t-3xl p-2 sm:p-2.5 pb-0 border shadow-2xl z-20"
-            style={{
-              backgroundColor: '#161922',
-              borderColor: isDark ? '#2d3345' : '#3c455c',
-              transformOrigin: 'bottom center',
-              transform: isLidOpen
-                ? 'rotateX(0deg) translateZ(0px)'
-                : 'rotateX(-82deg) translateZ(0px)',
-              transition: 'transform 4800ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 4800ms ease',
-              transformStyle: 'preserve-3d',
-              boxShadow: isLidOpen
-                ? isDark
-                  ? '0 30px 70px -15px rgba(0, 0, 0, 0.8), -6px -6px 28px -10px rgba(186, 230, 253, 0.15)'
-                  : '0 30px 70px -15px rgba(0, 0, 0, 0.8), -6px -6px 28px -10px rgba(254, 240, 138, 0.22)'
-                : '0 15px 35px -5px rgba(0, 0, 0, 0.9)'
-            }}
-          >
-            {/* Top Camera Bezel / Notch */}
-            <div className="absolute top-1 sm:top-1.5 left-1/2 -translate-x-1/2 w-14 sm:w-20 h-2.5 sm:h-3.5 bg-black rounded-b-md flex items-center justify-center gap-1.5 z-40">
-              <div className="w-1.5 h-1.5 rounded-full bg-zinc-800 border border-zinc-700"></div>
-              <div className="w-1 h-1 rounded-full bg-emerald-400/90 shadow-[0_0_4px_#34d399]"></div>
-            </div>
-
-            {/* Display Area (Liquid Retina Display with Classic Mac Wallpaper) */}
+            {/* Left-Hand External Ambient Light Source */}
             <div
-              tabIndex={0}
-              role="region"
-              aria-label="Interactive MacBook Liquid Retina Display"
-              className="relative w-full overflow-hidden rounded-t-lg transition-all duration-700 outline-none"
+              aria-hidden="true"
+              className="absolute top-10 left-4 w-96 h-96 rounded-full blur-3xl pointer-events-none transition-all duration-700 z-0"
               style={{
-                minHeight: '490px',
-                height: '510px',
-                backgroundImage: `url(${currentWallpaper.path})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
+                background: isDark
+                  ? 'radial-gradient(circle, rgba(147, 197, 253, 0.16) 0%, rgba(96, 165, 250, 0.05) 50%, transparent 75%)'
+                  : 'radial-gradient(circle, rgba(253, 224, 71, 0.22) 0%, rgba(251, 191, 36, 0.07) 50%, transparent 75%)'
+              }}
+            />
+
+            {/* THE LAPTOP RIG (800px x 500px, 3D Tilted Desk Angle at 54deg) */}
+            <div
+              className="relative"
+              style={{
+                width: '800px',
+                height: '500px',
+                transformStyle: 'preserve-3d',
+                transform: 'rotateX(54deg)',
+                marginTop: '370px',
+                transition: 'transform 4800ms cubic-bezier(0.16, 1, 0.3, 1)'
               }}
             >
-              {/* --- CLOSED LID EXTERIOR SHELL FACE (Clean Minimalist Aluminum, Zero Logos & Zero Text) --- */}
+              {/* --- 1. LOWER UNIBODY BASE CHASSIS (500px depth, exactly matches Lid 500px depth) --- */}
               <div
-                className={`absolute inset-0 z-45 rounded-t-lg transition-opacity duration-1000 flex flex-col items-center justify-center select-none ${
-                  isLidOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                }`}
+                className="absolute inset-0 rounded-[20px] flex flex-col justify-between"
                 style={{
                   background: isDark
-                    ? 'linear-gradient(145deg, #2a303d 0%, #1c202a 50%, #12141a 100%)'
-                    : 'linear-gradient(145deg, #384050 0%, #262c38 50%, #1a1e27 100%)',
-                  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.6)'
+                    ? 'linear-gradient(180deg, #1a1d26 0%, #12141a 45%, #0b0d11 100%)'
+                    : 'linear-gradient(180deg, #2b303d 0%, #1e222b 45%, #12141a 100%)',
+                  border: isDark ? '2px solid #2d3345' : '2px solid #3c455c',
+                  padding: '16px 24px 20px 24px',
+                  boxShadow: '0 50px 90px -15px rgba(0, 0, 0, 0.95), 0 20px 40px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                 }}
               >
-                {/* Aluminum Specular Sheen Diagonal Streak */}
-                <div
-                  className="absolute inset-0 pointer-events-none opacity-20"
-                  style={{
-                    background: 'linear-gradient(125deg, transparent 20%, rgba(255,255,255,0.4) 45%, transparent 60%)'
-                  }}
-                />
+                {/* Upper Deck Surface: Speaker Grilles + Recessed Keyboard Well */}
+                <div className="flex items-center justify-between gap-4 mt-1.5">
+                  {/* Left Speaker Grille */}
+                  <div className="w-12 h-52 rounded bg-[radial-gradient(#52525b_1px,transparent_1px)] [background-size:3px_3px] opacity-35 shrink-0" />
+
+                  {/* Recessed Anodized Aluminum Keyboard Well */}
+                  <div className="flex-1 h-52 bg-[#08090c] border border-zinc-800/90 rounded-xl p-2 shadow-inner flex flex-col justify-between select-none">
+                    {/* Function Keys Row */}
+                    <div className="flex gap-1 h-5">
+                      <div className="w-8 bg-zinc-900 border border-zinc-800 rounded-[3px] text-[7px] text-zinc-500 flex items-center justify-center font-mono">esc</div>
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      ))}
+                      <div className="w-8 bg-zinc-950 border border-zinc-700/80 rounded-[3px] shadow-inner" />
+                    </div>
+
+                    {/* Number Row */}
+                    <div className="flex gap-1 h-6">
+                      <div className="w-6 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      ))}
+                      <div className="w-9 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                    </div>
+
+                    {/* QWERTY Row */}
+                    <div className="flex gap-1 h-6">
+                      <div className="w-9 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      ))}
+                      <div className="w-6 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                    </div>
+
+                    {/* Home Row (ASDF) */}
+                    <div className="flex gap-1 h-6">
+                      <div className="w-11 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      {Array.from({ length: 11 }).map((_, i) => (
+                        <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      ))}
+                      <div className="w-12 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                    </div>
+
+                    {/* Bottom Row (Spacebar + Modifiers) */}
+                    <div className="flex gap-1 h-7">
+                      <div className="w-8 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      <div className="w-8 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      <div className="w-10 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      <div className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[3px] shadow-inner" />
+                      <div className="w-10 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      <div className="w-8 bg-zinc-900 border border-zinc-800 rounded-[3px]" />
+                      <div className="w-11 bg-zinc-900 border border-zinc-800 rounded-[3px] flex gap-0.5">
+                        <div className="flex-1 bg-zinc-800/80 rounded-[2px]" />
+                        <div className="flex-1 bg-zinc-800/80 rounded-[2px]" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Speaker Grille */}
+                  <div className="w-12 h-52 rounded bg-[radial-gradient(#52525b_1px,transparent_1px)] [background-size:3px_3px] opacity-35 shrink-0" />
+                </div>
+
+                {/* Center Glass Force Touch Trackpad */}
+                <div className="relative mx-auto mt-4 mb-1 w-72 h-44 rounded-2xl bg-[#14171f] border border-zinc-700/60 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]">
+                  <div className="absolute inset-0 rounded-2xl bg-white/[0.02] pointer-events-none" />
+                </div>
+
+                {/* Precision CNC Thumb Opening Scoop Notch on Front Lip */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-36 h-1 bg-[#08090c] rounded-t-sm border-t border-zinc-700/80" />
               </div>
+
+              {/* Rear Cylindrical Hinge Bar */}
+              <div
+                className="absolute -top-1.5 left-6 right-6 h-2.5 bg-[#050608] rounded-full border border-zinc-800/90 shadow-md pointer-events-none"
+                style={{ zIndex: 15 }}
+              />
+
+              {/* Ambient Studio Desk Surface Drop Shadows */}
+              <div
+                aria-hidden="true"
+                className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[92%] h-10 bg-black/70 blur-2xl rounded-full pointer-events-none"
+                style={{ transform: 'translateZ(-20px)' }}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[76%] h-14 bg-black/50 blur-3xl rounded-full pointer-events-none"
+                style={{ transform: 'translateZ(-30px)' }}
+              />
+
+              {/* --- 2. 3D REAR-HINGED DISPLAY LID (800px x 500px, matches base 1:1) --- */}
+              <div
+                className="laptop-lid absolute top-0 left-0 w-[800px] h-[500px] rounded-[20px]"
+                style={{
+                  transformStyle: 'preserve-3d',
+                  transformOrigin: 'top center',
+                  transform: isLidOpen ? 'rotateX(108deg)' : 'rotateX(0deg)',
+                  transition: 'transform 4800ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 4800ms ease',
+                  boxShadow: isLidOpen
+                    ? isDark
+                      ? '0 30px 70px -15px rgba(0, 0, 0, 0.8), -6px -6px 28px -10px rgba(186, 230, 253, 0.15)'
+                      : '0 30px 70px -15px rgba(0, 0, 0, 0.8), -6px -6px 28px -10px rgba(254, 240, 138, 0.22)'
+                    : '0 15px 35px -5px rgba(0, 0, 0, 0.95)'
+                }}
+              >
+                {/* 2A. EXTERIOR SHELL FACE (Space Gray Aluminum - visible when closed / fold angle < 90deg) */}
+                <div
+                  className="absolute inset-0 rounded-[20px] select-none flex items-center justify-center overflow-hidden"
+                  onClick={() => !isLidOpen && setIsLidOpen(true)}
+                  style={{
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    background: isDark
+                      ? 'linear-gradient(145deg, #2a303d 0%, #1c202a 50%, #12141a 100%)'
+                      : 'linear-gradient(145deg, #384050 0%, #262c38 50%, #1a1e27 100%)',
+                    border: isDark ? '2px solid #3c455c' : '2px solid #4a5568',
+                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.6)',
+                    cursor: isLidOpen ? 'default' : 'pointer'
+                  }}
+                  title={!isLidOpen ? "Click to open MacBook" : undefined}
+                >
+                  {/* Aluminum Specular Sheen Diagonal Streak */}
+                  <div
+                    className="absolute inset-0 pointer-events-none opacity-20"
+                    style={{
+                      background: 'linear-gradient(125deg, transparent 20%, rgba(255,255,255,0.4) 45%, transparent 60%)'
+                    }}
+                  />
+                  {/* Minimalist chassis label */}
+                  <div className="text-zinc-500/30 font-mono text-[10px] tracking-widest uppercase pointer-events-none select-none">
+                    MacBook Pro 16″
+                  </div>
+                </div>
+
+                {/* 2B. INTERIOR DISPLAY FACE (KasajuOS Liquid Retina Display - visible when open / fold angle > 90deg) */}
+                <div
+                  className="absolute inset-0 rounded-[20px] flex flex-col overflow-hidden"
+                  style={{
+                    transform: 'rotateY(180deg) rotateZ(180deg)',
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    backgroundColor: '#0a0d14',
+                    border: isDark ? '2px solid #2d3345' : '2px solid #3c455c',
+                    padding: '8px 8px 0 8px',
+                    boxShadow: '0 30px 70px -15px rgba(0, 0, 0, 0.9)',
+                    pointerEvents: isLidOpen ? 'auto' : 'none'
+                  }}
+                >
+                  {/* Top Camera Bezel / Notch */}
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-3.5 bg-black rounded-b-md flex items-center justify-center gap-1.5 z-40">
+                    <div className="w-1.5 h-1.5 rounded-full bg-zinc-800 border border-zinc-700" />
+                    <div className="w-1 h-1 rounded-full bg-emerald-400/90 shadow-[0_0_4px_#34d399]" />
+                  </div>
+
+                  {/* Display Area (Liquid Retina Display with Classic Mac Wallpaper) */}
+                  <div
+                    tabIndex={0}
+                    role="region"
+                    aria-label="Interactive MacBook Liquid Retina Display"
+                    className="relative w-full flex-1 overflow-hidden rounded-t-lg transition-all duration-700 outline-none flex flex-col"
+                    style={{
+                      backgroundImage: `url(${currentWallpaper.path})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat'
+                    }}
+                  >
 
               {/* Subtle Cosmic Grid / Ambient Glow Layer */}
               <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]"></div>
@@ -835,134 +964,14 @@ export const MacbookShowcase = ({
                     </div>
                   </div>
                 )}
-              </div>
-            </div>
-          </div>
-
-          {/* --- MACBOOK PRO LOWER UNIBODY BASE DECK (Authentic Apple Proportions & Seamless Edge Alignment) --- */}
-          <div
-            className="relative w-full z-10 -mt-1"
-            style={{
-              perspective: '2800px',
-              perspectiveOrigin: '50% 0%'
-            }}
-          >
-            {/* Rear Cylindrical Hinge Barrel (Matches 100% Display Lid Width) */}
-            <div className="w-full h-2 sm:h-2.5 bg-black border-x border-zinc-800 rounded-t-sm shadow-md"></div>
-
-            {/* Base Chassis (Extends Forward with Natural, Proportionate 3D Depth) */}
-            <div
-              className="relative w-full rounded-b-2xl sm:rounded-b-3xl border border-t-0 transition-all duration-700 overflow-hidden"
-              style={{
-                transformOrigin: 'top center',
-                transform: 'rotateX(64deg)',
-                transformStyle: 'preserve-3d',
-                background: isDark
-                  ? 'linear-gradient(180deg, #1c1f28 0%, #13161e 40%, #0b0d12 100%)'
-                  : 'linear-gradient(180deg, #2b303d 0%, #1e222b 40%, #12141a 100%)',
-                borderColor: isDark ? '#373e4f' : '#454e63',
-                padding: '10px 16px 14px 16px',
-                boxShadow: isDark
-                  ? '0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 10px 20px -6px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.6)'
-                  : '0 20px 45px -12px rgba(15, 23, 42, 0.28), 0 8px 18px -6px rgba(15, 23, 42, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(0, 0, 0, 0.4)'
-              }}
-            >
-              {/* Upper Deck Surface: Speaker Grilles + Keyboard Well */}
-              <div className="flex items-center justify-between gap-3 sm:gap-4 max-w-4xl mx-auto">
-                {/* Left Speaker Grille */}
-                <div className="w-8 sm:w-14 h-20 sm:h-24 rounded bg-[radial-gradient(#52525b_1px,transparent_1px)] [background-size:3px_3px] opacity-40 shrink-0"></div>
-
-                {/* Recessed Anodized Aluminum Keyboard Well */}
-                <div className="flex-1 h-20 sm:h-24 bg-[#0a0b0e] border border-zinc-800/90 rounded-lg p-1.5 sm:p-2 shadow-inner flex flex-col justify-between select-none">
-                  {/* Function Keys Row */}
-                  <div className="flex gap-1 h-2.5 sm:h-3">
-                    <div className="w-4 sm:w-6 bg-zinc-900 border border-zinc-800 rounded-[2px] text-[6px] text-zinc-500 flex items-center justify-center">esc</div>
-                    {Array.from({ length: 12 }).map((_, i) => (
-                      <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    ))}
-                    <div className="w-4 sm:w-6 bg-zinc-950 border border-zinc-700/80 rounded-[2px] shadow-inner"></div>
-                  </div>
-
-                  {/* Number Row */}
-                  <div className="flex gap-1 h-3 sm:h-3.5">
-                    <div className="w-4 sm:w-5 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    {Array.from({ length: 12 }).map((_, i) => (
-                      <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    ))}
-                    <div className="w-5 sm:w-7 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                  </div>
-
-                  {/* QWERTY Row */}
-                  <div className="flex gap-1 h-3 sm:h-3.5">
-                    <div className="w-5 sm:w-7 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    {Array.from({ length: 12 }).map((_, i) => (
-                      <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    ))}
-                    <div className="w-4 sm:w-5 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                  </div>
-
-                  {/* Home Row (ASDF) */}
-                  <div className="flex gap-1 h-3 sm:h-3.5">
-                    <div className="w-6 sm:w-8 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    {Array.from({ length: 11 }).map((_, i) => (
-                      <div key={i} className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    ))}
-                    <div className="w-6 sm:w-9 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                  </div>
-
-                  {/* Bottom Row (Spacebar + Modifiers) */}
-                  <div className="flex gap-1 h-3.5 sm:h-4">
-                    <div className="w-4 sm:w-6 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    <div className="w-4 sm:w-6 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    <div className="w-5 sm:w-7 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    <div className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[2px] shadow-inner"></div>
-                    <div className="w-5 sm:w-7 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    <div className="w-4 sm:w-6 bg-zinc-900 border border-zinc-800 rounded-[2px]"></div>
-                    <div className="w-6 sm:w-8 bg-zinc-900 border border-zinc-800 rounded-[2px] flex gap-0.5">
-                      <div className="flex-1 bg-zinc-800/80 rounded-[1px]"></div>
-                      <div className="flex-1 bg-zinc-800/80 rounded-[1px]"></div>
-                    </div>
-                  </div>
                 </div>
-
-                {/* Right Speaker Grille */}
-                <div className="w-8 sm:w-14 h-20 sm:h-24 rounded bg-[radial-gradient(#52525b_1px,transparent_1px)] [background-size:3px_3px] opacity-40 shrink-0"></div>
               </div>
-
-              {/* Center Glass Force Touch Trackpad */}
-              <div className="relative mx-auto mt-2 w-44 sm:w-60 h-11 sm:h-14 rounded-xl bg-zinc-900/80 border border-zinc-700/60 shadow-[inset_0_1px_2px_rgba(0,0,0,0.8)]">
-                <div className="absolute inset-0 rounded-xl bg-white/[0.03] pointer-events-none"></div>
-              </div>
-
-              {/* Precision CNC Thumb Opening Scoop Notch on Front Lip */}
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-28 sm:w-36 h-2 bg-zinc-950 rounded-t-md border-b border-zinc-700/80 shadow-inner"></div>
-            </div>
-
-            {/* Soft Ambient Desk Contact Shadow (Blends Seamlessly with Any Background & Theme) */}
-            <div className="relative mx-auto w-[96%] pointer-events-none -mt-20 sm:-mt-24 z-0">
-              <div
-                className="mx-auto w-[92%] h-10 rounded-full transition-all duration-700"
-                style={{
-                  background: isDark
-                    ? 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.22) 50%, transparent 75%)'
-                    : 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.22) 0%, rgba(15, 23, 42, 0.07) 50%, transparent 75%)',
-                  filter: isDark ? 'blur(12px)' : 'blur(14px)'
-                }}
-              />
-              <div
-                className="mx-auto w-[78%] h-14 rounded-full transition-all duration-700 -mt-6"
-                style={{
-                  background: isDark
-                    ? 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.12) 50%, transparent 75%)'
-                    : 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.12) 0%, rgba(15, 23, 42, 0.03) 50%, transparent 75%)',
-                  filter: isDark ? 'blur(20px)' : 'blur(22px)'
-                }}
-              />
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
       {/* Mobile Quick Reader Actions */}
       {scale < 1 && (
