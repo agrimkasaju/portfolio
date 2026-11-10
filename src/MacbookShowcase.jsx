@@ -820,21 +820,7 @@ export const MacbookShowcase = ({
                             </div>
 
                             <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  if (isDisplayZoomed) {
-                                    exitDisplayZoom(e)
-                                  } else {
-                                    enterDisplayZoom('about', e)
-                                  }
-                                }}
-                                className="text-[10px] font-mono text-zinc-300 hover:text-white bg-zinc-800/90 hover:bg-zinc-700 border border-zinc-700/80 px-2 py-0.5 rounded-md flex items-center gap-1 transition-colors cursor-pointer"
-                              >
-                                <span>{isDisplayZoomed ? '← Desk View' : 'Zoom In ⤢'}</span>
-                              </button>
-                              <div className="text-[10px] font-mono text-zinc-400 hidden sm:block">
+                              <div className="text-[10px] font-mono text-zinc-400">
                                 ~/kasaju/ABOUT_ME.md · UTF-8
                               </div>
                             </div>
@@ -1041,21 +1027,7 @@ export const MacbookShowcase = ({
                             </div>
 
                             <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  if (isDisplayZoomed) {
-                                    exitDisplayZoom(e)
-                                  } else {
-                                    enterDisplayZoom('experience', e)
-                                  }
-                                }}
-                                className="text-[10px] font-mono text-zinc-300 hover:text-white bg-zinc-800/90 hover:bg-zinc-700 border border-zinc-700/80 px-2 py-0.5 rounded-md flex items-center gap-1 transition-colors cursor-pointer"
-                              >
-                                <span>{isDisplayZoomed ? '← Desk View' : 'Zoom In ⤢'}</span>
-                              </button>
-                              <div className="text-[10px] font-mono text-zinc-400 hidden sm:block">
+                              <div className="text-[10px] font-mono text-zinc-400">
                                 ~/kasaju/EXPERIENCE.md · Preview
                               </div>
                             </div>
