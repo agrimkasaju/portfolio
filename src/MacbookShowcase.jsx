@@ -26,24 +26,58 @@ const WALLPAPERS = [
     id: 'matterhorn',
     name: 'Matterhorn Starry Night',
     shortName: 'Starry Night',
-    path: '/wallpapers/matterhorn-night.webp',
-    icon: '🏔️'
+    path: '/wallpapers/matterhorn-night.webp'
   },
   {
     id: 'galaxy',
     name: 'OS X Lion Andromeda Galaxy',
     shortName: 'OS X Galaxy',
-    path: '/wallpapers/osx-galaxy.webp',
-    icon: '🌌'
+    path: '/wallpapers/osx-galaxy.webp'
   },
   {
     id: 'ocean',
     name: 'Golden Ocean Sunrise',
     shortName: 'Sun Sunrise',
-    path: '/wallpapers/ocean-sunrise.webp',
-    icon: '🌅'
+    path: '/wallpapers/ocean-sunrise.webp'
   }
 ]
+
+// Isolated Live Clock component to avoid triggering full-tree re-renders on the 3D showcase
+const LiveClock = ({ userLocation }) => {
+  const [currentTime, setCurrentTime] = useState('')
+
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date()
+      setCurrentTime(
+        now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' })
+      )
+    }
+    updateClock()
+    const interval = setInterval(updateClock, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div
+      title={`Location: ${userLocation} · Live Clock: ${currentTime}`}
+      className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 text-[10px] font-mono shadow-xs shrink-0 select-none"
+    >
+      <svg
+        className="w-2.5 h-2.5 text-blue-400 shrink-0"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z" />
+      </svg>
+      <span className="font-medium text-zinc-200">{userLocation}</span>
+      <span className="text-zinc-500 font-normal">·</span>
+      <span className="font-semibold text-zinc-100 tracking-tight">
+        {currentTime || 'Syncing...'}
+      </span>
+    </div>
+  )
+}
 
 export const MacbookShowcase = ({
   isDark = false,
@@ -90,34 +124,34 @@ export const MacbookShowcase = ({
   // Responsive scale state for mobile fitting
   const containerRef = useRef(null)
   const [scale, setScale] = useState(1)
-  const DESIGN_WIDTH = 920
-  const DESIGN_HEIGHT = 780
+  const DESIGN_WIDTH = 800
+  const DESIGN_HEIGHT = 860
 
   useEffect(() => {
     if (!containerRef.current) return
+    let rafId = null
     const updateScale = () => {
       if (containerRef.current) {
         const width = containerRef.current.clientWidth
         setIsMobile(width < 640)
-        if (width > 0 && width < DESIGN_WIDTH) {
-          setScale(width / DESIGN_WIDTH)
-        } else {
-          setScale(1)
-        }
+        const nextScale = width > 0 && width < DESIGN_WIDTH ? width / DESIGN_WIDTH : 1
+        setScale((prev) => (Math.abs(prev - nextScale) > 0.005 ? nextScale : prev))
       }
     }
+    const onResize = () => {
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(updateScale)
+    }
     updateScale()
-    const ro = new ResizeObserver(updateScale)
+    const ro = new ResizeObserver(onResize)
     ro.observe(containerRef.current)
-    window.addEventListener('resize', updateScale)
+    window.addEventListener('resize', onResize, { passive: true })
     return () => {
+      if (rafId) cancelAnimationFrame(rafId)
       ro.disconnect()
-      window.removeEventListener('resize', updateScale)
+      window.removeEventListener('resize', onResize)
     }
   }, [])
-
-  // Real-time live clock state
-  const [currentTime, setCurrentTime] = useState('')
 
   // Escape key listener to exit display zoom back to 3D desk view
   useEffect(() => {
@@ -148,19 +182,6 @@ export const MacbookShowcase = ({
 
   // Real-time location state automatically synchronized from timezone
   const [userLocation, setUserLocation] = useState(getInitialTimezoneCity)
-
-  // Real-time live clock ticking every second
-  useEffect(() => {
-    const updateClock = () => {
-      const now = new Date()
-      setCurrentTime(
-        now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' })
-      )
-    }
-    updateClock()
-    const interval = setInterval(updateClock, 1000)
-    return () => clearInterval(interval)
-  }, [])
 
   // Automatically sync location seamlessly in the background without prompting the user
   useEffect(() => {
@@ -249,7 +270,7 @@ export const MacbookShowcase = ({
   const currentWallpaper = WALLPAPERS[activeWallpaperIndex]
 
   return (
-    <section ref={sectionRef} className="reveal mb-10 sm:mb-14 overflow-visible">
+    <section ref={sectionRef} className="reveal mb-20 sm:mb-24 overflow-visible">
       {/* Spacious Bounding Box - Scales proportionally on mobile or expands to 100% in display-zoom mode */}
       <div
         ref={containerRef}
@@ -258,19 +279,24 @@ export const MacbookShowcase = ({
           height: isDisplayZoomed
             ? isMobile
               ? 'auto'
-              : `${DESIGN_HEIGHT}px`
+              : '540px'
             : scale < 1
             ? `${Math.round(DESIGN_HEIGHT * scale)}px`
-            : 'auto',
-          minHeight: isDisplayZoomed && isMobile ? '78vh' : undefined
+            : `${DESIGN_HEIGHT}px`,
+          minHeight: isDisplayZoomed
+            ? isMobile
+              ? '78vh'
+              : '540px'
+            : '840px'
         }}
       >
         <div
           style={{
-            width: isDisplayZoomed && isMobile ? '100%' : scale < 1 ? `${DESIGN_WIDTH}px` : '100%',
-            maxWidth: isDisplayZoomed && isMobile ? '100%' : `${DESIGN_WIDTH}px`,
-            transform: isDisplayZoomed && isMobile ? 'none' : scale < 1 ? `scale(${scale})` : undefined,
+            width: isDisplayZoomed ? (isMobile ? '100%' : '800px') : (scale < 1 ? '800px' : '100%'),
+            maxWidth: isDisplayZoomed && isMobile ? '100%' : '800px',
+            transform: isDisplayZoomed ? 'none' : scale < 1 ? `scale(${scale})` : undefined,
             transformOrigin: 'top center',
+            margin: '0 auto',
             flexShrink: 0,
             transition: 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
@@ -279,9 +305,13 @@ export const MacbookShowcase = ({
           <div
             className="relative w-full select-none overflow-visible flex items-center justify-center transition-all duration-700"
             style={{
-              perspective: isDisplayZoomed && isMobile ? 'none' : '1600px',
+              perspective: isDisplayZoomed ? 'none' : '1600px',
               perspectiveOrigin: '50% 25%',
-              minHeight: isDisplayZoomed && isMobile ? '78vh' : `${DESIGN_HEIGHT}px`
+              minHeight: isDisplayZoomed
+                ? isMobile
+                  ? '78vh'
+                  : '500px'
+                : `${DESIGN_HEIGHT}px`
             }}
           >
             {/* Soft Ambient Workspace Glow behind Laptop */}
@@ -301,20 +331,19 @@ export const MacbookShowcase = ({
             <div
               className="relative display-zoom-rig"
               style={{
-                width: isDisplayZoomed && isMobile ? '100%' : '800px',
-                height: isDisplayZoomed && isMobile ? 'auto' : '500px',
+                width: isDisplayZoomed ? (isMobile ? '100%' : '800px') : '800px',
+                height: isDisplayZoomed ? (isMobile ? 'auto' : '500px') : '500px',
                 minHeight: isDisplayZoomed && isMobile ? '78vh' : undefined,
-                transformStyle: isDisplayZoomed && isMobile ? 'flat' : 'preserve-3d',
+                transformStyle: isDisplayZoomed ? 'flat' : 'preserve-3d',
                 transform: isDisplayZoomed
-                  ? isMobile
-                    ? 'none'
-                    : 'rotateX(0deg) scale(1.08)'
+                  ? 'none'
                   : 'rotateX(54deg)',
                 marginTop: isDisplayZoomed
                   ? isMobile
                     ? '0px'
-                    : '500px'
+                    : '10px'
                   : '360px',
+                margin: '0 auto',
                 transition: 'transform 800ms cubic-bezier(0.16, 1, 0.3, 1), margin-top 800ms cubic-bezier(0.16, 1, 0.3, 1), width 500ms ease'
               }}
             >
@@ -448,17 +477,17 @@ export const MacbookShowcase = ({
               {/* --- 2. 3D REAR-HINGED DISPLAY LID (800px x 500px or Full Screen Zoom) --- */}
               <div
                 className={`laptop-lid ${
-                  isDisplayZoomed && isMobile
-                    ? 'relative w-full rounded-2xl'
+                  isDisplayZoomed
+                    ? isMobile
+                      ? 'relative w-full rounded-2xl'
+                      : 'relative w-[800px] h-[500px] rounded-[20px] mx-auto'
                     : 'absolute top-0 left-0 w-[800px] h-[500px] rounded-[20px]'
                 }`}
                 style={{
-                  transformStyle: isDisplayZoomed && isMobile ? 'flat' : 'preserve-3d',
+                  transformStyle: isDisplayZoomed ? 'flat' : 'preserve-3d',
                   transformOrigin: 'top center',
                   transform: isDisplayZoomed
-                    ? isMobile
-                      ? 'none'
-                      : 'rotateX(180deg)'
+                    ? 'none'
                     : isLidOpen
                     ? 'rotateX(108deg)'
                     : 'rotateX(0deg)',
@@ -482,7 +511,7 @@ export const MacbookShowcase = ({
                   className="absolute inset-0 rounded-[20px] select-none flex items-center justify-center overflow-hidden"
                   onClick={() => !isLidOpen && setIsLidOpen(true)}
                   style={{
-                    display: isDisplayZoomed && isMobile ? 'none' : 'flex',
+                    display: isDisplayZoomed ? 'none' : 'flex',
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     background: isDark
@@ -515,15 +544,18 @@ export const MacbookShowcase = ({
                       : 'absolute inset-0 rounded-[20px] flex flex-col overflow-hidden'
                   }`}
                   style={{
-                    transform: isDisplayZoomed && isMobile ? 'none' : 'rotateY(180deg) rotateZ(180deg)',
-                    backfaceVisibility: isDisplayZoomed && isMobile ? 'visible' : 'hidden',
-                    WebkitBackfaceVisibility: isDisplayZoomed && isMobile ? 'visible' : 'hidden',
+                    transform: isDisplayZoomed ? 'none' : 'rotateY(180deg) rotateZ(180deg) translateZ(0)',
+                    backfaceVisibility: isDisplayZoomed ? 'visible' : 'hidden',
+                    WebkitBackfaceVisibility: isDisplayZoomed ? 'visible' : 'hidden',
                     backgroundColor: '#0a0d14',
                     border: isDark ? '2px solid #2d3345' : '2px solid #3c455c',
                     padding: isDisplayZoomed && isMobile ? '4px 4px 0 4px' : '8px 8px 0 8px',
                     boxShadow: '0 30px 70px -15px rgba(0, 0, 0, 0.9)',
                     pointerEvents: (isLidOpen || isDisplayZoomed) ? 'auto' : 'none',
-                    minHeight: isDisplayZoomed && isMobile ? '78vh' : undefined
+                    minHeight: isDisplayZoomed && isMobile ? '78vh' : undefined,
+                    WebkitFontSmoothing: 'antialiased',
+                    MozOsxFontSmoothing: 'grayscale',
+                    textRendering: 'optimizeLegibility'
                   }}
                 >
                   {/* Top Camera Bezel / Notch */}
@@ -549,44 +581,33 @@ export const MacbookShowcase = ({
                     {/* Subtle Cosmic Grid */}
                     <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]"></div>
 
-                    {/* Directional Glass Glare */}
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 pointer-events-none z-35 overflow-hidden transition-all duration-700 select-none"
-                      style={{ opacity: isDisplayZoomed ? 0.2 : 1 }}
-                    >
-                      {/* Light Source 1 */}
+                    {/* Directional Glass Glare (Behind windows in 3D desk view; hidden in display-zoom mode) */}
+                    {!isDisplayZoomed && (
                       <div
-                        className="absolute -left-16 -top-16 w-80 h-80 rounded-full blur-3xl transition-all duration-700 pointer-events-none"
-                        style={{
-                          background: isDark
-                            ? 'radial-gradient(circle, rgba(186, 230, 253, 0.32) 0%, rgba(147, 197, 253, 0.12) 45%, transparent 75%)'
-                            : 'radial-gradient(circle, rgba(254, 240, 138, 0.42) 0%, rgba(253, 230, 138, 0.18) 45%, transparent 75%)'
-                        }}
-                      />
+                        aria-hidden="true"
+                        className="absolute inset-0 pointer-events-none z-10 overflow-hidden select-none"
+                      >
+                        {/* Light Source 1 */}
+                        <div
+                          className="absolute -left-16 -top-16 w-80 h-80 rounded-full blur-3xl pointer-events-none"
+                          style={{
+                            background: isDark
+                              ? 'radial-gradient(circle, rgba(186, 230, 253, 0.15) 0%, rgba(147, 197, 253, 0.05) 45%, transparent 75%)'
+                              : 'radial-gradient(circle, rgba(254, 240, 138, 0.20) 0%, rgba(253, 230, 138, 0.08) 45%, transparent 75%)'
+                          }}
+                        />
 
-                      {/* Light Source 2 */}
-                      <div
-                        className="absolute top-0 left-0 w-3/5 h-full transition-all duration-700 pointer-events-none"
-                        style={{
-                          background: isDark
-                            ? 'linear-gradient(120deg, rgba(255, 255, 255, 0.22) 0%, rgba(224, 242, 254, 0.14) 22%, rgba(186, 230, 253, 0.05) 45%, transparent 70%)'
-                            : 'linear-gradient(120deg, rgba(255, 255, 255, 0.32) 0%, rgba(254, 240, 138, 0.22) 22%, rgba(253, 224, 71, 0.07) 48%, transparent 70%)',
-                          maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 40%, transparent 100%)',
-                          WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 40%, transparent 100%)'
-                        }}
-                      />
-
-                      {/* Light Source 3 */}
-                      <div
-                        className="absolute top-0 left-0 w-1/2 h-full opacity-65 transition-all duration-700 pointer-events-none"
-                        style={{
-                          background: isDark
-                            ? 'linear-gradient(115deg, transparent 12%, rgba(255, 255, 255, 0.16) 24%, rgba(224, 242, 254, 0.07) 30%, transparent 42%)'
-                            : 'linear-gradient(115deg, transparent 12%, rgba(255, 255, 255, 0.28) 24%, rgba(254, 240, 138, 0.12) 30%, transparent 42%)'
-                        }}
-                      />
-                    </div>
+                        {/* Light Source 2 */}
+                        <div
+                          className="absolute top-0 left-0 w-3/5 h-full pointer-events-none"
+                          style={{
+                            background: isDark
+                              ? 'linear-gradient(120deg, rgba(255, 255, 255, 0.08) 0%, rgba(224, 242, 254, 0.04) 22%, transparent 70%)'
+                              : 'linear-gradient(120deg, rgba(255, 255, 255, 0.12) 0%, rgba(254, 240, 138, 0.06) 22%, transparent 70%)'
+                          }}
+                        />
+                      </div>
+                    )}
 
                     {/* macOS Top Menu Bar */}
                     <div className="relative z-30 h-8 px-2 sm:px-3 bg-zinc-950/85 backdrop-blur-md border-b border-white/10 flex items-center justify-between text-[11px] text-zinc-300 select-none">
@@ -616,11 +637,11 @@ export const MacbookShowcase = ({
                           <span>{isDisplayZoomed ? 'Desk View' : 'Zoom Screen'}</span>
                         </button>
 
-                        {/* Inactive Menu Buttons (File, Edit, View, Window) - Blurred glare effect when not zoomed */}
+                        {/* Inactive Menu Buttons (File, Edit, View, Window) */}
                         {!isDisplayZoomed && (
                           <div
                             aria-hidden="true"
-                            className="hidden md:flex items-center gap-3 filter blur-[2px] opacity-25 select-none pointer-events-none transition-all duration-500 font-normal text-zinc-300"
+                            className="hidden md:flex items-center gap-3 opacity-30 select-none pointer-events-none font-normal text-zinc-400"
                           >
                             <span>File</span>
                             <span>Edit</span>
@@ -642,7 +663,11 @@ export const MacbookShowcase = ({
                           title={`Wallpaper: ${currentWallpaper.name} (Click to cycle classic Mac aesthetics)`}
                           className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 text-[10px] font-mono transition-colors cursor-pointer group shadow-xs shrink-0"
                         >
-                          <span>{currentWallpaper.icon}</span>
+                          <svg className="w-2.5 h-2.5 text-zinc-300 group-hover:text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                          </svg>
                           <span className="hidden sm:inline">{currentWallpaper.shortName}</span>
                         </button>
 
@@ -665,22 +690,8 @@ export const MacbookShowcase = ({
                         </button>
 
                         {/* FEATURE 3: Auto-Synced Location & Live Clock */}
-                        <div
-                          title={`Location: ${userLocation} · Live Clock: ${currentTime}`}
-                          className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 text-[10px] font-mono shadow-xs shrink-0 select-none"
-                        >
-                          <svg
-                            className="w-2.5 h-2.5 text-blue-400 shrink-0"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                          >
-                            <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z" />
-                          </svg>
-                          <span className="font-medium text-zinc-200">{userLocation}</span>
-                          <span className="text-zinc-500 font-normal">·</span>
-                          <span className="font-semibold text-zinc-100 tracking-tight">
-                            {currentTime || 'Syncing...'}
-                          </span>
+                        <div className="hidden sm:block">
+                          <LiveClock userLocation={userLocation} />
                         </div>
                       </div>
                     </div>
@@ -770,16 +781,14 @@ export const MacbookShowcase = ({
                                 : 'inset-2 sm:inset-3 rounded-xl border-zinc-700/90 z-35'
                               : maximized.about
                               ? 'inset-1 z-35 rounded-xl border-blue-400/80'
-                              : 'left-6 top-4 w-[57%] h-[86%] rounded-xl'
+                              : 'left-1/2 -translate-x-1/2 top-2.5 w-[92%] h-[89%] rounded-xl'
                           } ${
                             activeWindow === 'about'
                               ? 'z-30 ring-1 ring-blue-500/50 border-zinc-700/90'
                               : 'z-20 border-zinc-800/80 opacity-95 hover:opacity-100 hover:border-zinc-700'
                           }`}
                           style={{
-                            backgroundColor: 'rgba(13, 17, 23, 0.94)',
-                            backdropFilter: 'blur(16px)',
-                            WebkitBackdropFilter: 'blur(16px)',
+                            backgroundColor: '#0c1017',
                             transform: isLidOpen ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)'
                           }}
                         >
@@ -935,19 +944,19 @@ export const MacbookShowcase = ({
                                   </h3>
                                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-mono">
                                     <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                      <span className="text-white font-semibold block">⚡ Real-Time Systems</span>
+                                      <span className="text-white font-semibold block">Real-Time Systems</span>
                                       <span className="text-[10px] text-zinc-400">Rate-Monotonic scheduling, priority inversion inheritance, POSIX threads.</span>
                                     </div>
                                     <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                      <span className="text-white font-semibold block">🛡️ Network Security</span>
+                                      <span className="text-white font-semibold block">Network Security</span>
                                       <span className="text-[10px] text-zinc-400">Cryptographic protocols, packet filtering, iptables, mTLS authentication.</span>
                                     </div>
                                     <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                      <span className="text-white font-semibold block">🔌 Embedded Systems</span>
+                                      <span className="text-white font-semibold block">Embedded Systems</span>
                                       <span className="text-[10px] text-zinc-400">ARM Cortex-M SoC, memory-mapped I/O, UART/SPI/I2C bare-metal drivers.</span>
                                     </div>
                                     <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                      <span className="text-white font-semibold block">⚙️ Operating Systems</span>
+                                      <span className="text-white font-semibold block">Operating Systems</span>
                                       <span className="text-[10px] text-zinc-400">Virtual memory paging, inode filesystems, lock-free concurrency.</span>
                                     </div>
                                   </div>
@@ -977,16 +986,14 @@ export const MacbookShowcase = ({
                                 : 'inset-2 sm:inset-3 rounded-xl border-zinc-700/90 z-35'
                               : maximized.experience
                               ? 'inset-1 z-35 rounded-xl border-emerald-500/80'
-                              : 'right-6 top-7 w-[50%] h-[84%] rounded-xl'
+                              : 'left-1/2 -translate-x-1/2 top-2.5 w-[92%] h-[89%] rounded-xl'
                           } ${
                             activeWindow === 'experience'
                               ? 'z-30 ring-1 ring-emerald-500/50 border-zinc-700/90'
                               : 'z-20 border-zinc-800/80 opacity-95 hover:opacity-100 hover:border-zinc-700'
                           }`}
                           style={{
-                            backgroundColor: 'rgba(15, 20, 28, 0.94)',
-                            backdropFilter: 'blur(16px)',
-                            WebkitBackdropFilter: 'blur(16px)',
+                            backgroundColor: '#0c1017',
                             transform: isLidOpen ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)'
                           }}
                         >
@@ -1118,16 +1125,16 @@ export const MacbookShowcase = ({
                               </p>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[10px] font-mono">
                                 <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
-                                  ⚡ Real-Time Systems (Rate-Monotonic)
+                                  Real-Time Systems (Rate-Monotonic)
                                 </div>
                                 <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
-                                  🛡️ Network & Software Security (iptables)
+                                  Network & Software Security (iptables)
                                 </div>
                                 <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
-                                  🔌 ARM SoC Design (UART/I2C/SPI)
+                                  ARM SoC Design (UART/I2C/SPI)
                                 </div>
                                 <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
-                                  ⚙️ CPU Scheduling & POSIX IPC
+                                  CPU Scheduling & POSIX IPC
                                 </div>
                               </div>
                             </div>

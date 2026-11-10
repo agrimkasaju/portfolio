@@ -26,7 +26,7 @@ In [`src/MacbookShowcase.jsx`](file:///home/grim/Downloads/portfolio/src/Macbook
 #### Evaluated Architectural Options:
 - **Option A: Pure 3D `translateZ()` Fly-In:**
   - *Pitfall:* WebKit (iOS Safari) rasterizes 3D transformed elements onto a fixed texture bitmap before perspective scaling. Zooming via 3D `translateZ` causes blurry, pixelated text and breaks momentum touch scrolling inside overflow containers.
-- **Option B: Responsive Display-Lock Camera Zoom (Selected 🏆):**
+- **Option B: Responsive Display-Lock Camera Zoom (Selected):**
   - When `isDisplayZoomed === true`:
     1. **Fade Lower Unibody:** The keyboard base chassis smoothly drops away (`opacity: 0`, `translateY(60px)`, `pointer-events: none`).
     2. **3D Tilt Normalization:** The 3D rig smoothly un-tilts from `rotateX(54deg)` to `rotateX(0deg)` and lid normalizes to `rotateX(0deg)` using `cubic-bezier(0.16, 1, 0.3, 1)`.
