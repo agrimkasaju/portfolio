@@ -1947,6 +1947,36 @@ body:not(.dark-theme) .main-page-divider-lift:focus-within,
   animation: modal-spring-in 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Enticing Luminous Glow for Readme in MacBook Display */
+@keyframes readme-glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 16px rgba(56, 189, 248, 0.45),
+      0 0 34px rgba(56, 189, 248, 0.22),
+      0 18px 45px rgba(0, 0, 0, 0.85);
+    border-color: rgba(56, 189, 248, 0.65);
+  }
+  50% {
+    box-shadow:
+      0 0 30px rgba(56, 189, 248, 0.8),
+      0 0 60px rgba(56, 189, 248, 0.38),
+      0 22px 52px rgba(0, 0, 0, 0.92);
+    border-color: rgba(56, 189, 248, 1);
+  }
+}
+
+.readme-glow {
+  animation: readme-glow-pulse 2.8s ease-in-out infinite;
+}
+
+.readme-glow:hover {
+  box-shadow:
+    0 0 38px rgba(56, 189, 248, 0.9),
+    0 0 68px rgba(56, 189, 248, 0.5),
+    0 24px 55px rgba(0, 0, 0, 0.95) !important;
+  border-color: #38bdf8 !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1 !important;
