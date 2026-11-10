@@ -1141,7 +1141,7 @@ export const MacbookShowcase = ({
                                     <img src="/logos/telus.svg" alt="TELUS" className="h-3.5 sm:h-4 w-auto block" />
                                   </span>
                                   <span className="hidden sm:inline text-zinc-400 font-normal">·</span>
-                                  <span className="text-zinc-300 font-normal text-xs sm:text-sm">Sales Representative</span>
+                                  <span className="text-zinc-300 font-normal text-xs sm:text-sm">Technical Analyst</span>
                                 </div>
                                 <span className="text-[10px] font-mono text-zinc-400 shrink-0">Jul 2023 – Aug 2023</span>
                               </div>
