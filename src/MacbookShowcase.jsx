@@ -124,8 +124,8 @@ export const MacbookShowcase = ({
   // Responsive scale state for mobile fitting
   const containerRef = useRef(null)
   const [scale, setScale] = useState(1)
-  const DESIGN_WIDTH = 800
-  const DESIGN_HEIGHT = 760
+  const DESIGN_WIDTH = 920
+  const DESIGN_HEIGHT = 800
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -134,7 +134,7 @@ export const MacbookShowcase = ({
       if (containerRef.current) {
         const width = containerRef.current.clientWidth
         setIsMobile(width < 640)
-        const nextScale = width > 0 && width < DESIGN_WIDTH ? Math.min(1, (width - (width < 640 ? 12 : 0)) / DESIGN_WIDTH) : 1
+        const nextScale = width > 0 && width < DESIGN_WIDTH ? width / DESIGN_WIDTH : 1
         setScale((prev) => (Math.abs(prev - nextScale) > 0.005 ? nextScale : prev))
       }
     }
@@ -314,24 +314,11 @@ export const MacbookShowcase = ({
         >
           {/* --- APPLE MACBOOK 3D HERO SHOWCASE (Unified Perspective Rig) --- */}
           <div
-            className="relative w-full select-none overflow-visible flex flex-col items-center justify-start transition-all duration-700"
+            className="relative w-full select-none overflow-visible flex items-center justify-center transition-all duration-700"
             style={{
               perspective: isDisplayZoomed ? 'none' : '1600px',
               perspectiveOrigin: '50% 25%',
-              height: isDisplayZoomed
-                ? isMobile
-                  ? 'auto'
-                  : '540px'
-                : scale < 1
-                ? `${Math.round(DESIGN_HEIGHT * scale)}px`
-                : `${DESIGN_HEIGHT}px`,
-              minHeight: isDisplayZoomed
-                ? isMobile
-                  ? '78vh'
-                  : '500px'
-                : scale < 1
-                ? `${Math.round(DESIGN_HEIGHT * scale)}px`
-                : `${DESIGN_HEIGHT}px`
+              minHeight: isDisplayZoomed && isMobile ? '78vh' : `${DESIGN_HEIGHT}px`
             }}
           >
             {/* Soft Ambient Workspace Glow behind Laptop */}
@@ -362,7 +349,8 @@ export const MacbookShowcase = ({
                   ? isMobile
                     ? '0px'
                     : '10px'
-                  : '440px',
+                  : '480px',
+                flexShrink: 0,
                 transition: 'transform 800ms cubic-bezier(0.16, 1, 0.3, 1), margin-top 800ms cubic-bezier(0.16, 1, 0.3, 1), width 500ms ease'
               }}
             >
@@ -578,7 +566,12 @@ export const MacbookShowcase = ({
                   }}
                 >
                   {/* Top Camera Bezel / Notch */}
-                  <div className="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-3.5 bg-black rounded-b-md flex items-center justify-center gap-1.5 z-40 select-none pointer-events-none">
+                  <div
+                    className="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-3.5 bg-black rounded-b-md flex items-center justify-center gap-1.5 z-40 select-none pointer-events-none"
+                    style={{
+                      display: isDisplayZoomed && isMobile ? 'none' : 'flex'
+                    }}
+                  >
                     <div className="w-1.5 h-1.5 rounded-full bg-zinc-800 border border-zinc-700" />
                     <div className="w-1 h-1 rounded-full bg-emerald-400/90 shadow-[0_0_4px_#34d399]" />
                   </div>
