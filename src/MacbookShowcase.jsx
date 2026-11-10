@@ -279,14 +279,14 @@ export const MacbookShowcase = ({
           height: isDisplayZoomed
             ? isMobile
               ? 'auto'
-              : '560px'
+              : '540px'
             : scale < 1
             ? `${Math.round(DESIGN_HEIGHT * scale)}px`
             : `${DESIGN_HEIGHT}px`,
           minHeight: isDisplayZoomed
             ? isMobile
               ? '78vh'
-              : '560px'
+              : '540px'
             : scale < 1
             ? `${Math.round(DESIGN_HEIGHT * scale)}px`
             : `${DESIGN_HEIGHT}px`
@@ -314,11 +314,17 @@ export const MacbookShowcase = ({
         >
           {/* --- APPLE MACBOOK 3D HERO SHOWCASE (Unified Perspective Rig) --- */}
           <div
-            className="relative w-full select-none overflow-visible flex items-center justify-center transition-all duration-700"
+            className={`relative w-full select-none overflow-visible flex justify-center transition-all duration-700 ${
+              isDisplayZoomed ? 'items-start' : 'items-center'
+            }`}
             style={{
               perspective: isDisplayZoomed ? 'none' : '1600px',
               perspectiveOrigin: '50% 25%',
-              minHeight: isDisplayZoomed && isMobile ? '78vh' : `${DESIGN_HEIGHT}px`
+              minHeight: isDisplayZoomed
+                ? isMobile
+                  ? '78vh'
+                  : '520px'
+                : `${DESIGN_HEIGHT}px`
             }}
           >
             {/* Soft Ambient Workspace Glow behind Laptop */}
