@@ -1931,6 +1931,40 @@ body:not(.dark-theme) .main-page-divider-lift:focus-within,
   45%, 55% { left: 160%; }
 }
 
+/* Corporate Logo Shimmer Badge with Specular Shine */
+.logo-shimmer {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+.logo-shimmer:hover {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.logo-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 15%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 85%
+  );
+  transform: skewX(-20deg);
+  animation: sweep-shine 5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 5;
+}
+
 /* Display-Only Camera Zoom Transition Engine */
 .display-zoom-rig {
   transition:

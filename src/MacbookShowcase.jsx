@@ -1108,15 +1108,17 @@ export const MacbookShowcase = ({
                           >
                             {/* Lumentum Co-op Experience */}
                             <div className="border-b border-zinc-800/80 pb-2.5">
-                              <div className="flex items-baseline justify-between">
-                                <h2 className="text-sm sm:text-base font-bold text-white flex items-center gap-1.5">
-                                  <span>Lumentum</span>
-                                  <span className="text-zinc-400 font-normal">·</span>
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="logo-shimmer px-2 py-0.5 rounded bg-white shadow-xs border border-white/80 shrink-0" title="Lumentum">
+                                    <img src="/logos/lumentum.svg" alt="Lumentum" className="h-3.5 sm:h-4 w-auto block" />
+                                  </span>
+                                  <span className="hidden sm:inline text-zinc-400 font-normal">·</span>
                                   <span className="text-emerald-400 font-medium text-xs sm:text-sm">Software Developer (Co-op)</span>
-                                </h2>
-                                <span className="text-[10px] font-mono text-zinc-300">May 2026 – Present</span>
+                                </div>
+                                <span className="text-[10px] font-mono text-zinc-400 shrink-0">May 2026 – Present</span>
                               </div>
-                              <p className="text-[10px] sm:text-xs font-mono text-zinc-400">Ottawa, ON · Systems Software & Verification</p>
+                              <p className="text-[10px] sm:text-xs font-mono text-zinc-400 mt-1">Ottawa, ON · Systems Software & Verification</p>
 
                               <ul className="mt-2 space-y-1.5 text-[11px] sm:text-xs text-zinc-200 pl-3 list-disc marker:text-emerald-400">
                                 <li>
@@ -1133,11 +1135,15 @@ export const MacbookShowcase = ({
 
                             {/* TELUS Experience */}
                             <div className="border-b border-zinc-800/80 pb-2">
-                              <div className="flex items-baseline justify-between">
-                                <h3 className="text-xs sm:text-sm font-bold text-white">
-                                  TELUS Go Sales <span className="text-zinc-400 font-normal">· Sales Representative</span>
-                                </h3>
-                                <span className="text-[10px] font-mono text-zinc-300">Jul 2023 – Aug 2023</span>
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="logo-shimmer px-2 py-0.5 rounded bg-white shadow-xs border border-white/80 shrink-0" title="TELUS">
+                                    <img src="/logos/telus.svg" alt="TELUS" className="h-3.5 sm:h-4 w-auto block" />
+                                  </span>
+                                  <span className="hidden sm:inline text-zinc-400 font-normal">·</span>
+                                  <span className="text-zinc-300 font-normal text-xs sm:text-sm">Sales Representative</span>
+                                </div>
+                                <span className="text-[10px] font-mono text-zinc-400 shrink-0">Jul 2023 – Aug 2023</span>
                               </div>
                               <p className="text-[11px] sm:text-xs text-zinc-300 mt-1">
                                 Communicated technical network specifications, hardware requirements, and client advisory in Calgary, AB.
