@@ -88,8 +88,8 @@ export const MacbookShowcase = ({
   // Responsive scale state for mobile fitting
   const containerRef = useRef(null)
   const [scale, setScale] = useState(1)
-  const DESIGN_WIDTH = 960
-  const DESIGN_HEIGHT = 740
+  const DESIGN_WIDTH = 920
+  const DESIGN_HEIGHT = 780
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -232,7 +232,7 @@ export const MacbookShowcase = ({
   return (
     <section ref={sectionRef} className="fadeup-item fadeup-2 mb-16 overflow-visible">
       {/* Section Header */}
-      <div className="flex items-center justify-between mb-4 px-1">
+      <div className="flex items-center justify-between mb-8 sm:mb-12 px-1 relative z-30">
         <div className="flex items-center gap-2">
           <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-color)' }}></span>
           <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
@@ -289,7 +289,7 @@ export const MacbookShowcase = ({
                 height: '500px',
                 transformStyle: 'preserve-3d',
                 transform: 'rotateX(54deg)',
-                marginTop: '310px',
+                marginTop: '360px',
                 transition: 'transform 4800ms cubic-bezier(0.16, 1, 0.3, 1)'
               }}
             >
