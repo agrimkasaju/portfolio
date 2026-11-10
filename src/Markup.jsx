@@ -153,7 +153,7 @@ const Markup = ({
   return (
     <div className="page-fadeup max-w-4xl mx-auto px-4 py-8 mt-2 sm:mt-3">
       {/* Hero Section */}
-      <section id="heroCard" className="reveal grid grid-cols-[100px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] md:grid-cols-[140px_minmax(0,1fr)] gap-4 sm:gap-6 mb-6 items-center">
+      <section id="heroCard" className="reveal grid grid-cols-[100px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] md:grid-cols-[140px_minmax(0,1fr)] gap-4 sm:gap-6 mb-8 sm:mb-10 items-center">
         {/* Geometric Monogram Badge */}
         <div className="tilt-card relative w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] md:w-[140px] md:h-[140px] bg-zinc-100 dark:bg-zinc-900 border-2 flex flex-col items-center justify-center transition-all duration-300"
           style={{ borderColor: 'var(--accent-color)' }}>

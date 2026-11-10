@@ -124,8 +124,8 @@ export const MacbookShowcase = ({
   // Responsive scale state for mobile fitting
   const containerRef = useRef(null)
   const [scale, setScale] = useState(1)
-  const DESIGN_WIDTH = 920
-  const DESIGN_HEIGHT = 860
+  const DESIGN_WIDTH = 800
+  const DESIGN_HEIGHT = 760
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -134,7 +134,7 @@ export const MacbookShowcase = ({
       if (containerRef.current) {
         const width = containerRef.current.clientWidth
         setIsMobile(width < 640)
-        const nextScale = width > 0 && width < DESIGN_WIDTH ? width / DESIGN_WIDTH : 1
+        const nextScale = width > 0 && width < DESIGN_WIDTH ? Math.min(1, (width - (width < 640 ? 12 : 0)) / DESIGN_WIDTH) : 1
         setScale((prev) => (Math.abs(prev - nextScale) > 0.005 ? nextScale : prev))
       }
     }
@@ -270,11 +270,11 @@ export const MacbookShowcase = ({
   const currentWallpaper = WALLPAPERS[activeWallpaperIndex]
 
   return (
-    <section ref={sectionRef} className="reveal mb-20 sm:mb-24 overflow-visible">
+    <section ref={sectionRef} className="reveal mb-10 sm:mb-14 overflow-visible pt-2 sm:pt-4">
       {/* Spacious Bounding Box - Scales proportionally on mobile or expands to 100% in display-zoom mode */}
       <div
         ref={containerRef}
-        className="relative w-full py-1 sm:py-6 px-0 sm:px-4 overflow-visible flex flex-col items-center justify-start transition-all duration-700"
+        className="relative w-full py-1 sm:py-4 px-0 sm:px-4 overflow-visible flex flex-col items-center justify-start transition-all duration-700"
         style={{
           height: isDisplayZoomed
             ? isMobile
@@ -287,7 +287,9 @@ export const MacbookShowcase = ({
             ? isMobile
               ? '78vh'
               : '560px'
-            : '840px'
+            : scale < 1
+            ? `${Math.round(DESIGN_HEIGHT * scale)}px`
+            : `${DESIGN_HEIGHT}px`
         }}
       >
         <div
@@ -306,21 +308,29 @@ export const MacbookShowcase = ({
               : `${DESIGN_WIDTH}px`,
             transform: isDisplayZoomed ? 'none' : scale < 1 ? `scale(${scale})` : undefined,
             transformOrigin: 'top center',
-            margin: isDisplayZoomed && !isMobile ? '0 auto' : undefined,
             flexShrink: 0,
             transition: 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
         >
           {/* --- APPLE MACBOOK 3D HERO SHOWCASE (Unified Perspective Rig) --- */}
           <div
-            className="relative w-full select-none overflow-visible flex items-center justify-center transition-all duration-700"
+            className="relative w-full select-none overflow-visible flex flex-col items-center justify-start transition-all duration-700"
             style={{
               perspective: isDisplayZoomed ? 'none' : '1600px',
               perspectiveOrigin: '50% 25%',
+              height: isDisplayZoomed
+                ? isMobile
+                  ? 'auto'
+                  : '540px'
+                : scale < 1
+                ? `${Math.round(DESIGN_HEIGHT * scale)}px`
+                : `${DESIGN_HEIGHT}px`,
               minHeight: isDisplayZoomed
                 ? isMobile
                   ? '78vh'
                   : '500px'
+                : scale < 1
+                ? `${Math.round(DESIGN_HEIGHT * scale)}px`
                 : `${DESIGN_HEIGHT}px`
             }}
           >
@@ -352,8 +362,7 @@ export const MacbookShowcase = ({
                   ? isMobile
                     ? '0px'
                     : '10px'
-                  : '360px',
-                margin: isDisplayZoomed && !isMobile ? '0 auto' : undefined,
+                  : '440px',
                 transition: 'transform 800ms cubic-bezier(0.16, 1, 0.3, 1), margin-top 800ms cubic-bezier(0.16, 1, 0.3, 1), width 500ms ease'
               }}
             >
@@ -372,7 +381,7 @@ export const MacbookShowcase = ({
                   opacity: isDisplayZoomed ? 0 : 1,
                   transform: isDisplayZoomed ? 'translateY(120px)' : 'translateY(0)',
                   pointerEvents: isDisplayZoomed ? 'none' : 'auto',
-                  display: isDisplayZoomed && isMobile ? 'none' : 'flex'
+                  display: isDisplayZoomed ? 'none' : 'flex'
                 }}
               >
                 {/* Upper Deck Surface: Speaker Grilles + Recessed Keyboard Well */}
@@ -452,7 +461,7 @@ export const MacbookShowcase = ({
                 style={{
                   zIndex: 15,
                   opacity: isDisplayZoomed ? 0 : 1,
-                  display: isDisplayZoomed && isMobile ? 'none' : 'block'
+                  display: isDisplayZoomed ? 'none' : 'block'
                 }}
               />
 
@@ -467,7 +476,7 @@ export const MacbookShowcase = ({
                   filter: isDark ? 'blur(10px)' : 'blur(12px)',
                   transform: 'translateZ(-10px)',
                   opacity: isDisplayZoomed ? 0 : 1,
-                  display: isDisplayZoomed && isMobile ? 'none' : 'block'
+                  display: isDisplayZoomed ? 'none' : 'block'
                 }}
               />
               <div
@@ -480,7 +489,7 @@ export const MacbookShowcase = ({
                   filter: isDark ? 'blur(16px)' : 'blur(18px)',
                   transform: 'translateZ(-20px)',
                   opacity: isDisplayZoomed ? 0 : 1,
-                  display: isDisplayZoomed && isMobile ? 'none' : 'block'
+                  display: isDisplayZoomed ? 'none' : 'block'
                 }}
               />
 
