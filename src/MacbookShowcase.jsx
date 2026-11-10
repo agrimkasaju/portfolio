@@ -125,7 +125,7 @@ export const MacbookShowcase = ({
   const containerRef = useRef(null)
   const [scale, setScale] = useState(1)
   const DESIGN_WIDTH = 920
-  const DESIGN_HEIGHT = 800
+  const DESIGN_HEIGHT = 960
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -270,7 +270,7 @@ export const MacbookShowcase = ({
   const currentWallpaper = WALLPAPERS[activeWallpaperIndex]
 
   return (
-    <section ref={sectionRef} className="reveal mb-10 sm:mb-14 overflow-visible pt-2 sm:pt-4">
+    <section ref={sectionRef} className="reveal mb-16 sm:mb-20 overflow-visible pt-1 sm:pt-3">
       {/* Spacious Bounding Box - Scales proportionally on mobile or expands to 100% in display-zoom mode */}
       <div
         ref={containerRef}
@@ -349,7 +349,7 @@ export const MacbookShowcase = ({
                   ? isMobile
                     ? '0px'
                     : '10px'
-                  : '480px',
+                  : '420px',
                 flexShrink: 0,
                 transition: 'transform 800ms cubic-bezier(0.16, 1, 0.3, 1), margin-top 800ms cubic-bezier(0.16, 1, 0.3, 1), width 500ms ease'
               }}

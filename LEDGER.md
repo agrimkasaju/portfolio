@@ -10,3 +10,4 @@
 | 2026-11-10T04:41:57Z | Epoch 5: Puppeteer Testing | COMPLETE | Automated cross-device test suite passed on Desktop (1280x950) and Mobile (390x844) |
 | 2026-11-10T04:43:00Z | Epoch 6: Git Commit & Push | COMPLETE | Committed and pushed to `origin main` |
 | 2026-11-10T06:36:00Z | Mobile Layout Fix | COMPLETE | Pulled remote changes, diagnosed flexbox height crush and perspective width cutoff, restored 920x800 coordinate system and 480px top alignment, verified via Puppeteer screenshots, and pushed commit `5f661ef` |
+| 2026-11-10T06:44:00Z | Spacing & Notch Clearance Fix | COMPLETE | Increased DESIGN_HEIGHT to 960px, reduced rig marginTop to 420px, set section margin to mb-16 sm:mb-20, hid notch in mobile zoomed view; verified +56px positive clearance before Featured Projects and 36px clearance from hero card via Puppeteer |
