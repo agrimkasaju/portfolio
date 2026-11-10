@@ -1842,3 +1842,122 @@ body:not(.dark-theme) .main-page-divider-lift:focus-within,
   background-color: #3f3f46 !important;
   color: #ffffff !important;
 }
+
+/* ==========================================================================
+   OMIDHEMMATI-INSPIRED MOTION ENGINE (GPU-Accelerated Composite Physics)
+   ========================================================================== */
+
+/* Kinetic Scroll Reveal with Spring Deceleration */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px) scale(0.98);
+  transition:
+    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* 3D Perspective Tilt Card with Specular Shine */
+.tilt-card {
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.tilt-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.tilt-card:hover::before {
+  left: 140%;
+}
+
+/* Tactile Button Micro-Interactions & Shimmer */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+.btn-shimmer:hover {
+  transform: translateY(-2px) scale(1.01);
+}
+
+.btn-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transform: skewX(-18deg);
+  animation: sweep-shine 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes sweep-shine {
+  0%, 100% { left: -100%; }
+  45%, 55% { left: 160%; }
+}
+
+/* Spring Sheet Modal for Deep Dossier Reading */
+@keyframes modal-spring-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-modal-spring {
+  animation: modal-spring-in 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .tilt-card {
+    transform: none !important;
+    transition: none !important;
+  }
+  .btn-shimmer::after {
+    animation: none !important;
+  }
+}

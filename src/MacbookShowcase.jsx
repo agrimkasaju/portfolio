@@ -82,6 +82,8 @@ export const MacbookShowcase = ({
   const [maximized, setMaximized] = useState({ about: false, experience: false })
   // Active mobile tab when on small screens
   const [mobileTab, setMobileTab] = useState('about')
+  // Active scroll dossier tab
+  const [activeDossierTab, setActiveDossierTab] = useState('about')
   // Mobile dossier modal reader state: null | 'about' | 'experience'
   const [dossierModal, setDossierModal] = useState(null)
 
@@ -230,20 +232,7 @@ export const MacbookShowcase = ({
   const currentWallpaper = WALLPAPERS[activeWallpaperIndex]
 
   return (
-    <section ref={sectionRef} className="fadeup-item fadeup-2 mb-16 overflow-visible">
-      {/* Section Header */}
-      <div className="flex items-center justify-between mb-8 sm:mb-12 px-1 relative z-30">
-        <div className="flex items-center gap-2">
-          <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-color)' }}></span>
-          <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-            <span>Engineering Profile & Experience</span>
-            <span className="hidden sm:inline-block text-[11px] font-mono font-normal text-zinc-500 dark:text-zinc-400">
-              Interactive Workspace
-            </span>
-          </h2>
-        </div>
-      </div>
-
+    <section ref={sectionRef} className="reveal mb-10 sm:mb-14 overflow-visible">
       {/* Spacious Bounding Box - Scales proportionally on mobile to fit screen */}
       <div
         ref={containerRef}
@@ -980,6 +969,16 @@ export const MacbookShowcase = ({
                     </div>
                   </div>
                 )}
+
+                {/* Mobile Screen Tap Affordance Badge */}
+                {scale < 1 && isLidOpen && (
+                  <div className="sm:hidden absolute bottom-2 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono bg-black/85 backdrop-blur-md text-white border border-white/20 shadow-xl">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                      <span>Tap window on screen to expand ↗</span>
+                    </span>
+                  </div>
+                )}
                 </div>
               </div>
             </div>
@@ -989,29 +988,185 @@ export const MacbookShowcase = ({
     </div>
   </div>
 
-      {/* Mobile Quick Reader Actions */}
-      {scale < 1 && (
-        <div className="flex flex-wrap items-center justify-center gap-2.5 mt-2 px-2 select-none relative z-20">
-          <button
-            type="button"
-            onClick={() => setDossierModal('about')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono bg-white dark:bg-zinc-900/95 text-zinc-800 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-300 dark:border-zinc-700/80 shadow-sm transition-colors cursor-pointer"
-          >
-            <span className="w-2 h-2 rounded-full bg-blue-400"></span>
-            <span>Read ABOUT_ME.md</span>
-            <span className="text-[10px] text-zinc-400">↗</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setDossierModal('experience')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono bg-white dark:bg-zinc-900/95 text-zinc-800 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-300 dark:border-zinc-700/80 shadow-sm transition-colors cursor-pointer"
-          >
-            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-            <span>Read EXPERIENCE.md</span>
-            <span className="text-[10px] text-zinc-400">↗</span>
-          </button>
+      {/* Interactive Dossier Card (Native Scroll-Down Reading with Fluid Segmented Control) */}
+      <div className="reveal tilt-card mt-6 sm:mt-10 w-full max-w-3xl mx-auto rounded-2xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden transition-all duration-300">
+        {/* Title Bar with Traffic Lights and Segmented Switch */}
+        <div className="px-3 sm:px-4 py-2.5 bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-2 select-none">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]"></span>
+              <span className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123]"></span>
+              <span className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29]"></span>
+            </div>
+            <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400 ml-1">
+              ~/kasaju/{activeDossierTab === 'about' ? 'ABOUT_ME.md' : 'EXPERIENCE.md'}
+            </span>
+          </div>
+
+          {/* Segmented Control */}
+          <div className="flex items-center bg-zinc-200/80 dark:bg-zinc-800/80 p-0.5 rounded-lg border border-zinc-300/60 dark:border-zinc-700/60 text-xs font-mono">
+            <button
+              type="button"
+              onClick={() => setActiveDossierTab('about')}
+              className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                activeDossierTab === 'about'
+                  ? 'bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 font-semibold shadow-xs'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
+              }`}
+            >
+              # ABOUT_ME.md
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveDossierTab('experience')}
+              className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                activeDossierTab === 'experience'
+                  ? 'bg-white dark:bg-zinc-900 text-emerald-600 dark:text-emerald-400 font-semibold shadow-xs'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
+              }`}
+            >
+              # EXPERIENCE.md
+            </button>
+          </div>
         </div>
-      )}
+
+        {/* Dossier Content Body */}
+        <div className="p-4 sm:p-6 space-y-4 text-xs sm:text-sm leading-relaxed text-zinc-700 dark:text-zinc-300 font-sans">
+          {activeDossierTab === 'about' ? (
+            <>
+              <div className="border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-zinc-900 dark:text-white tracking-tight">
+                    Agrim Kasaju
+                  </h3>
+                  <span className="text-[11px] font-mono text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/50 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                    <span>Theme: {currentTheme?.name || 'Minimal Slate'}</span>
+                  </span>
+                </div>
+                <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-1">
+                  B.Eng Computer Systems Engineering @ Carleton University · GPA 3.33/4.0 · Dean's Honour List
+                </p>
+              </div>
+
+              <p>
+                Fourth-year engineering student with hands-on production experience in Linux systems software, automated verification harnesses, and edge AI deployment.
+              </p>
+
+              {/* Architectural Philosophy */}
+              <div className="p-3.5 rounded-xl bg-zinc-50 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 text-xs">
+                <span className="text-blue-600 dark:text-blue-400 font-mono font-semibold block mb-1">// Architectural Philosophy</span>
+                <p className="text-zinc-700 dark:text-zinc-300">
+                  High-throughput, low-latency execution that survives hostile edge environments, high thread contention, and deterministic timing constraints.
+                </p>
+              </div>
+
+              {/* Core Engineering Stack */}
+              <div>
+                <span className="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400 tracking-wider block mb-2 font-semibold">
+                  Core Engineering Stack:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {['C/C++', 'Go', 'Python', 'Linux POSIX APIs', 'ONNX / TFLite INT8', 'mTLS & X.509'].map((tech) => (
+                    <span
+                      key={tech}
+                      className="px-2 py-0.5 text-xs font-mono bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded text-zinc-800 dark:text-zinc-200"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Engineering Focus Areas */}
+              <div>
+                <span className="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400 tracking-wider block mb-2 font-semibold">
+                  Engineering Focus Areas:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
+                    <span className="text-zinc-900 dark:text-white font-semibold block mb-0.5">🧠 Embedded & Edge AI</span>
+                    <span className="text-zinc-500 dark:text-zinc-400">Quantized ONNX models, streaming inference, low-latency wake-word audio pipelines.</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
+                    <span className="text-zinc-900 dark:text-white font-semibold block mb-0.5">🔒 Systems Infrastructure & Verification</span>
+                    <span className="text-zinc-500 dark:text-zinc-400">Automated test harness pipelines, mTLS host-daemon auth, log parsing.</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
+                    <span className="text-zinc-900 dark:text-white font-semibold block mb-0.5">🔌 Embedded Systems</span>
+                    <span className="text-zinc-500 dark:text-zinc-400">ARM Cortex-M SoC, memory-mapped I/O, UART/SPI/I2C bare-metal drivers.</span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
+                    <span className="text-zinc-900 dark:text-white font-semibold block mb-0.5">⚙️ Operating Systems</span>
+                    <span className="text-zinc-500 dark:text-zinc-400">Virtual memory paging, inode filesystems, lock-free concurrency.</span>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Lumentum */}
+              <div className="border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                <div className="flex items-baseline justify-between">
+                  <h3 className="text-base font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
+                    <span>Lumentum</span>
+                    <span className="text-zinc-400 font-normal">·</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-medium text-xs">Software Developer (Co-op)</span>
+                  </h3>
+                  <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">May 2026 – Present</span>
+                </div>
+                <p className="text-xs font-mono text-zinc-500 dark:text-zinc-400 mt-0.5">Ottawa, ON · Systems Software & Verification</p>
+
+                <ul className="mt-2.5 space-y-2 text-xs sm:text-sm pl-4 list-disc marker:text-emerald-500">
+                  <li>
+                    <strong className="text-zinc-900 dark:text-white font-semibold">Automated Linux Validation:</strong> Validated system software by automating test harness execution and diagnostic log parsing across 10+ configurations, <span className="text-emerald-600 dark:text-emerald-400 font-semibold">reducing manual regression duration by 35%</span>.
+                  </li>
+                  <li>
+                    <strong className="text-zinc-900 dark:text-white font-semibold">Mutual TLS (mTLS) Security:</strong> Implemented bidirectional X.509 certificate validation between host daemons and client endpoints to enforce strict authentication.
+                  </li>
+                  <li>
+                    <strong className="text-zinc-900 dark:text-white font-semibold">State Isolation & Storage Reduction:</strong> Built C# filesystem event monitoring service & Go backend pipelines validating declarative prototext persistence, <span className="text-emerald-600 dark:text-emerald-400 font-semibold">cutting snapshot storage overhead by 88%</span>.
+                  </li>
+                </ul>
+              </div>
+
+              {/* TELUS */}
+              <div className="border-b border-zinc-200 dark:border-zinc-800 pb-3">
+                <div className="flex items-baseline justify-between">
+                  <h4 className="text-sm font-bold text-zinc-900 dark:text-white">
+                    TELUS Go Sales <span className="text-zinc-400 font-normal">· Sales Representative</span>
+                  </h4>
+                  <span className="text-xs font-mono text-zinc-500 dark:text-zinc-400">Jul 2023 – Aug 2023</span>
+                </div>
+                <p className="text-xs sm:text-sm mt-1">
+                  Communicated technical network specifications, hardware requirements, and client advisory in Calgary, AB.
+                </p>
+              </div>
+
+              {/* Coursework & Low-Level Foundations */}
+              <div>
+                <p className="text-xs font-mono uppercase text-zinc-500 dark:text-zinc-400 tracking-wider mb-2 font-semibold">
+                  Coursework & Low-Level Foundations:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                  <div className="p-2 rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium">
+                    ⚡ Real-Time Systems (Rate-Monotonic)
+                  </div>
+                  <div className="p-2 rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium">
+                    🛡️ Network & Software Security (iptables)
+                  </div>
+                  <div className="p-2 rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium">
+                    🔌 ARM SoC Design (UART/I2C/SPI)
+                  </div>
+                  <div className="p-2 rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 font-medium">
+                    ⚙️ CPU Scheduling & POSIX IPC
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
 
       {/* Mobile Dossier Modal Reader (Clean, Accessible Full-Screen View) */}
       {dossierModal && (
@@ -1023,7 +1178,7 @@ export const MacbookShowcase = ({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-2xl max-h-[85vh] bg-zinc-950/95 border border-zinc-700/90 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-zinc-200"
+            className="relative w-full max-w-2xl max-h-[85vh] bg-zinc-950/95 border border-zinc-700/90 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-zinc-200 animate-modal-spring"
             style={{
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)'

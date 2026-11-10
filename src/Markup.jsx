@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import MacbookShowcase from './MacbookShowcase.jsx'
 
 const projectsData = [
@@ -89,12 +89,73 @@ const Markup = ({
 }) => {
   const currentTheme = projectThemes[activeThemeId] || projectThemes.default
 
+  useEffect(() => {
+    // 1. Omid Hemmati-style IntersectionObserver Scroll Reveal
+    const revealElements = document.querySelectorAll('.reveal')
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = Array.from(revealElements).indexOf(entry.target)
+            const delay = (idx >= 0 ? idx % 5 : 0) * 45
+            setTimeout(() => {
+              entry.target.classList.add('visible')
+            }, delay)
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
+    )
+
+    revealElements.forEach((el) => observer.observe(el))
+
+    // 2. 3D Perspective Tilt on Cards (Desktop Pointer Devices)
+    const isTouch = window.matchMedia('(hover: none)').matches
+    const tiltCards = document.querySelectorAll('.tilt-card')
+    const MAX_TILT = 2 // degrees
+
+    const handleMouseMove = (e) => {
+      const card = e.currentTarget
+      const rect = card.getBoundingClientRect()
+      const x = e.clientX - rect.left
+      const y = e.clientY - rect.top
+      const centerX = rect.width / 2
+      const centerY = rect.height / 2
+      const rotateY = ((x - centerX) / centerX) * MAX_TILT
+      const rotateX = ((centerY - y) / centerY) * MAX_TILT
+      card.style.transform = `perspective(800px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateY(-2px) scale(1.005)`
+    }
+
+    const handleMouseLeave = (e) => {
+      const card = e.currentTarget
+      card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)'
+    }
+
+    if (!isTouch) {
+      tiltCards.forEach((card) => {
+        card.addEventListener('mousemove', handleMouseMove)
+        card.addEventListener('mouseleave', handleMouseLeave)
+      })
+    }
+
+    return () => {
+      observer.disconnect()
+      if (!isTouch) {
+        tiltCards.forEach((card) => {
+          card.removeEventListener('mousemove', handleMouseMove)
+          card.removeEventListener('mouseleave', handleMouseLeave)
+        })
+      }
+    }
+  }, [])
+
   return (
     <div className="page-fadeup max-w-4xl mx-auto px-4 py-8 mt-2 sm:mt-3">
       {/* Hero Section */}
-      <section id="heroCard" className="fadeup-item fadeup-1 grid grid-cols-[100px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] md:grid-cols-[140px_minmax(0,1fr)] gap-4 sm:gap-6 mb-6 items-start">
+      <section id="heroCard" className="reveal grid grid-cols-[100px_minmax(0,1fr)] sm:grid-cols-[130px_minmax(0,1fr)] md:grid-cols-[140px_minmax(0,1fr)] gap-4 sm:gap-6 mb-6 items-center">
         {/* Geometric Monogram Badge */}
-        <div className="relative w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] md:w-[140px] md:h-[140px] bg-zinc-100 dark:bg-zinc-900 border-2 flex flex-col items-center justify-center transition-all duration-300"
+        <div className="tilt-card relative w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] md:w-[140px] md:h-[140px] bg-zinc-100 dark:bg-zinc-900 border-2 flex flex-col items-center justify-center transition-all duration-300"
           style={{ borderColor: 'var(--accent-color)' }}>
           <span className="text-3xl sm:text-4xl font-extrabold tracking-tighter" style={{ color: 'var(--accent-color)' }}>
             AK
@@ -109,17 +170,8 @@ const Markup = ({
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight tracking-tight text-zinc-900 dark:text-zinc-100">
               Agrim Kasaju
             </h1>
-            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1 flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 inline-block text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              Ottawa, ON / Calgary, AB · Canada
-            </p>
             <p className="text-xs sm:text-sm font-medium mt-1.5 leading-relaxed text-zinc-800 dark:text-zinc-200">
               Computer Systems Engineering Student @ Carleton University
-              <span className="text-zinc-400 mx-1.5">|</span>
-              Software Developer (Co-op) @ Lumentum
             </p>
           </div>
 
@@ -129,14 +181,14 @@ const Markup = ({
               href="https://github.com/agrimkasaju"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 text-xs font-semibold border text-white transition-all duration-200 inline-flex items-center gap-1.5 hover:-translate-y-0.5"
+              className="btn-shimmer px-3 py-1.5 text-xs font-semibold border text-white transition-all duration-200 inline-flex items-center gap-1.5"
               style={{ backgroundColor: 'var(--accent-color)', borderColor: 'var(--accent-color)' }}
             >
               <i className="fa-brands fa-github text-sm"></i> GitHub
             </a>
             <a
               href="mailto:agrimkasaju@gmail.com"
-              className="px-3 py-1.5 text-xs font-semibold border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 transition-all duration-200 inline-flex items-center gap-1.5 hover:-translate-y-0.5"
+              className="btn-shimmer px-3 py-1.5 text-xs font-semibold border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 transition-all duration-200 inline-flex items-center gap-1.5"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -145,13 +197,13 @@ const Markup = ({
             </a>
             <a
               href="/recent-projects"
-              className="px-3 py-1.5 text-xs font-semibold border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 transition-all duration-200 inline-flex items-center gap-1.5 hover:-translate-y-0.5"
+              className="btn-shimmer px-3 py-1.5 text-xs font-semibold border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 transition-all duration-200 inline-flex items-center gap-1.5"
             >
               <i className="fa-solid fa-layer-group text-xs"></i> All Projects
             </a>
             <a
               href="/techstack"
-              className="px-3 py-1.5 text-xs font-semibold border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 transition-all duration-200 inline-flex items-center gap-1.5 hover:-translate-y-0.5"
+              className="btn-shimmer px-3 py-1.5 text-xs font-semibold border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 transition-all duration-200 inline-flex items-center gap-1.5"
             >
               <i className="fa-solid fa-code text-xs"></i> Tech Stack
             </a>
@@ -169,7 +221,7 @@ const Markup = ({
       />
 
       {/* Featured Projects with Click-to-Theme */}
-      <section className="fadeup-item fadeup-3 mb-4">
+      <section className="reveal mb-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
             <span>Featured Projects</span>
@@ -184,7 +236,7 @@ const Markup = ({
                 <article
                   key={proj.id}
                   onClick={() => selectProjectTheme(proj.id)}
-                  className={`p-4 bg-white dark:bg-zinc-900 border transition-all duration-300 cursor-pointer relative group hover:-translate-y-0.5 ${idx === 4 ? 'md:col-span-2' : ''}`}
+                  className={`tilt-card p-4 bg-white dark:bg-zinc-900 border transition-all duration-300 cursor-pointer relative group ${idx === 4 ? 'md:col-span-2' : ''}`}
                   style={{
                     borderColor: isSelected ? 'var(--accent-color)' : undefined,
                     boxShadow: isSelected ? '0 0 16px var(--accent-glow)' : undefined
@@ -197,7 +249,7 @@ const Markup = ({
                           borderColor: isSelected ? 'var(--accent-color)' : '#d4d4d8',
                           color: isSelected ? 'var(--accent-color)' : undefined
                         }}>
-                        {proj.tag}
+                          {proj.tag}
                       </span>
                       <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mt-1.5 group-hover:underline">
                         {proj.title}
@@ -247,7 +299,7 @@ const Markup = ({
       </section>
 
       {/* Skills & Capabilities Overview */}
-      <section className="fadeup-item fadeup-4 bg-white dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-800 mb-4">
+      <section className="reveal bg-white dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-800 mb-4">
         <div className="flex items-center justify-between mb-3 pb-1 border-b border-zinc-200 dark:border-zinc-800">
           <h2 className="text-base font-bold">Technical Core Competencies</h2>
           <a href="/techstack" className="text-xs hover:underline font-medium" style={{ color: 'var(--accent-color)' }}>
@@ -292,7 +344,7 @@ const Markup = ({
       </section>
 
       {/* Connect / Footer */}
-      <footer className="fadeup-item fadeup-5 border-t border-zinc-200 dark:border-zinc-800 pt-4 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-2">
+      <footer className="reveal border-t border-zinc-200 dark:border-zinc-800 pt-4 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-2">
         <p>&copy; 2026 Agrim Kasaju · Computer Systems Engineering</p>
         <div className="flex gap-4">
           <a href="https://github.com/agrimkasaju" target="_blank" rel="noopener noreferrer" className="hover:underline">GitHub</a>
