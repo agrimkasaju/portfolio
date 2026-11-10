@@ -944,9 +944,6 @@ export const MacbookShowcase = ({
                                   </h2>
                                   <div className="space-y-2.5 text-zinc-300 text-xs sm:text-sm leading-relaxed font-sans">
                                     <p>
-                                      I am a fourth-year Computer Systems Engineering student at Carleton University with a 3.33/4.0 GPA, specializing in hardware-software co-design, real-time operating systems, distributed networks, and embedded edge AI computing.
-                                    </p>
-                                    <p>
                                       At <strong>Lumentum</strong>, I work as a Software Developer Co-op on systems verification pipelines, where I automated Linux test harnesses across 10+ optical subsystem configurations (reducing test durations by 35%), implemented mutual TLS (mTLS) with bidirectional X.509 certificate validation, and architected C#/Go filesystem event monitoring pipelines with prototext persistence that reduced snapshot storage overhead by 88%.
                                     </p>
                                     <p>
