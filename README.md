@@ -4,7 +4,7 @@ Personal engineering portfolio showcasing applied projects in autonomous AI agen
 
 Built with **React**, **Vite**, **Tailwind CSS**, and dynamic project-driven CSS variables.
 
-**Live Deployment:** [agrimkasaju.netlify.app](https://agrimkasaju.vercel.app)
+**Live Deployment:** [agrimkasaju.vercel.app](https://agrimkasaju.vercel.app)
 
 ## Featured Projects
 
