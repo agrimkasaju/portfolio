@@ -274,18 +274,18 @@ export const MacbookShowcase = ({
       {/* Spacious Bounding Box - Scales proportionally on mobile or expands to 100% in display-zoom mode */}
       <div
         ref={containerRef}
-        className="relative w-full py-1 sm:py-4 px-0 sm:px-4 overflow-visible flex flex-col items-center justify-start transition-all duration-700"
+        className="relative w-full py-1 sm:py-4 px-0 sm:px-4 overflow-visible flex flex-col items-center justify-start transition-[transform,margin-top] duration-500"
         style={{
           height: isDisplayZoomed
             ? isMobile
-              ? 'auto'
+              ? '580px'
               : '540px'
             : scale < 1
             ? `${Math.round(DESIGN_HEIGHT * scale)}px`
             : `${DESIGN_HEIGHT}px`,
           minHeight: isDisplayZoomed
             ? isMobile
-              ? '78vh'
+              ? '580px'
               : '540px'
             : scale < 1
             ? `${Math.round(DESIGN_HEIGHT * scale)}px`
@@ -314,7 +314,7 @@ export const MacbookShowcase = ({
         >
           {/* --- APPLE MACBOOK 3D HERO SHOWCASE (Unified Perspective Rig) --- */}
           <div
-            className={`relative w-full select-none overflow-visible flex justify-center transition-all duration-700 ${
+            className={`relative w-full select-none overflow-visible flex justify-center ${
               isDisplayZoomed ? 'items-start' : 'items-center'
             }`}
             style={{
@@ -322,7 +322,7 @@ export const MacbookShowcase = ({
               perspectiveOrigin: '50% 25%',
               minHeight: isDisplayZoomed
                 ? isMobile
-                  ? '78vh'
+                  ? '560px'
                   : '520px'
                 : `${DESIGN_HEIGHT}px`
             }}
@@ -345,8 +345,12 @@ export const MacbookShowcase = ({
               className="relative display-zoom-rig"
               style={{
                 width: isDisplayZoomed && isMobile ? '100%' : '800px',
-                height: isDisplayZoomed && isMobile ? 'auto' : '500px',
-                minHeight: isDisplayZoomed && isMobile ? '78vh' : undefined,
+                maxWidth: '100%',
+                height: isDisplayZoomed
+                  ? isMobile
+                    ? '560px'
+                    : '500px'
+                  : '500px',
                 transformStyle: isDisplayZoomed ? 'flat' : 'preserve-3d',
                 transform: isDisplayZoomed
                   ? 'none'
@@ -492,7 +496,7 @@ export const MacbookShowcase = ({
                 className={`laptop-lid ${
                   isDisplayZoomed
                     ? isMobile
-                      ? 'relative w-full rounded-2xl'
+                      ? 'relative w-full h-[560px] rounded-2xl'
                       : 'relative w-[800px] h-[500px] rounded-[20px] mx-auto'
                     : 'absolute top-0 left-0 w-[800px] h-[500px] rounded-[20px]'
                 }`}
@@ -505,7 +509,6 @@ export const MacbookShowcase = ({
                     ? 'rotateX(108deg)'
                     : 'rotateX(0deg)',
                   transition: 'transform 800ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 800ms ease',
-                  minHeight: isDisplayZoomed && isMobile ? '78vh' : undefined,
                   boxShadow: isDisplayZoomed
                     ? isDark
                       ? '0 30px 80px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.08)'
@@ -553,7 +556,7 @@ export const MacbookShowcase = ({
                 <div
                   className={`${
                     isDisplayZoomed && isMobile
-                      ? 'relative w-full rounded-2xl flex flex-col overflow-hidden'
+                      ? 'relative w-full h-full rounded-2xl flex flex-col overflow-hidden'
                       : 'absolute inset-0 rounded-[20px] flex flex-col overflow-hidden'
                   }`}
                   style={{
@@ -565,7 +568,6 @@ export const MacbookShowcase = ({
                     padding: isDisplayZoomed && isMobile ? '4px 4px 0 4px' : '8px 8px 0 8px',
                     boxShadow: '0 30px 70px -15px rgba(0, 0, 0, 0.9)',
                     pointerEvents: (isLidOpen || isDisplayZoomed) ? 'auto' : 'none',
-                    minHeight: isDisplayZoomed && isMobile ? '78vh' : undefined,
                     WebkitFontSmoothing: 'antialiased',
                     MozOsxFontSmoothing: 'grayscale',
                     textRendering: 'optimizeLegibility'
@@ -587,13 +589,12 @@ export const MacbookShowcase = ({
                     tabIndex={0}
                     role="region"
                     aria-label="Interactive MacBook Liquid Retina Display"
-                    className="relative w-full flex-1 overflow-hidden rounded-t-lg transition-all duration-700 outline-none flex flex-col"
+                    className="relative w-full flex-1 h-full overflow-hidden rounded-t-lg outline-none flex flex-col"
                     style={{
                       backgroundImage: `url(${currentWallpaper.path})`,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat',
-                      minHeight: isDisplayZoomed && isMobile ? '76vh' : undefined
+                      backgroundRepeat: 'no-repeat'
                     }}
                   >
                     {/* Subtle Cosmic Grid */}
@@ -715,7 +716,7 @@ export const MacbookShowcase = ({
                     </div>
 
                     {/* Desktop Canvas Window Container */}
-                    <div className="relative w-full h-[calc(100%-32px)] flex-1 overflow-hidden">
+                    <div className="relative w-full h-[calc(100%-32px)] flex-1 min-h-0 overflow-hidden">
                       {/* INTERACTIVE DESKTOP APP SHORTCUTS (Visible when not zoomed) */}
                       {!isDisplayZoomed && (
                         <div className="absolute top-4 right-4 z-20 flex flex-col gap-3 select-none">
@@ -792,7 +793,9 @@ export const MacbookShowcase = ({
                               setMobileTab('about')
                             }
                           }}
-                          className={`absolute transition-all duration-300 overflow-hidden border shadow-2xl flex flex-col cursor-pointer ${
+                          className={`absolute overflow-hidden border shadow-2xl flex flex-col cursor-pointer ${
+                            isDisplayZoomed ? '' : 'transition-all duration-300'
+                          } ${
                             isDisplayZoomed
                               ? isMobile
                                 ? 'inset-0 rounded-none border-0'
@@ -892,7 +895,10 @@ export const MacbookShowcase = ({
                           )}
 
                           {/* Window Markdown Editor Content Area */}
-                          <div className="p-3.5 sm:p-5 overflow-y-auto mac-scrollbar text-xs sm:text-sm leading-relaxed text-zinc-200 font-sans space-y-3">
+                          <div
+                            className="flex-1 min-h-0 p-3.5 sm:p-5 overflow-y-auto overscroll-contain mac-scrollbar text-xs sm:text-sm leading-relaxed text-zinc-200 font-sans space-y-3"
+                            style={{ WebkitOverflowScrolling: 'touch' }}
+                          >
                             <div className="border-b border-zinc-800/80 pb-2.5">
                               <div className="flex items-center justify-between">
                                 <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
@@ -937,7 +943,7 @@ export const MacbookShowcase = ({
 
                             {/* Extended Engineering Dossier Details */}
                             {(maximized.about || isDisplayZoomed) && (
-                              <div className="mt-4 pt-4 border-t border-zinc-800/90 space-y-4 animate-fadeIn">
+                              <div className="mt-4 pt-4 border-t border-zinc-800/90 space-y-4">
                                 <div>
                                   <h2 className="text-xs font-bold font-mono text-zinc-200 uppercase tracking-wider mb-2">
                                     ## Engineering Background & Systems Philosophy
@@ -994,7 +1000,9 @@ export const MacbookShowcase = ({
                               setMobileTab('experience')
                             }
                           }}
-                          className={`absolute transition-all duration-300 overflow-hidden border shadow-2xl flex flex-col cursor-pointer ${
+                          className={`absolute overflow-hidden border shadow-2xl flex flex-col cursor-pointer ${
+                            isDisplayZoomed ? '' : 'transition-all duration-300'
+                          } ${
                             isDisplayZoomed
                               ? isMobile
                                 ? 'inset-0 rounded-none border-0'
@@ -1094,7 +1102,10 @@ export const MacbookShowcase = ({
                           )}
 
                           {/* Window Markdown Editor Content Area */}
-                          <div className="p-3.5 sm:p-5 overflow-y-auto mac-scrollbar text-xs sm:text-sm leading-relaxed text-zinc-200 font-sans space-y-3">
+                          <div
+                            className="flex-1 min-h-0 p-3.5 sm:p-5 overflow-y-auto overscroll-contain mac-scrollbar text-xs sm:text-sm leading-relaxed text-zinc-200 font-sans space-y-3"
+                            style={{ WebkitOverflowScrolling: 'touch' }}
+                          >
                             {/* Lumentum Co-op Experience */}
                             <div className="border-b border-zinc-800/80 pb-2.5">
                               <div className="flex items-baseline justify-between">
