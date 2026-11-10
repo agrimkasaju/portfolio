@@ -1931,50 +1931,27 @@ body:not(.dark-theme) .main-page-divider-lift:focus-within,
   45%, 55% { left: 160%; }
 }
 
-/* Spring Sheet Modal for Deep Dossier Reading */
-@keyframes modal-spring-in {
-  from {
-    opacity: 0;
-    transform: translateY(24px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+/* Display-Only Camera Zoom Transition Engine */
+.display-zoom-rig {
+  transition:
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    margin-top 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, margin-top;
 }
 
-.animate-modal-spring {
-  animation: modal-spring-in 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.display-zoom-chassis {
+  transition:
+    opacity 0.45s ease,
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
-/* Enticing Luminous Glow for Readme in MacBook Display */
-@keyframes readme-glow-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 16px rgba(56, 189, 248, 0.45),
-      0 0 34px rgba(56, 189, 248, 0.22),
-      0 18px 45px rgba(0, 0, 0, 0.85);
-    border-color: rgba(56, 189, 248, 0.65);
-  }
-  50% {
-    box-shadow:
-      0 0 30px rgba(56, 189, 248, 0.8),
-      0 0 60px rgba(56, 189, 248, 0.38),
-      0 22px 52px rgba(0, 0, 0, 0.92);
-    border-color: rgba(56, 189, 248, 1);
-  }
-}
-
-.readme-glow {
-  animation: readme-glow-pulse 2.8s ease-in-out infinite;
-}
-
-.readme-glow:hover {
-  box-shadow:
-    0 0 38px rgba(56, 189, 248, 0.9),
-    0 0 68px rgba(56, 189, 248, 0.5),
-    0 24px 55px rgba(0, 0, 0, 0.95) !important;
-  border-color: #38bdf8 !important;
+.display-zoom-screen {
+  transition:
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, width, height;
 }
 
 @media (prefers-reduced-motion: reduce) {
