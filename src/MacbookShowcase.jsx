@@ -88,8 +88,8 @@ export const MacbookShowcase = ({
   // Responsive scale state for mobile fitting
   const containerRef = useRef(null)
   const [scale, setScale] = useState(1)
-  const DESIGN_WIDTH = 820
-  const DESIGN_HEIGHT = 860
+  const DESIGN_WIDTH = 960
+  const DESIGN_HEIGHT = 740
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -247,7 +247,7 @@ export const MacbookShowcase = ({
       {/* Spacious Bounding Box - Scales proportionally on mobile to fit screen */}
       <div
         ref={containerRef}
-        className="relative w-full py-2 sm:py-6 px-0 sm:px-4 overflow-hidden sm:overflow-visible flex flex-col items-center justify-start"
+        className="relative w-full py-1 sm:py-6 px-0 sm:px-4 overflow-visible flex flex-col items-center justify-start"
         style={{
           height: scale < 1 ? `${Math.round(DESIGN_HEIGHT * scale)}px` : 'auto'
         }}
@@ -267,17 +267,17 @@ export const MacbookShowcase = ({
             style={{
               perspective: '1600px',
               perspectiveOrigin: '50% 25%',
-              minHeight: '840px'
+              minHeight: `${DESIGN_HEIGHT}px`
             }}
           >
-            {/* Left-Hand External Ambient Light Source */}
+            {/* Soft Ambient Workspace Glow behind Laptop (Blends 100% into Page Background) */}
             <div
               aria-hidden="true"
-              className="absolute top-10 left-4 w-96 h-96 rounded-full blur-3xl pointer-events-none transition-all duration-700 z-0"
+              className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[88%] max-w-2xl h-80 rounded-full blur-3xl pointer-events-none transition-all duration-700 z-0"
               style={{
                 background: isDark
-                  ? 'radial-gradient(circle, rgba(147, 197, 253, 0.16) 0%, rgba(96, 165, 250, 0.05) 50%, transparent 75%)'
-                  : 'radial-gradient(circle, rgba(253, 224, 71, 0.22) 0%, rgba(251, 191, 36, 0.07) 50%, transparent 75%)'
+                  ? 'radial-gradient(ellipse at center, rgba(147, 197, 253, 0.12) 0%, rgba(96, 165, 250, 0.04) 45%, transparent 70%)'
+                  : 'radial-gradient(ellipse at center, rgba(148, 163, 184, 0.15) 0%, rgba(203, 213, 225, 0.05) 45%, transparent 70%)'
               }}
             />
 
@@ -289,7 +289,7 @@ export const MacbookShowcase = ({
                 height: '500px',
                 transformStyle: 'preserve-3d',
                 transform: 'rotateX(54deg)',
-                marginTop: '370px',
+                marginTop: '310px',
                 transition: 'transform 4800ms cubic-bezier(0.16, 1, 0.3, 1)'
               }}
             >
@@ -302,7 +302,9 @@ export const MacbookShowcase = ({
                     : 'linear-gradient(180deg, #2b303d 0%, #1e222b 45%, #12141a 100%)',
                   border: isDark ? '2px solid #2d3345' : '2px solid #3c455c',
                   padding: '16px 24px 20px 24px',
-                  boxShadow: '0 50px 90px -15px rgba(0, 0, 0, 0.95), 0 20px 40px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                  boxShadow: isDark
+                    ? '0 30px 60px -12px rgba(0, 0, 0, 0.85), 0 12px 24px -6px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.18)'
+                    : '0 20px 45px -12px rgba(15, 23, 42, 0.22), 0 8px 18px -6px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.25)'
                 }}
               >
                 {/* Upper Deck Surface: Speaker Grilles + Recessed Keyboard Well */}
@@ -382,16 +384,28 @@ export const MacbookShowcase = ({
                 style={{ zIndex: 15 }}
               />
 
-              {/* Ambient Studio Desk Surface Drop Shadows */}
+              {/* Soft Ambient Desk Contact Shadow (Blends Seamlessly with Any Background & Theme) */}
               <div
                 aria-hidden="true"
-                className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[92%] h-10 bg-black/70 blur-2xl rounded-full pointer-events-none"
-                style={{ transform: 'translateZ(-20px)' }}
+                className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[92%] h-8 rounded-full pointer-events-none transition-all duration-700"
+                style={{
+                  background: isDark
+                    ? 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.20) 50%, transparent 75%)'
+                    : 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.20) 0%, rgba(15, 23, 42, 0.05) 50%, transparent 75%)',
+                  filter: isDark ? 'blur(10px)' : 'blur(12px)',
+                  transform: 'translateZ(-10px)'
+                }}
               />
               <div
                 aria-hidden="true"
-                className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[76%] h-14 bg-black/50 blur-3xl rounded-full pointer-events-none"
-                style={{ transform: 'translateZ(-30px)' }}
+                className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[78%] h-12 rounded-full pointer-events-none transition-all duration-700"
+                style={{
+                  background: isDark
+                    ? 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.10) 50%, transparent 75%)'
+                    : 'radial-gradient(ellipse at center, rgba(15, 23, 42, 0.10) 0%, rgba(15, 23, 42, 0.02) 50%, transparent 75%)',
+                  filter: isDark ? 'blur(16px)' : 'blur(18px)',
+                  transform: 'translateZ(-20px)'
+                }}
               />
 
               {/* --- 2. 3D REAR-HINGED DISPLAY LID (800px x 500px, matches base 1:1) --- */}
@@ -405,8 +419,10 @@ export const MacbookShowcase = ({
                   boxShadow: isLidOpen
                     ? isDark
                       ? '0 30px 70px -15px rgba(0, 0, 0, 0.8), -6px -6px 28px -10px rgba(186, 230, 253, 0.15)'
-                      : '0 30px 70px -15px rgba(0, 0, 0, 0.8), -6px -6px 28px -10px rgba(254, 240, 138, 0.22)'
-                    : '0 15px 35px -5px rgba(0, 0, 0, 0.95)'
+                      : '0 25px 50px -15px rgba(15, 23, 42, 0.35), -6px -6px 28px -10px rgba(148, 163, 184, 0.18)'
+                    : isDark
+                      ? '0 15px 35px -5px rgba(0, 0, 0, 0.95)'
+                      : '0 12px 28px -5px rgba(15, 23, 42, 0.25)'
                 }}
               >
                 {/* 2A. EXTERIOR SHELL FACE (Space Gray Aluminum - visible when closed / fold angle < 90deg) */}
@@ -975,11 +991,11 @@ export const MacbookShowcase = ({
 
       {/* Mobile Quick Reader Actions */}
       {scale < 1 && (
-        <div className="flex flex-wrap items-center justify-center gap-2.5 mt-3 px-2 select-none">
+        <div className="flex flex-wrap items-center justify-center gap-2.5 mt-2 px-2 select-none relative z-20">
           <button
             type="button"
             onClick={() => setDossierModal('about')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-100 shadow-md transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono bg-white dark:bg-zinc-900/95 text-zinc-800 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-300 dark:border-zinc-700/80 shadow-sm transition-colors cursor-pointer"
           >
             <span className="w-2 h-2 rounded-full bg-blue-400"></span>
             <span>Read ABOUT_ME.md</span>
@@ -988,7 +1004,7 @@ export const MacbookShowcase = ({
           <button
             type="button"
             onClick={() => setDossierModal('experience')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-100 shadow-md transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono bg-white dark:bg-zinc-900/95 text-zinc-800 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-300 dark:border-zinc-700/80 shadow-sm transition-colors cursor-pointer"
           >
             <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
             <span>Read EXPERIENCE.md</span>
