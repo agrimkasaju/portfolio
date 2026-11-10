@@ -124,7 +124,7 @@ export const MacbookShowcase = ({
   // Responsive scale state for mobile fitting
   const containerRef = useRef(null)
   const [scale, setScale] = useState(1)
-  const DESIGN_WIDTH = 800
+  const DESIGN_WIDTH = 920
   const DESIGN_HEIGHT = 860
 
   useEffect(() => {
@@ -279,24 +279,34 @@ export const MacbookShowcase = ({
           height: isDisplayZoomed
             ? isMobile
               ? 'auto'
-              : '540px'
+              : '560px'
             : scale < 1
             ? `${Math.round(DESIGN_HEIGHT * scale)}px`
             : `${DESIGN_HEIGHT}px`,
           minHeight: isDisplayZoomed
             ? isMobile
               ? '78vh'
-              : '540px'
+              : '560px'
             : '840px'
         }}
       >
         <div
           style={{
-            width: isDisplayZoomed ? (isMobile ? '100%' : '800px') : (scale < 1 ? '800px' : '100%'),
-            maxWidth: isDisplayZoomed && isMobile ? '100%' : '800px',
+            width: isDisplayZoomed
+              ? isMobile
+                ? '100%'
+                : '800px'
+              : scale < 1
+              ? `${DESIGN_WIDTH}px`
+              : '100%',
+            maxWidth: isDisplayZoomed
+              ? isMobile
+                ? '100%'
+                : '800px'
+              : `${DESIGN_WIDTH}px`,
             transform: isDisplayZoomed ? 'none' : scale < 1 ? `scale(${scale})` : undefined,
             transformOrigin: 'top center',
-            margin: '0 auto',
+            margin: isDisplayZoomed && !isMobile ? '0 auto' : undefined,
             flexShrink: 0,
             transition: 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
@@ -331,8 +341,8 @@ export const MacbookShowcase = ({
             <div
               className="relative display-zoom-rig"
               style={{
-                width: isDisplayZoomed ? (isMobile ? '100%' : '800px') : '800px',
-                height: isDisplayZoomed ? (isMobile ? 'auto' : '500px') : '500px',
+                width: isDisplayZoomed && isMobile ? '100%' : '800px',
+                height: isDisplayZoomed && isMobile ? 'auto' : '500px',
                 minHeight: isDisplayZoomed && isMobile ? '78vh' : undefined,
                 transformStyle: isDisplayZoomed ? 'flat' : 'preserve-3d',
                 transform: isDisplayZoomed
@@ -343,7 +353,7 @@ export const MacbookShowcase = ({
                     ? '0px'
                     : '10px'
                   : '360px',
-                margin: '0 auto',
+                margin: isDisplayZoomed && !isMobile ? '0 auto' : undefined,
                 transition: 'transform 800ms cubic-bezier(0.16, 1, 0.3, 1), margin-top 800ms cubic-bezier(0.16, 1, 0.3, 1), width 500ms ease'
               }}
             >
@@ -781,7 +791,7 @@ export const MacbookShowcase = ({
                                 : 'inset-2 sm:inset-3 rounded-xl border-zinc-700/90 z-35'
                               : maximized.about
                               ? 'inset-1 z-35 rounded-xl border-blue-400/80'
-                              : 'left-1/2 -translate-x-1/2 top-2.5 w-[92%] h-[89%] rounded-xl'
+                              : 'left-6 top-4 w-[57%] h-[86%] rounded-xl'
                           } ${
                             activeWindow === 'about'
                               ? 'z-30 ring-1 ring-blue-500/50 border-zinc-700/90'
@@ -986,7 +996,7 @@ export const MacbookShowcase = ({
                                 : 'inset-2 sm:inset-3 rounded-xl border-zinc-700/90 z-35'
                               : maximized.experience
                               ? 'inset-1 z-35 rounded-xl border-emerald-500/80'
-                              : 'left-1/2 -translate-x-1/2 top-2.5 w-[92%] h-[89%] rounded-xl'
+                              : 'right-6 top-7 w-[50%] h-[84%] rounded-xl'
                           } ${
                             activeWindow === 'experience'
                               ? 'z-30 ring-1 ring-emerald-500/50 border-zinc-700/90'
