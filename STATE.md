@@ -1,16 +1,41 @@
-# Task State: Direct Display Camera Zoom & Vercel Migration
+# Execution State Record
 
-## Current Objective
-Implement direct in-place camera zoom onto the laptop display (hiding keyboard chassis and desk perspective), eliminate neon glows and popup modal overlays, ensure crisp typography and native touch-scrolling on mobile, verify Vercel routing configuration, verify via Puppeteer, and deploy.
+## Current Epoch: Completed
+- **Status**: COMPLETED
+- **Goal Objective**: Redesign interactive MacBook display in `src/MacbookShowcase.jsx` to an authentic, readable, mobile-responsive VS Code workspace.
+- **Started**: 2026-11-14T18:34:00-05:00
+- **Completed**: 2026-11-14T18:53:00-05:00
 
-## Execution Epochs
-- [x] **Epoch 0: Initialization & Task Records Setup** (Initialize `PLAN.md`, `STATE.md`, `FINDINGS.md`, `LEDGER.md`)
-- [x] **Epoch 1: Neon Glow & Outdated Modal CSS Cleanup** (`src/App.css`)
-- [x] **Epoch 2: Camera Zoom State Machine & Handlers** (`src/MacbookShowcase.jsx`)
-- [x] **Epoch 3: 3D Camera Rig & Mobile Display Morphing** (`src/MacbookShowcase.jsx`)
-- [x] **Epoch 4: Vercel Configuration & Local Production Build** (`vercel.json`, `npm run build`)
-- [x] **Epoch 5: Comprehensive Cross-Device Verification** (Puppeteer desktop & mobile tests)
-- [x] **Epoch 6: Git Commit & Remote Deployment** (`git push origin main`)
+---
 
-## Active Epoch
-Epoch 6: Complete. All verification checks passed with 100% test coverage.
+## Epoch Roadmap & Transition States
+- [x] **Epoch 1: Static Content & Token Extraction** [COMPLETED]
+  - Extracted document structures (`ABOUT_ME.md`, `EXPERIENCE.md`) out of inline JSX into `src/portfolioData.js`.
+  - Defined workspace document metadata, breadcrumbs, and syntax tokens.
+- [x] **Epoch 2: Chrome & Navigation Components** [COMPLETED]
+  - Implemented `VSCodeTitleBar` (Window traffic lights, command search pill, Zoom Screen button, Theme button, LiveClock).
+  - Implemented `VSCodeActivityBar` (44px vertical icon rail with Explorer, Source Control badge, Extensions, Settings).
+  - Implemented `VSCodeExplorer` (Collapsible tree sidebar + mobile slide-over drawer).
+  - Implemented `VSCodeStatusBar` (Remote indicator, Git branch, Diagnostics, Line/Col, Encoding, Language).
+- [x] **Epoch 3: Editor Groups & Hybrid Syntax Canvas** [COMPLETED]
+  - Implemented `EditorGroup` with tabs, breadcrumbs, gutter line numbers, and git diff markers.
+  - Implemented `MarkdownCanvas` with syntax tokens, code block badges, and scannable career metrics.
+  - Wired state for split view (desktop default) vs single tab view (mobile default) vs explorer toggle.
+- [x] **Epoch 4: Viewport & Performance Verification** [COMPLETED]
+  - Build check (`npm run build`).
+  - Headless browser verification across Desktop (1920x1080), Laptop (1440x900), Tablet (1024x768), and Mobile (390x844).
+  - Fixed Chromium 3D GPU tile bug on speaker grilles by replacing Tailwind `opacity-35` with embedded RGBA gradient.
+  - Fixed display container boundary with `contain: 'paint'` and `transformStyle: 'flat'`.
+  - Zero emoji audit passed (0 emojis across entire `src/`).
+  - Git commit, push, and validation.
+
+---
+
+## Final Layout Metrics & Invariants
+- `DESIGN_WIDTH = 800`
+- `DESIGN_HEIGHT = 850`
+- Top clearance: Laptop lid clearance below `#heroCard` is 91px on Desktop/Laptop/Tablet and 49px on Mobile ($\ge 45\text{px}$).
+- Bottom clearance: Laptop chassis clearance above `Featured Projects` is 84px on Desktop/Laptop/Tablet and 104px on Mobile ($\ge 70\text{px}$).
+- Horizontal centering: Desktop center = 953px, Mobile center = 188px (`centerDiff = 0px`).
+- Zero emojis across all source files and markdown documents.
+- Mobile tap targets $\ge 44\text{px}$.

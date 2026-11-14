@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { VSCodeWorkspace } from './VSCodeWorkspace'
 
 const getInitialTimezoneCity = () => {
   try {
@@ -18,65 +19,6 @@ const getInitialTimezoneCity = () => {
     // fallback
   }
   return 'Ottawa, ON'
-}
-
-// Classic aesthetic wallpapers sourced directly from wallpapercave.com/macbook-backgrounds-hd
-const WALLPAPERS = [
-  {
-    id: 'matterhorn',
-    name: 'Matterhorn Starry Night',
-    shortName: 'Starry Night',
-    path: '/wallpapers/matterhorn-night.webp'
-  },
-  {
-    id: 'galaxy',
-    name: 'OS X Lion Andromeda Galaxy',
-    shortName: 'OS X Galaxy',
-    path: '/wallpapers/osx-galaxy.webp'
-  },
-  {
-    id: 'ocean',
-    name: 'Golden Ocean Sunrise',
-    shortName: 'Sun Sunrise',
-    path: '/wallpapers/ocean-sunrise.webp'
-  }
-]
-
-// Isolated Live Clock component to avoid triggering full-tree re-renders on the 3D showcase
-const LiveClock = ({ userLocation }) => {
-  const [currentTime, setCurrentTime] = useState('')
-
-  useEffect(() => {
-    const updateClock = () => {
-      const now = new Date()
-      setCurrentTime(
-        now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' })
-      )
-    }
-    updateClock()
-    const interval = setInterval(updateClock, 1000)
-    return () => clearInterval(interval)
-  }, [])
-
-  return (
-    <div
-      title={`Location: ${userLocation} · Live Clock: ${currentTime}`}
-      className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-zinc-900/90 border border-zinc-700/80 text-zinc-200 text-[10px] font-mono shadow-xs shrink-0 select-none"
-    >
-      <svg
-        className="w-2.5 h-2.5 text-blue-400 shrink-0"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-      >
-        <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71L12 2z" />
-      </svg>
-      <span className="font-medium text-zinc-200">{userLocation}</span>
-      <span className="text-zinc-500 font-normal">·</span>
-      <span className="font-semibold text-zinc-100 tracking-tight">
-        {currentTime || 'Syncing...'}
-      </span>
-    </div>
-  )
 }
 
 export const MacbookShowcase = ({
@@ -103,20 +45,6 @@ export const MacbookShowcase = ({
   })
   const sectionRef = useRef(null)
 
-  // Wallpaper index state (synced with theme: Matterhorn for dark, Sunrise for light)
-  const [activeWallpaperIndex, setActiveWallpaperIndex] = useState(() => (isDark ? 0 : 2))
-
-  // Which window has focus (higher z-index): 'about' | 'experience'
-  const [activeWindow, setActiveWindow] = useState('about')
-  // Window closed states (red traffic light)
-  const [closed, setClosed] = useState({ about: false, experience: false })
-  // Window minimize states (yellow traffic light)
-  const [minimized, setMinimized] = useState({ about: false, experience: false })
-  // Window maximized states (green traffic light)
-  const [maximized, setMaximized] = useState({ about: false, experience: false })
-  // Active mobile tab when on small screens
-  const [mobileTab, setMobileTab] = useState('about')
-
   // In-place display camera zoom state (replaces legacy popup modal)
   const [isDisplayZoomed, setIsDisplayZoomed] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
@@ -124,8 +52,8 @@ export const MacbookShowcase = ({
   // Responsive scale state for mobile fitting
   const containerRef = useRef(null)
   const [scale, setScale] = useState(1)
-  const DESIGN_WIDTH = 920
-  const DESIGN_HEIGHT = 960
+  const DESIGN_WIDTH = 800
+  const DESIGN_HEIGHT = 850
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -134,7 +62,7 @@ export const MacbookShowcase = ({
       if (containerRef.current) {
         const width = containerRef.current.clientWidth
         setIsMobile(width < 640)
-        const nextScale = width > 0 && width < DESIGN_WIDTH ? width / DESIGN_WIDTH : 1
+        const nextScale = width > 0 && width < DESIGN_WIDTH ? Math.min(1, (width - (width < 640 ? 12 : 0)) / DESIGN_WIDTH) : 1
         setScale((prev) => (Math.abs(prev - nextScale) > 0.005 ? nextScale : prev))
       }
     }
@@ -168,10 +96,6 @@ export const MacbookShowcase = ({
   const enterDisplayZoom = (targetWindow = 'about', e) => {
     if (e) e.stopPropagation()
     setIsDisplayZoomed(true)
-    setActiveWindow(targetWindow)
-    setMobileTab(targetWindow)
-    setClosed((prev) => ({ ...prev, [targetWindow]: false }))
-    setMinimized((prev) => ({ ...prev, [targetWindow]: false }))
   }
 
   // Exit display-only camera zoom back to 3D desk view
@@ -206,11 +130,6 @@ export const MacbookShowcase = ({
     }
   }, [])
 
-  // Auto-switch default wallpaper if theme changes
-  useEffect(() => {
-    setActiveWallpaperIndex(isDark ? 0 : 2)
-  }, [isDark])
-
   // One-time slow, cinematic opening animation on initial page load / scroll into view
   useEffect(() => {
     if (hasAutoOpened) return
@@ -236,38 +155,6 @@ export const MacbookShowcase = ({
 
     return () => observer.disconnect()
   }, [hasAutoOpened])
-
-  // Cycle through classic wallpapers from wallpapercave
-  const cycleWallpaper = () => {
-    setActiveWallpaperIndex((prev) => (prev + 1) % WALLPAPERS.length)
-  }
-
-  // Restore / Bring to front a markdown file window when clicked
-  const restoreWindow = (windowKey, e) => {
-    if (e) e.stopPropagation()
-    setClosed((prev) => ({ ...prev, [windowKey]: false }))
-    setMinimized((prev) => ({ ...prev, [windowKey]: false }))
-    setActiveWindow(windowKey)
-    setMobileTab(windowKey)
-  }
-
-  const handleClose = (windowKey, e) => {
-    e.stopPropagation()
-    setClosed((prev) => ({ ...prev, [windowKey]: true }))
-  }
-
-  const handleMinimize = (windowKey, e) => {
-    e.stopPropagation()
-    setMinimized((prev) => ({ ...prev, [windowKey]: true }))
-  }
-
-  const toggleMaximize = (windowKey, e) => {
-    e.stopPropagation()
-    setMaximized((prev) => ({ ...prev, [windowKey]: !prev[windowKey] }))
-    setActiveWindow(windowKey)
-  }
-
-  const currentWallpaper = WALLPAPERS[activeWallpaperIndex]
 
   return (
     <section ref={sectionRef} className="reveal mb-16 sm:mb-20 overflow-visible pt-1 sm:pt-3">
@@ -359,7 +246,7 @@ export const MacbookShowcase = ({
                   ? isMobile
                     ? '0px'
                     : '10px'
-                  : '420px',
+                  : '390px',
                 flexShrink: 0,
                 transition: 'transform 800ms cubic-bezier(0.16, 1, 0.3, 1), margin-top 800ms cubic-bezier(0.16, 1, 0.3, 1), width 500ms ease'
               }}
@@ -385,7 +272,13 @@ export const MacbookShowcase = ({
                 {/* Upper Deck Surface: Speaker Grilles + Recessed Keyboard Well */}
                 <div className="flex items-center justify-between gap-4 mt-1.5">
                   {/* Left Speaker Grille */}
-                  <div className="w-12 h-52 rounded bg-[radial-gradient(#52525b_1px,transparent_1px)] [background-size:3px_3px] opacity-35 shrink-0" />
+                  <div
+                    className="w-12 h-52 rounded shrink-0"
+                    style={{
+                      backgroundImage: 'radial-gradient(circle, rgba(82, 82, 91, 0.3) 1px, transparent 1px)',
+                      backgroundSize: '3px 3px'
+                    }}
+                  />
 
                   {/* Recessed Anodized Aluminum Keyboard Well */}
                   <div className="flex-1 h-52 bg-[#08090c] border border-zinc-800/90 rounded-xl p-2 shadow-inner flex flex-col justify-between select-none">
@@ -441,7 +334,13 @@ export const MacbookShowcase = ({
                   </div>
 
                   {/* Right Speaker Grille */}
-                  <div className="w-12 h-52 rounded bg-[radial-gradient(#52525b_1px,transparent_1px)] [background-size:3px_3px] opacity-35 shrink-0" />
+                  <div
+                    className="w-12 h-52 rounded shrink-0"
+                    style={{
+                      backgroundImage: 'radial-gradient(circle, rgba(82, 82, 91, 0.3) 1px, transparent 1px)',
+                      backgroundSize: '3px 3px'
+                    }}
+                  />
                 </div>
 
                 {/* Center Glass Force Touch Trackpad */}
@@ -561,6 +460,9 @@ export const MacbookShowcase = ({
                   }`}
                   style={{
                     transform: isDisplayZoomed ? 'none' : 'rotateY(180deg) rotateZ(180deg) translateZ(0)',
+                    transformStyle: 'flat',
+                    contain: 'paint',
+                    overflow: 'hidden',
                     backfaceVisibility: isDisplayZoomed ? 'visible' : 'hidden',
                     WebkitBackfaceVisibility: isDisplayZoomed ? 'visible' : 'hidden',
                     backgroundColor: '#0a0d14',
@@ -584,596 +486,26 @@ export const MacbookShowcase = ({
                     <div className="w-1 h-1 rounded-full bg-emerald-400/90 shadow-[0_0_4px_#34d399]" />
                   </div>
 
-                  {/* Display Area (Liquid Retina Display with Classic Mac Wallpaper) */}
+                  {/* Display Area hosting Visual Studio Code Workspace */}
                   <div
                     tabIndex={0}
                     role="region"
-                    aria-label="Interactive MacBook Liquid Retina Display"
+                    aria-label="Interactive MacBook Liquid Retina Display - Visual Studio Code Workspace"
                     className="relative w-full flex-1 h-full overflow-hidden rounded-t-lg outline-none flex flex-col"
                     style={{
-                      backgroundImage: `url(${currentWallpaper.path})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat'
+                      contain: 'paint',
+                      overflow: 'hidden'
                     }}
                   >
-                    {/* Subtle Cosmic Grid */}
-                    <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]"></div>
-
-                    {/* Directional Glass Glare (Behind windows in 3D desk view; hidden in display-zoom mode) */}
-                    {!isDisplayZoomed && (
-                      <div
-                        aria-hidden="true"
-                        className="absolute inset-0 pointer-events-none z-10 overflow-hidden select-none"
-                      >
-                        {/* Light Source 1 */}
-                        <div
-                          className="absolute -left-16 -top-16 w-80 h-80 rounded-full blur-3xl pointer-events-none"
-                          style={{
-                            background: isDark
-                              ? 'radial-gradient(circle, rgba(186, 230, 253, 0.15) 0%, rgba(147, 197, 253, 0.05) 45%, transparent 75%)'
-                              : 'radial-gradient(circle, rgba(254, 240, 138, 0.20) 0%, rgba(253, 230, 138, 0.08) 45%, transparent 75%)'
-                          }}
-                        />
-
-                        {/* Light Source 2 */}
-                        <div
-                          className="absolute top-0 left-0 w-3/5 h-full pointer-events-none"
-                          style={{
-                            background: isDark
-                              ? 'linear-gradient(120deg, rgba(255, 255, 255, 0.08) 0%, rgba(224, 242, 254, 0.04) 22%, transparent 70%)'
-                              : 'linear-gradient(120deg, rgba(255, 255, 255, 0.12) 0%, rgba(254, 240, 138, 0.06) 22%, transparent 70%)'
-                          }}
-                        />
-                      </div>
-                    )}
-
-                    {/* macOS Top Menu Bar */}
-                    <div className="relative z-30 h-8 px-2 sm:px-3 bg-zinc-950/85 backdrop-blur-md border-b border-white/10 flex items-center justify-between text-[11px] text-zinc-300 select-none">
-                      {/* Left Side: Clean Title + Primary Zoom Mode Toggle Button */}
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <span className="font-semibold text-white tracking-tight text-xs">KasajuOS</span>
-
-                        {/* Accessible Desk View / Display Zoom Toggle Button */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            if (isDisplayZoomed) {
-                              exitDisplayZoom(e)
-                            } else {
-                              enterDisplayZoom(activeWindow, e)
-                            }
-                          }}
-                          title={isDisplayZoomed ? "Return to 3D Desk View (Esc)" : "Zoom onto Screen"}
-                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-mono transition-all cursor-pointer shadow-xs ${
-                            isDisplayZoomed
-                              ? 'bg-blue-600 hover:bg-blue-500 text-white font-semibold ring-1 ring-blue-400/50'
-                              : 'bg-zinc-800/90 hover:bg-zinc-700 text-zinc-200 border border-zinc-700/80 hover:text-white'
-                          }`}
-                        >
-                          <span>{isDisplayZoomed ? '←' : '⤢'}</span>
-                          <span>{isDisplayZoomed ? 'Desk View' : 'Zoom Screen'}</span>
-                        </button>
-
-                        {/* Inactive Menu Buttons (File, Edit, View, Window) */}
-                        {!isDisplayZoomed && (
-                          <div
-                            aria-hidden="true"
-                            className="hidden md:flex items-center gap-3 opacity-30 select-none pointer-events-none font-normal text-zinc-400"
-                          >
-                            <span>File</span>
-                            <span>Edit</span>
-                            <span>View</span>
-                            <span>Window</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Right Side: Working Features (Wallpaper Switcher, Theme Toggle, Real-Time Location & Clock Sync) */}
-                      <div className="flex items-center gap-1.5 sm:gap-2">
-                        {/* FEATURE 1: Classic Aesthetic Wallpaper Switcher */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            cycleWallpaper()
-                          }}
-                          title={`Wallpaper: ${currentWallpaper.name} (Click to cycle classic Mac aesthetics)`}
-                          className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 text-[10px] font-mono transition-colors cursor-pointer group shadow-xs shrink-0"
-                        >
-                          <svg className="w-2.5 h-2.5 text-zinc-300 group-hover:text-white shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                            <circle cx="8.5" cy="8.5" r="1.5"/>
-                            <polyline points="21 15 16 10 5 21"/>
-                          </svg>
-                          <span className="hidden sm:inline">{currentWallpaper.shortName}</span>
-                        </button>
-
-                        {/* FEATURE 2: Dark / Light Mode Toggle Button */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            toggleTheme()
-                          }}
-                          title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                          className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-100 text-[10px] font-mono transition-colors cursor-pointer group shadow-xs shrink-0"
-                        >
-                          {isDark ? (
-                            <i className="fa-solid fa-moon text-blue-300 text-[10px]"></i>
-                          ) : (
-                            <i className="fa-solid fa-sun text-amber-400 text-[10px]"></i>
-                          )}
-                          <span className="hidden sm:inline">{isDark ? 'Dark' : 'Light'}</span>
-                        </button>
-
-                        {/* FEATURE 3: Auto-Synced Location & Live Clock */}
-                        <div className="hidden sm:block">
-                          <LiveClock userLocation={userLocation} />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Desktop Canvas Window Container */}
-                    <div className="relative w-full h-[calc(100%-32px)] flex-1 min-h-0 overflow-hidden">
-                      {/* INTERACTIVE DESKTOP APP SHORTCUTS (Visible when not zoomed) */}
-                      {!isDisplayZoomed && (
-                        <div className="absolute top-4 right-4 z-20 flex flex-col gap-3 select-none">
-                          {/* ABOUT_ME.md Desktop Shortcut */}
-                          <button
-                            type="button"
-                            onClick={(e) => restoreWindow('about', e)}
-                            title="Click to open or bring ABOUT_ME.md to front"
-                            className="flex flex-col items-center gap-1 w-20 p-1 rounded-xl hover:bg-white/10 active:scale-95 transition-all cursor-pointer group text-center outline-none"
-                          >
-                            <div
-                              className={`w-10 h-10 rounded-xl bg-zinc-900/90 border border-zinc-700/80 flex items-center justify-center text-blue-400 shadow-xl transition-all group-hover:scale-105 group-hover:border-blue-400 ${
-                                !closed.about && !minimized.about && activeWindow === 'about'
-                                  ? 'ring-2 ring-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]'
-                                  : ''
-                              }`}
-                            >
-                              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <polyline points="14 2 14 8 20 8" />
-                                <line x1="16" y1="13" x2="8" y2="13" />
-                                <line x1="16" y1="17" x2="8" y2="17" />
-                                <polyline points="10 9 9 9 8 9" />
-                              </svg>
-                            </div>
-                            <span className="text-[10px] text-zinc-200 font-mono text-center px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-xs group-hover:bg-blue-600/90 leading-tight">
-                              ABOUT_ME.md
-                            </span>
-                            {!closed.about && !minimized.about && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 -mt-0.5"></span>
-                            )}
-                          </button>
-
-                          {/* EXPERIENCE.md Desktop Shortcut */}
-                          <button
-                            type="button"
-                            onClick={(e) => restoreWindow('experience', e)}
-                            title="Click to open or bring EXPERIENCE.md to front"
-                            className="flex flex-col items-center gap-1 w-20 p-1 rounded-xl hover:bg-white/10 active:scale-95 transition-all cursor-pointer group text-center outline-none"
-                          >
-                            <div
-                              className={`w-10 h-10 rounded-xl bg-zinc-900/90 border border-zinc-700/80 flex items-center justify-center text-emerald-400 shadow-xl transition-all group-hover:scale-105 group-hover:border-emerald-400 ${
-                                !closed.experience && !minimized.experience && activeWindow === 'experience'
-                                  ? 'ring-2 ring-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]'
-                                  : ''
-                              }`}
-                            >
-                              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <polyline points="14 2 14 8 20 8" />
-                                <line x1="12" y1="18" x2="12" y2="12" />
-                                <line x1="9" y1="15" x2="15" y2="15" />
-                              </svg>
-                            </div>
-                            <span className="text-[10px] text-zinc-200 font-mono text-center px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-xs group-hover:bg-emerald-600/90 leading-tight">
-                              EXPERIENCE.md
-                            </span>
-                            {!closed.experience && !minimized.experience && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 -mt-0.5"></span>
-                            )}
-                          </button>
-                        </div>
-                      )}
-
-                      {/* --- WINDOW 1: ABOUT_ME.md --- */}
-                      {isLidOpen && !closed.about && (!isDisplayZoomed || activeWindow === 'about') && !minimized.about && (
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            if (!isDisplayZoomed) {
-                              enterDisplayZoom('about', e)
-                            } else {
-                              setActiveWindow('about')
-                              setMobileTab('about')
-                            }
-                          }}
-                          className={`absolute overflow-hidden border shadow-2xl flex flex-col cursor-pointer ${
-                            isDisplayZoomed ? '' : 'transition-all duration-300'
-                          } ${
-                            isDisplayZoomed
-                              ? isMobile
-                                ? 'inset-0 rounded-none border-0'
-                                : 'inset-2 sm:inset-3 rounded-xl border-zinc-700/90 z-35'
-                              : maximized.about
-                              ? 'inset-1 z-35 rounded-xl border-blue-400/80'
-                              : 'left-6 top-4 w-[57%] h-[86%] rounded-xl'
-                          } ${
-                            activeWindow === 'about'
-                              ? 'z-30 ring-1 ring-blue-500/50 border-zinc-700/90'
-                              : 'z-20 border-zinc-800/80 opacity-95 hover:opacity-100 hover:border-zinc-700'
-                          }`}
-                          style={{
-                            backgroundColor: '#0c1017',
-                            transform: isLidOpen ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)'
-                          }}
-                        >
-                          {/* Window Title Bar */}
-                          <div className="h-8 px-3 bg-zinc-900/95 border-b border-zinc-800 flex items-center justify-between shrink-0 select-none">
-                            <div className="flex items-center gap-2">
-                              {/* Traffic Light Buttons */}
-                              <div className="flex items-center gap-1.5">
-                                <button
-                                  type="button"
-                                  onClick={(e) => handleClose('about', e)}
-                                  className="w-3 h-3 rounded-full bg-[#ff5f56] hover:brightness-110 border border-[#e0443e] cursor-pointer"
-                                  title="Close"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={(e) => handleMinimize('about', e)}
-                                  className="w-3 h-3 rounded-full bg-[#ffbd2e] hover:brightness-110 border border-[#dea123] cursor-pointer"
-                                  title="Minimize"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    if (isDisplayZoomed) {
-                                      exitDisplayZoom(e)
-                                    } else {
-                                      enterDisplayZoom('about', e)
-                                    }
-                                  }}
-                                  className="w-3 h-3 rounded-full bg-[#27c93f] hover:brightness-110 border border-[#1aab29] cursor-pointer"
-                                  title={isDisplayZoomed ? "Exit zoom to desk view" : "Zoom into screen"}
-                                />
-                              </div>
-                              <span className="text-[11px] font-mono text-zinc-300 ml-1 flex items-center gap-1">
-                                <span className="text-blue-400">#</span> ABOUT_ME.md
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <div className="text-[10px] font-mono text-zinc-400">
-                                ~/kasaju/ABOUT_ME.md · UTF-8
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Segmented Document Tabs Bar when Zoomed */}
-                          {isDisplayZoomed && (
-                            <div className="flex items-center bg-zinc-950/95 border-b border-zinc-800/90 px-2 py-1 gap-1 select-none shrink-0">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setActiveWindow('about')
-                                  setMobileTab('about')
-                                }}
-                                className={`flex-1 sm:flex-initial px-3 py-1 text-[11px] font-mono rounded-md flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
-                                  activeWindow === 'about'
-                                    ? 'bg-blue-600 text-white font-semibold shadow-xs'
-                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
-                                }`}
-                              >
-                                <span className="text-blue-300">#</span>
-                                <span>ABOUT_ME.md</span>
-                              </button>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setActiveWindow('experience')
-                                  setMobileTab('experience')
-                                }}
-                                className={`flex-1 sm:flex-initial px-3 py-1 text-[11px] font-mono rounded-md flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
-                                  activeWindow === 'experience'
-                                    ? 'bg-emerald-600 text-white font-semibold shadow-xs'
-                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
-                                }`}
-                              >
-                                <span className="text-emerald-300">#</span>
-                                <span>EXPERIENCE.md</span>
-                              </button>
-                            </div>
-                          )}
-
-                          {/* Window Markdown Editor Content Area */}
-                          <div
-                            className="flex-1 min-h-0 p-3.5 sm:p-5 overflow-y-auto overscroll-contain mac-scrollbar text-xs sm:text-sm leading-relaxed text-zinc-200 font-sans space-y-3"
-                            style={{ WebkitOverflowScrolling: 'touch' }}
-                          >
-                            <div className="border-b border-zinc-800/80 pb-2.5">
-                              <div className="flex items-center justify-between">
-                                <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                                  Agrim Kasaju
-                                </h1>
-                                <span className="text-[10px] font-mono text-blue-300 bg-blue-950/60 border border-blue-800/50 px-2 py-0.5 rounded-full flex items-center gap-1">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-                                  <span>Theme: {currentTheme?.name || 'Minimal Slate'}</span>
-                                </span>
-                              </div>
-                              <p className="text-[11px] font-mono text-zinc-400 mt-0.5">
-                                B.Eng Computer Systems Engineering @ Carleton University · GPA 3.33/4.0 · Dean's Honour List
-                              </p>
-                            </div>
-
-                            <p className="text-zinc-300">
-                              Fourth-year engineering student with hands-on production experience in Linux systems software, automated verification harnesses, and edge AI deployment.
-                            </p>
-
-                            {/* Architectural Philosophy Callout */}
-                            <div className="p-2.5 rounded-lg bg-zinc-900/90 border border-zinc-800/90 text-[11px]">
-                              <span className="text-blue-400 font-mono font-semibold block mb-0.5">// Architectural Philosophy</span>
-                              <p className="text-zinc-300">
-                                High-throughput, low-latency execution that survives hostile edge environments, high thread contention, and deterministic timing constraints.
-                              </p>
-                            </div>
-
-                            {/* Core Engineering Stack */}
-                            <div>
-                              <span className="text-[10px] font-mono uppercase text-zinc-300 tracking-wider mb-1 block font-semibold">
-                                Core Engineering Stack:
-                              </span>
-                              <div className="flex flex-wrap gap-1 text-[10px] font-mono">
-                                <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">C/C++</span>
-                                <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">Go</span>
-                                <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">Python</span>
-                                <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">Linux POSIX APIs</span>
-                                <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">ONNX / TFLite INT8</span>
-                                <span className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">mTLS & X.509</span>
-                              </div>
-                            </div>
-
-                            {/* Extended Engineering Dossier Details */}
-                            {(maximized.about || isDisplayZoomed) && (
-                              <div className="mt-4 pt-4 border-t border-zinc-800/90 space-y-4">
-                                <div>
-                                  <h2 className="text-xs font-bold font-mono text-zinc-200 uppercase tracking-wider mb-2">
-                                    ## Engineering Background & Systems Philosophy
-                                  </h2>
-                                  <div className="space-y-2.5 text-zinc-300 text-xs sm:text-sm leading-relaxed font-sans">
-                                    <p>
-                                      At <strong>Lumentum</strong>, I work as a Software Developer Co-op on systems verification pipelines, where I automated Linux test harnesses across 10+ optical subsystem configurations (reducing test durations by 35%), implemented mutual TLS (mTLS) with bidirectional X.509 certificate validation, and architected C#/Go filesystem event monitoring pipelines with prototext persistence that reduced snapshot storage overhead by 88%.
-                                    </p>
-                                    <p>
-                                      My technical approach prioritizes systems-level determinism, minimal memory footprint, lockless inter-thread communication, and rigorous verification under high load.
-                                    </p>
-                                  </div>
-                                </div>
-
-                                {/* Extended Coursework Grid */}
-                                <div className="pt-2">
-                                  <h3 className="text-[10px] font-mono uppercase text-zinc-400 tracking-wider mb-2">
-                                    ### Academic Highlights & Systems Coursework
-                                  </h3>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-mono">
-                                    <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                      <span className="text-white font-semibold block">Real-Time Systems</span>
-                                      <span className="text-[10px] text-zinc-400">Rate-Monotonic scheduling, priority inversion inheritance, POSIX threads.</span>
-                                    </div>
-                                    <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                      <span className="text-white font-semibold block">Network Security</span>
-                                      <span className="text-[10px] text-zinc-400">Cryptographic protocols, packet filtering, iptables, mTLS authentication.</span>
-                                    </div>
-                                    <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                      <span className="text-white font-semibold block">Embedded Systems</span>
-                                      <span className="text-[10px] text-zinc-400">ARM Cortex-M SoC, memory-mapped I/O, UART/SPI/I2C bare-metal drivers.</span>
-                                    </div>
-                                    <div className="p-2 rounded bg-zinc-900/90 border border-zinc-800 text-zinc-300">
-                                      <span className="text-white font-semibold block">Operating Systems</span>
-                                      <span className="text-[10px] text-zinc-400">Virtual memory paging, inode filesystems, lock-free concurrency.</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* --- WINDOW 2: EXPERIENCE.md --- */}
-                      {isLidOpen && !closed.experience && (!isDisplayZoomed || activeWindow === 'experience') && !minimized.experience && (
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            if (!isDisplayZoomed) {
-                              enterDisplayZoom('experience', e)
-                            } else {
-                              setActiveWindow('experience')
-                              setMobileTab('experience')
-                            }
-                          }}
-                          className={`absolute overflow-hidden border shadow-2xl flex flex-col cursor-pointer ${
-                            isDisplayZoomed ? '' : 'transition-all duration-300'
-                          } ${
-                            isDisplayZoomed
-                              ? isMobile
-                                ? 'inset-0 rounded-none border-0'
-                                : 'inset-2 sm:inset-3 rounded-xl border-zinc-700/90 z-35'
-                              : maximized.experience
-                              ? 'inset-1 z-35 rounded-xl border-emerald-500/80'
-                              : 'right-6 top-7 w-[50%] h-[84%] rounded-xl'
-                          } ${
-                            activeWindow === 'experience'
-                              ? 'z-30 ring-1 ring-emerald-500/50 border-zinc-700/90'
-                              : 'z-20 border-zinc-800/80 opacity-95 hover:opacity-100 hover:border-zinc-700'
-                          }`}
-                          style={{
-                            backgroundColor: '#0c1017',
-                            transform: isLidOpen ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)'
-                          }}
-                        >
-                          {/* Window Title Bar */}
-                          <div className="h-8 px-3 bg-zinc-900/95 border-b border-zinc-800 flex items-center justify-between shrink-0 select-none">
-                            <div className="flex items-center gap-2">
-                              {/* Traffic Light Buttons */}
-                              <div className="flex items-center gap-1.5">
-                                <button
-                                  type="button"
-                                  onClick={(e) => handleClose('experience', e)}
-                                  className="w-3 h-3 rounded-full bg-[#ff5f56] hover:brightness-110 border border-[#e0443e] cursor-pointer"
-                                  title="Close"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={(e) => handleMinimize('experience', e)}
-                                  className="w-3 h-3 rounded-full bg-[#ffbd2e] hover:brightness-110 border border-[#dea123] cursor-pointer"
-                                  title="Minimize"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    if (isDisplayZoomed) {
-                                      exitDisplayZoom(e)
-                                    } else {
-                                      enterDisplayZoom('experience', e)
-                                    }
-                                  }}
-                                  className="w-3 h-3 rounded-full bg-[#27c93f] hover:brightness-110 border border-[#1aab29] cursor-pointer"
-                                  title={isDisplayZoomed ? "Exit zoom to desk view" : "Zoom into screen"}
-                                />
-                              </div>
-                              <span className="text-[11px] font-mono text-zinc-300 ml-1 flex items-center gap-1">
-                                <span className="text-emerald-400">#</span> EXPERIENCE.md
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <div className="text-[10px] font-mono text-zinc-400">
-                                ~/kasaju/EXPERIENCE.md · Preview
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Segmented Document Tabs Bar when Zoomed */}
-                          {isDisplayZoomed && (
-                            <div className="flex items-center bg-zinc-950/95 border-b border-zinc-800/90 px-2 py-1 gap-1 select-none shrink-0">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setActiveWindow('about')
-                                  setMobileTab('about')
-                                }}
-                                className={`flex-1 sm:flex-initial px-3 py-1 text-[11px] font-mono rounded-md flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
-                                  activeWindow === 'about'
-                                    ? 'bg-blue-600 text-white font-semibold shadow-xs'
-                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
-                                }`}
-                              >
-                                <span className="text-blue-300">#</span>
-                                <span>ABOUT_ME.md</span>
-                              </button>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setActiveWindow('experience')
-                                  setMobileTab('experience')
-                                }}
-                                className={`flex-1 sm:flex-initial px-3 py-1 text-[11px] font-mono rounded-md flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
-                                  activeWindow === 'experience'
-                                    ? 'bg-emerald-600 text-white font-semibold shadow-xs'
-                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
-                                }`}
-                              >
-                                <span className="text-emerald-300">#</span>
-                                <span>EXPERIENCE.md</span>
-                              </button>
-                            </div>
-                          )}
-
-                          {/* Window Markdown Editor Content Area */}
-                          <div
-                            className="flex-1 min-h-0 p-3.5 sm:p-5 overflow-y-auto overscroll-contain mac-scrollbar text-xs sm:text-sm leading-relaxed text-zinc-200 font-sans space-y-3"
-                            style={{ WebkitOverflowScrolling: 'touch' }}
-                          >
-                            {/* Lumentum Co-op Experience */}
-                            <div className="border-b border-zinc-800/80 pb-2.5">
-                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="logo-shimmer px-2 py-0.5 rounded bg-white shadow-xs border border-white/80 shrink-0" title="Lumentum">
-                                    <img src="/logos/lumentum.svg" alt="Lumentum" className="h-3.5 sm:h-4 w-auto block" />
-                                  </span>
-                                  <span className="hidden sm:inline text-zinc-400 font-normal">·</span>
-                                  <span className="text-emerald-400 font-medium text-xs sm:text-sm">Software Developer (Co-op)</span>
-                                </div>
-                                <span className="text-[10px] font-mono text-zinc-400 shrink-0">May 2026 – Present</span>
-                              </div>
-                              <p className="text-[10px] sm:text-xs font-mono text-zinc-400 mt-1">Ottawa, ON · Systems Software & Verification</p>
-
-                              <ul className="mt-2 space-y-1.5 text-[11px] sm:text-xs text-zinc-200 pl-3 list-disc marker:text-emerald-400">
-                                <li>
-                                  <strong className="text-white font-semibold">Automated Linux Validation:</strong> Validated system software by automating test harness execution and diagnostic log parsing across 10+ configurations, <span className="text-emerald-300 font-semibold">reducing manual regression duration by 35%</span>.
-                                </li>
-                                <li>
-                                  <strong className="text-white font-semibold">Mutual TLS (mTLS) Security:</strong> Implemented bidirectional X.509 certificate validation between host daemons and client endpoints to enforce strict authentication.
-                                </li>
-                                <li>
-                                  <strong className="text-white font-semibold">State Isolation & Storage Reduction:</strong> Built C# filesystem event monitoring service & Go backend pipelines validating declarative prototext persistence, <span className="text-emerald-300 font-semibold">cutting snapshot storage overhead by 88%</span>.
-                                </li>
-                              </ul>
-                            </div>
-
-                            {/* TELUS Experience */}
-                            <div className="border-b border-zinc-800/80 pb-2">
-                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="logo-shimmer px-2 py-0.5 rounded bg-white shadow-xs border border-white/80 shrink-0" title="TELUS">
-                                    <img src="/logos/telus.svg" alt="TELUS" className="h-3.5 sm:h-4 w-auto block" />
-                                  </span>
-                                  <span className="hidden sm:inline text-zinc-400 font-normal">·</span>
-                                  <span className="text-zinc-300 font-normal text-xs sm:text-sm">Technical Analyst</span>
-                                </div>
-                                <span className="text-[10px] font-mono text-zinc-400 shrink-0">Jul 2023 – Aug 2023</span>
-                              </div>
-                              <p className="text-[11px] sm:text-xs text-zinc-300 mt-1">
-                                Communicated technical network specifications, hardware requirements, and client advisory in Calgary, AB.
-                              </p>
-                            </div>
-
-                            {/* Academic Experience & Coursework */}
-                            <div>
-                              <p className="text-[10px] font-mono uppercase text-zinc-300 tracking-wider mb-1 font-semibold">
-                                Coursework & Low-Level Foundations:
-                              </p>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[10px] font-mono">
-                                <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
-                                  Real-Time Systems (Rate-Monotonic)
-                                </div>
-                                <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
-                                  Network & Software Security (iptables)
-                                </div>
-                                <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
-                                  ARM SoC Design (UART/I2C/SPI)
-                                </div>
-                                <div className="p-1.5 rounded bg-zinc-900 border border-zinc-700 text-zinc-100 font-medium">
-                                  CPU Scheduling & POSIX IPC
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    <VSCodeWorkspace
+                      isDark={isDark}
+                      toggleTheme={toggleTheme}
+                      isDisplayZoomed={isDisplayZoomed}
+                      enterDisplayZoom={enterDisplayZoom}
+                      exitDisplayZoom={exitDisplayZoom}
+                      userLocation={userLocation}
+                      isMobile={isMobile}
+                    />
                   </div>
                 </div>
               </div>

@@ -1,18 +1,33 @@
-# Task Ledger & Verification Log
+# Task Activity Ledger
 
-| Timestamp (UTC) | Phase / Action | Status | Notes |
-| :--- | :--- | :--- | :--- |
-| 2026-11-10T04:29:32Z | Goal Initialized | COMPLETE | User invoked `/goal` to execute the Argon plan |
-| 2026-11-10T04:29:48Z | Task State Initialized | COMPLETE | `STATE.md`, `FINDINGS.md`, `LEDGER.md` created |
-| 2026-11-10T04:30:10Z | Epoch 1: CSS Cleanup | COMPLETE | Removed `.readme-glow` and modal CSS; added `.display-zoom-*` transitions in `src/App.css` |
-| 2026-11-10T04:38:30Z | Epoch 2 & 3: Component Refactor | COMPLETE | Removed `dossierModal`; implemented `isDisplayZoomed`, 3D camera zoom, chassis fade, and orthogonal mobile morphing in `src/MacbookShowcase.jsx` |
-| 2026-11-10T04:39:40Z | Epoch 4: Build Verification | COMPLETE | `npm run build` completed in 1.18s with 0 errors |
-| 2026-11-10T04:41:57Z | Epoch 5: Puppeteer Testing | COMPLETE | Automated cross-device test suite passed on Desktop (1280x950) and Mobile (390x844) |
-| 2026-11-10T04:43:00Z | Epoch 6: Git Commit & Push | COMPLETE | Committed and pushed to `origin main` |
-| 2026-11-10T06:36:00Z | Mobile Layout Fix | COMPLETE | Pulled remote changes, diagnosed flexbox height crush and perspective width cutoff, restored 920x800 coordinate system and 480px top alignment, verified via Puppeteer screenshots, and pushed commit `5f661ef` |
-| 2026-11-10T06:44:00Z | Spacing & Notch Clearance Fix | COMPLETE | Increased DESIGN_HEIGHT to 960px, reduced rig marginTop to 420px, set section margin to mb-16 sm:mb-20, hid notch in mobile zoomed view; verified +56px positive clearance before Featured Projects and 36px clearance from hero card via Puppeteer |
-| 2026-11-10T06:55:00Z | Desktop Zoom Spacing Alignment Fix | COMPLETE | Fixed inner container minHeight and items-start alignment in desktop zoom mode to prevent 960px flex-centering overflow; verified +133px positive clearance to Featured Projects and +78px to hero card via Puppeteer |
-| 2026-11-10T12:54:00Z | Content De-duplication in ABOUT_ME.md | COMPLETE | Removed redundant student introduction paragraph under Engineering Background & Systems Philosophy heading |
-| 2026-11-10T14:24:00Z | Mobile Scroll Elongation & Lag Fix | COMPLETE | Replaced dynamic vh units with stable 580px/560px dimensions on mobile zoom; added flex-1 min-h-0 and overscroll-contain to editor containers; removed transition-all and animate-fadeIn to eliminate scroll-time height extension and layout lag |
-| 2026-11-10T14:38:00Z | Brand Logos & Specular Shimmer Badges | COMPLETE | Replaced job title text with official Lumentum and TELUS SVG vector logos in shiny specular badges (.logo-shimmer); updated TELUS job title from 'TELUS Go Sales' to 'TELUS' |
-| 2026-11-10T14:40:00Z | TELUS Role Title Update | COMPLETE | Updated TELUS job title from 'Sales Representative' to 'Technical Analyst' in EXPERIENCE.md |
+## Epoch 0: Planning & Carbon Consultation
+- Executed Google search research on VS Code web portfolios and mobile IDE layouts.
+- Consulted Gemini 4 Carbon via `call_carbon.py` with 11,435-character context payload.
+- Aligned on core decisions with user via `ask_question`:
+  - Split Editor View by default.
+  - Integrated VS Code Title Bar controls.
+  - Focused two-file workspace (`ABOUT_ME.md`, `EXPERIENCE.md`).
+- Authored initial `PLAN.md` and `VSCODE_AESTHETIC_PLAN.md`.
+
+## Epoch 1: Static Content & Token Extraction
+- Created `src/portfolioData.js` isolating document data, metadata, breadcrumbs, and syntax tokens.
+- Verified build passes cleanly without syntax or typing issues.
+
+## Epoch 2 & 3: Component Implementation & Integration
+- Implemented `src/VSCodeWorkspace.jsx` containing:
+  - `VSCodeTitleBar`: Window traffic lights, command search pill, Zoom Screen button, Theme toggle, and `LiveClock`.
+  - `VSCodeActivityBar`: 44px vertical icon rail (Explorer, Git with commit badge `1`, Extensions, Settings gear).
+  - `VSCodeExplorer`: Collapsible tree view on desktop and slide-over modal drawer on mobile.
+  - `EditorGroup`: Tabs with M↓ icons, split editor action, breadcrumbs, gutter line numbers, Git diff green bars (`#2ea043`), and high-contrast semantic prose.
+  - `VSCodeStatusBar`: KasajuOS remote badge, `main*` branch, vector SVG diagnostics, `Spaces: 2`, `UTF-8`, `Markdown`.
+- Integrated `<VSCodeWorkspace />` into `src/MacbookShowcase.jsx`.
+- Verified clean build (`npm run build`).
+
+## Epoch 4: Viewport Verification & Bug Remediation
+- Executed automated Puppeteer test suite across Desktop (1920x1080), Laptop (1440x900), Tablet (1024x768), and Mobile (390x844).
+- Calibrated chassis geometry: Updated `DESIGN_HEIGHT = 850` and `marginTop = '390px'`.
+- Isolated and resolved Chromium 3D perspective GPU tile bug on speaker grilles by eliminating `opacity-35` in favor of embedded RGBA gradient.
+- Added strict GPU clipping containment (`contain: 'paint'`, `transformStyle: 'flat'`).
+- Executed zero-emoji Python audit: replaced unicode symbols with scalable inline SVGs.
+- Verified final production bundle build passes in 752ms.
+- Verified screenshots across all viewports in both Light and Dark themes.
