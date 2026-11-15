@@ -113,25 +113,6 @@ export const WORKSPACE_DOCS = {
             highlight: ''
           }
         ]
-      },
-      {
-        company: 'Carleton University',
-        logo: '',
-        role: 'Academic Peer Tutor (Systems & Math)',
-        period: 'Sep 2023 – Apr 2024',
-        location: 'Carleton University',
-        bullets: [
-          {
-            prefix: 'Mentorship: ',
-            text: 'Mentored 25+ first- and second-year engineering students in C programming, linear algebra, and circuit analysis.',
-            highlight: ''
-          },
-          {
-            prefix: 'Lab Instruction: ',
-            text: 'Facilitated weekly diagnostic review sessions improving student lab completion rates and exam performance.',
-            highlight: ''
-          }
-        ]
       }
     ]
   }

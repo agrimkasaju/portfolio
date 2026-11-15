@@ -31,6 +31,7 @@ export const MacbookShowcase = ({
   // Apple-style one-time slow opening animation state
   const [isLidOpen, setIsLidOpen] = useState(() => {
     try {
+      if (typeof window !== 'undefined' && window.innerWidth < 640) return true
       return typeof window !== 'undefined' && window.location.search.includes('opened=true')
     } catch {
       return false
@@ -38,6 +39,7 @@ export const MacbookShowcase = ({
   })
   const [hasAutoOpened, setHasAutoOpened] = useState(() => {
     try {
+      if (typeof window !== 'undefined' && window.innerWidth < 640) return true
       return typeof window !== 'undefined' && window.location.search.includes('opened=true')
     } catch {
       return false
@@ -45,12 +47,25 @@ export const MacbookShowcase = ({
   })
   const sectionRef = useRef(null)
 
-  // In-place display camera zoom state (replaces legacy popup modal)
-  const [isDisplayZoomed, setIsDisplayZoomed] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
+  // In-place display camera zoom state: starts zoomed in automatically on mobile
+  const [isDisplayZoomed, setIsDisplayZoomed] = useState(() => {
+    try {
+      return typeof window !== 'undefined' && window.innerWidth < 640
+    } catch {
+      return false
+    }
+  })
+  const [isMobile, setIsMobile] = useState(() => {
+    try {
+      return typeof window !== 'undefined' && window.innerWidth < 640
+    } catch {
+      return false
+    }
+  })
 
   // Responsive scale state for mobile fitting
   const containerRef = useRef(null)
+  const hasInitializedZoomRef = useRef(false)
   const [scale, setScale] = useState(1)
   const DESIGN_WIDTH = 800
   const DESIGN_HEIGHT = 850
@@ -61,8 +76,17 @@ export const MacbookShowcase = ({
     const updateScale = () => {
       if (containerRef.current) {
         const width = containerRef.current.clientWidth
-        setIsMobile(width < 640)
-        const nextScale = width > 0 && width < DESIGN_WIDTH ? Math.min(1, (width - (width < 640 ? 12 : 0)) / DESIGN_WIDTH) : 1
+        const mobile = width < 640
+        setIsMobile(mobile)
+        if (!hasInitializedZoomRef.current) {
+          hasInitializedZoomRef.current = true
+          if (mobile) {
+            setIsDisplayZoomed(true)
+            setIsLidOpen(true)
+            setHasAutoOpened(true)
+          }
+        }
+        const nextScale = width > 0 && width < DESIGN_WIDTH ? Math.min(1, (width - (mobile ? 12 : 0)) / DESIGN_WIDTH) : 1
         setScale((prev) => (Math.abs(prev - nextScale) > 0.005 ? nextScale : prev))
       }
     }
