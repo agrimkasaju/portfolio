@@ -467,7 +467,11 @@ export const MacbookShowcase = ({
                     WebkitBackfaceVisibility: isDisplayZoomed ? 'visible' : 'hidden',
                     backgroundColor: '#0a0d14',
                     border: isDark ? '2px solid #2d3345' : '2px solid #3c455c',
-                    padding: isDisplayZoomed && isMobile ? '4px 4px 0 4px' : '8px 8px 0 8px',
+                    padding: isDisplayZoomed
+                      ? isMobile
+                        ? '4px 4px 8px 4px'
+                        : '8px'
+                      : '8px 8px 18px 8px',
                     boxShadow: '0 30px 70px -15px rgba(0, 0, 0, 0.9)',
                     pointerEvents: (isLidOpen || isDisplayZoomed) ? 'auto' : 'none',
                     WebkitFontSmoothing: 'antialiased',
@@ -491,7 +495,7 @@ export const MacbookShowcase = ({
                     tabIndex={0}
                     role="region"
                     aria-label="Interactive MacBook Liquid Retina Display - Visual Studio Code Workspace"
-                    className="relative w-full flex-1 h-full overflow-hidden rounded-t-lg outline-none flex flex-col"
+                    className="relative w-full flex-1 h-full overflow-hidden rounded-lg outline-none flex flex-col"
                     style={{
                       contain: 'paint',
                       overflow: 'hidden'

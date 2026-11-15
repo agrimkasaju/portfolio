@@ -22,3 +22,6 @@
    - Setting `DESIGN_HEIGHT = 850` and `marginTop = '390px'` achieves `gapHeroToLid: 91px` and `gapChassisToProjects: 84px` across all viewports with `centerDiff = 0px` (flawless alignment with `#heroCard`).
 7. **Anti-Emoji Hygiene**:
    - Replaced all Unicode emoji glyphs (`0x2715`, `0x26a0`) with clean, lightweight inline vector SVGs matching VS Code's exact UI symbols.
+8. **MacBook Display Chin & 3D Hinge Clearance**:
+   - *Issue*: In 3D perspective desk view, having 0px bottom bezel padding on the display face caused the blue VS Code status bar at the bottom of the screen to physically intersect the 3D hinge bar and keyboard unibody deck, cutting off the bottom portion of status text.
+   - *Fix*: Added authentic 18px bottom chin bezel padding (`padding: '8px 8px 18px 8px'`) in 3D desk view (`4px 4px 8px 4px` in mobile zoom), calibrated status bar height to `h-6.5 sm:h-6`, and added `rounded-b-[7px]` curvature. This lifts the status bar cleanly above the hinge line on mobile and desktop viewports with zero occlusion.

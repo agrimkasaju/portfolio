@@ -341,7 +341,7 @@ export const VSCodeWorkspace = ({
 
   return (
     <div
-      className="relative w-full h-full flex flex-col bg-[#181818] text-zinc-200 overflow-hidden select-none border border-[#2b2b2b] rounded-t-lg shadow-2xl"
+      className="relative w-full h-full flex flex-col bg-[#181818] text-zinc-200 overflow-hidden select-none border border-[#2b2b2b] rounded-lg shadow-2xl"
       style={{
         contain: 'paint',
         overflow: 'hidden'
@@ -644,7 +644,7 @@ export const VSCodeWorkspace = ({
       </div>
 
       {/* 3. VS Code Status Bar */}
-      <div className="h-6 px-2 sm:px-3 bg-[#007acc] text-white flex items-center justify-between text-[11px] font-mono select-none shrink-0 z-30">
+      <div className="h-6.5 sm:h-6 px-2.5 sm:px-3 bg-[#007acc] text-white flex items-center justify-between text-[11px] font-mono select-none shrink-0 z-30 rounded-b-[7px]">
         {/* Left Side: Remote Status + Git Branch + Diagnostics */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Remote Badge */}
